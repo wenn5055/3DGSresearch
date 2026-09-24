@@ -175,12 +175,62 @@ class CpuRenderer:
             y = py + 0.5
             for px in range(self.camera.width):
                 x = px + 0.5
-                # TODO: Calculate the RGB value at (x, y)
-                # Composite the sorted splats front to back, then finish with the
-                # background weighted by the remaining transmittance.
+                if py == 0 and px == 0:
+                    from math import exp as _exp
+                    _A = projected.conics[:, 0]
+                    _B = projected.conics[:, 1]
+                    _C = projected.conics[:, 2]
+                    _det = _A * _C - _B * _B
+                    _live = (supports > 0.0) & (_det > 1.0e-12)
+                    _rx = np.zeros_like(_A)
+                    _ry = np.zeros_like(_A)
+                    _rx[_live] = np.sqrt(np.maximum(supports[_live] * _C[_live] / _det[_live], 0.0))
+                    _ry[_live] = np.sqrt(np.maximum(supports[_live] * _A[_live] / _det[_live], 0.0))
+                    _x0 = np.where(_live, projected.centres[:, 0] - _rx, np.inf)
+                    _x1 = np.where(_live, projected.centres[:, 0] + _rx, -np.inf)
+                    _y0 = np.where(_live, projected.centres[:, 1] - _ry, np.inf)
+                    _y1 = np.where(_live, projected.centres[:, 1] + _ry, -np.inf)
+                    _bg = background_color.tolist()
 
-                # TODO: The RHS is a placeholder
-                image[py, px] = np.zeros(3, dtype=np.float32)
+                if px == 0:
+                    _row = np.flatnonzero((_y0 <= y) & (_y1 >= y))          # depth order preserved
+                    _cx = projected.centres[_row, 0].tolist()
+                    _cy = projected.centres[_row, 1].tolist()
+                    _ca = projected.conics[_row, 0].tolist()
+                    _cb = (2.0 * projected.conics[_row, 1]).tolist()
+                    _cc = projected.conics[_row, 2].tolist()
+                    _op = projected.opacities[_row].tolist()
+                    _col = projected.colors[_row].tolist()
+                    _sup = supports[_row].tolist()
+                    _lo = _x0[_row].tolist()
+                    _hi = _x1[_row].tolist()
+                    _n = len(_row)
+
+                r = g = b = 0.0
+                transmittance = 1.0
+                for i in range(_n):
+                    if x < _lo[i] or x > _hi[i]:
+                        continue
+                    du = x - _cx[i]
+                    dv = y - _cy[i]
+                    q = _ca[i] * du * du + _cb[i] * du * dv + _cc[i] * dv * dv
+                    if q <= _sup[i]:
+                        alpha = _op[i] * _exp(-0.5 * q)
+                        if alpha > 0.99:
+                            alpha = 0.99
+                        if alpha >= ALPHA_CUTOFF:
+                            w = transmittance * alpha
+                            c = _col[i]
+                            r += w * c[0]
+                            g += w * c[1]
+                            b += w * c[2]
+                            transmittance -= w
+                            if transmittance < 1.0e-4:
+                                break
+
+                image[py, px] = (r + transmittance * _bg[0],
+                                 g + transmittance * _bg[1],
+                                 b + transmittance * _bg[2])
 
         return image
 

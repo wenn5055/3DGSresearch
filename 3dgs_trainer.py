@@ -581,8 +581,65 @@ def render_backward(
             # quaternion_grad_flat, opacity_grad and color_grad_flat -- many pixels touch the
             # same splat concurrently. The flat buffers are component-major: splat i's mean
             # occupies indices 3*i, 3*i+1, 3*i+2, and its quaternion 4*i .. 4*i+3.
-            #
-            # remaining_rgb = (final_rgb - prefix_rgb - transmittance * alpha * colour) / wp.max(next_transmittance, 1.0e-8)
+            
+            remaining_rgb = (final_rgb - prefix_rgb - transmittance * alpha * colour) / wp.max(next_transmittance, 1.0e-8) #R1
+            alpha_adjoint  = transmittance * wp.dot(pixel_grad, colour - remaining_rgb)   # scalar, # dL/d(alpha): scalar
+            colour_adjoint = transmittance * alpha * pixel_grad                            # dL/d(colour): vec3
+            (
+                mean_adjoint,
+                scale_adjoint,
+                quaternion_adjoint,
+                opacity_adjoint,
+                camera_adjoint,
+                px_adjoint,
+                py_adjoint,
+                width_adjoint,
+                height_adjoint,
+                focal_adjoint,
+                compact_enabled_adjoint,
+                compact_beta_adjoint,
+                compact_alpha_min_adjoint,
+            ) = wp.grad(alpha_at_pixel)(mean, log_scale, quaternion, opacity_logit, camera, px, py, float(width), float(height), focal, compact_enabled, compact_beta, compact_alpha_min)
+
+            wp.atomic_add(mean_grad_flat, splat * 3 + 0, alpha_adjoint * mean_adjoint[0] )
+            wp.atomic_add(mean_grad_flat, splat * 3 + 1, alpha_adjoint * mean_adjoint[1])
+            wp.atomic_add(mean_grad_flat, splat * 3 + 2, alpha_adjoint * mean_adjoint[2])
+
+            wp.atomic_add(scale_grad_flat, splat * 3 + 0, alpha_adjoint * scale_adjoint[0])
+            wp.atomic_add(scale_grad_flat, splat * 3 + 1, alpha_adjoint * scale_adjoint[1])
+            wp.atomic_add(scale_grad_flat, splat * 3 + 2, alpha_adjoint * scale_adjoint[2])
+
+            wp.atomic_add(
+                quaternion_grad_flat, splat * 4 + 0, alpha_adjoint * quaternion_adjoint[0]
+            )
+            wp.atomic_add(
+                quaternion_grad_flat, splat * 4 + 1, alpha_adjoint *  quaternion_adjoint[1]
+            )
+            wp.atomic_add(
+                quaternion_grad_flat, splat * 4 + 2, alpha_adjoint * quaternion_adjoint[2]
+            )
+            wp.atomic_add(
+                quaternion_grad_flat, splat * 4 + 3, alpha_adjoint * quaternion_adjoint[3]
+            )
+
+            wp.atomic_add(opacity_grad, splat, alpha_adjoint * opacity_adjoint)
+
+            raw_colour = color[splat]
+
+            if raw_colour[0] > 0.0 and raw_colour[0] < 1.0:
+                wp.atomic_add(
+                    color_grad_flat, splat * 3 + 0, colour_adjoint[0]
+                )
+
+            if raw_colour[1] > 0.0 and raw_colour[1] < 1.0:
+                wp.atomic_add(
+                    color_grad_flat, splat * 3 + 1, colour_adjoint[1]
+                )
+
+            if raw_colour[2] > 0.0 and raw_colour[2] < 1.0:
+                wp.atomic_add(
+                    color_grad_flat, splat * 3 + 2, colour_adjoint[2]
+                )
 
             prefix_rgb = prefix_rgb + transmittance * alpha * colour
             transmittance = next_transmittance
@@ -761,6 +818,65 @@ def render_sparse_backward(
             # check it: at `sparse.samples_per_tile == TILE * TILE` every pixel in every tile is
             # sampled exactly once, so the sparse loss and every sparse gradient buffer must match
             # the dense ones.
+            remaining_rgb = (final_rgb - prefix_rgb - transmittance * alpha * colour) / wp.max(next_transmittance, 1.0e-8) #R1
+            alpha_adjoint  = transmittance * wp.dot(pixel_grad, colour - remaining_rgb)   # scalar, # dL/d(alpha): scalar
+            colour_adjoint = transmittance * alpha * pixel_grad                            # dL/d(colour): vec3
+            (
+                mean_adjoint,
+                scale_adjoint,
+                quaternion_adjoint,
+                opacity_adjoint,
+                camera_adjoint,
+                px_adjoint,
+                py_adjoint,
+                width_adjoint,
+                height_adjoint,
+                focal_adjoint,
+                compact_enabled_adjoint,
+                compact_beta_adjoint,
+                compact_alpha_min_adjoint,
+            ) = wp.grad(alpha_at_pixel)(mean, log_scale, quaternion, opacity_logit, camera, px, py, float(width), float(height), focal, compact_enabled, compact_beta, compact_alpha_min)
+
+            wp.atomic_add(mean_grad_flat, splat * 3 + 0, alpha_adjoint * mean_adjoint[0] )
+            wp.atomic_add(mean_grad_flat, splat * 3 + 1, alpha_adjoint * mean_adjoint[1])
+            wp.atomic_add(mean_grad_flat, splat * 3 + 2, alpha_adjoint * mean_adjoint[2])
+
+            wp.atomic_add(scale_grad_flat, splat * 3 + 0, alpha_adjoint * scale_adjoint[0])
+            wp.atomic_add(scale_grad_flat, splat * 3 + 1, alpha_adjoint * scale_adjoint[1])
+            wp.atomic_add(scale_grad_flat, splat * 3 + 2, alpha_adjoint * scale_adjoint[2])
+
+            wp.atomic_add(
+                quaternion_grad_flat, splat * 4 + 0, alpha_adjoint * quaternion_adjoint[0]
+            )
+            wp.atomic_add(
+                quaternion_grad_flat, splat * 4 + 1, alpha_adjoint *  quaternion_adjoint[1]
+            )
+            wp.atomic_add(
+                quaternion_grad_flat, splat * 4 + 2, alpha_adjoint * quaternion_adjoint[2]
+            )
+            wp.atomic_add(
+                quaternion_grad_flat, splat * 4 + 3, alpha_adjoint * quaternion_adjoint[3]
+            )
+
+            wp.atomic_add(opacity_grad, splat, alpha_adjoint * opacity_adjoint)
+
+            raw_colour = color[splat]
+
+            if raw_colour[0] > 0.0 and raw_colour[0] < 1.0:
+                wp.atomic_add(
+                    color_grad_flat, splat * 3 + 0, colour_adjoint[0]
+                )
+
+            if raw_colour[1] > 0.0 and raw_colour[1] < 1.0:
+                wp.atomic_add(
+                    color_grad_flat, splat * 3 + 1, colour_adjoint[1]
+                )
+
+            if raw_colour[2] > 0.0 and raw_colour[2] < 1.0:
+                wp.atomic_add(
+                    color_grad_flat, splat * 3 + 2, colour_adjoint[2]
+                )
+            
 
             prefix_rgb = prefix_rgb + transmittance * alpha * colour
             transmittance = next_transmittance

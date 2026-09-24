@@ -96,7 +96,7 @@ class TrainingConfig:
         },
         "sparse": {
             "enabled": True,
-            "samples_per_tile": 48,
+            "samples_per_tile": 256,
         },
         "adaptive": {
             "late_prune_growth_window": 3,
