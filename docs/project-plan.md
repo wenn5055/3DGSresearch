@@ -1,5 +1,8 @@
 # Deferred Specular Shading with 2D Gaussian Surfels
 
+Working documents: [research stages](researchStages.md), [todo list](TODO.md),
+[run-record template](run-record-template.md), and [commands](CommandList.md).
+
 ## Purpose and status
 
 Extend the custom Python/NVIDIA Warp 3D Gaussian Splatting trainer in
