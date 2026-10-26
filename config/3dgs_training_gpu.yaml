@@ -14,7 +14,7 @@ paths:
 runtime:
   # Switch to `gpu` on a CUDA machine. CPU works but is roughly a second or two per iteration at
   # this resolution, so lower `training.iterations` while you are debugging.
-  arch: cpu
+  arch: gpu
   seed: 7
 
 model:
