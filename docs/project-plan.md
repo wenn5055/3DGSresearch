@@ -3,6 +3,9 @@
 Working documents: [research stages](researchStages.md), [todo list](TODO.md),
 [run-record template](run-record-template.md), and [commands](CommandList.md).
 
+Detailed rationale, literature checks, and current evidence:
+[research design record](research-design-notes.md).
+
 ## Purpose and status
 
 Extend the custom Python/NVIDIA Warp 3D Gaussian Splatting trainer in

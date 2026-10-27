@@ -7,6 +7,11 @@ Replace placeholders using evidence; use "unknown" for unavailable information.
 Terminal logs are useful, but they do not replace the exact configuration, code
 revision, dataset/splits, and environment. Preserve those before running.
 
+The [experiment runner](CommandList.md) now saves these automatically in each
+run directory, including a generated summary.md. Use this template for the
+remaining research context and interpretation, or copy and expand that summary.
+Rendering FPS, peak VRAM, and crop metrics still need separate measurement.
+
 ## Identity and purpose
 
 - Run ID:

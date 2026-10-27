@@ -1,86 +1,92 @@
-# Experiment commands (PowerShell)
+# Materials: commands to run
 
-Run from the repository root with the project virtual environment activated.
-These are instructions; creating this document does not run training or checks.
-Use a fresh run ID for each experiment and complete a
-[run record](run-record-template.md). See [TODO.md](TODO.md) for priorities.
+Use **Git Bash on Windows**, from the repository root.
 
-## Prepare a recorded Lego baseline
+## 1. Activate Python
 
-Choose an unused ID. New-Item intentionally fails if the run directory exists;
-choose another ID instead of overwriting an earlier experiment.
-
-```powershell
-$runId = 'lego-rgb-r001'
-$runDir = Join-Path 'outputs' $runId
-New-Item -ItemType Directory -Path $runDir -ErrorAction Stop
-Copy-Item -LiteralPath 'config/3dgs_training_gpu.yaml' -Destination "config/$runId.yaml" -ErrorAction Stop
+```bash
+source .venv/Scripts/activate
 ```
 
-Edit `config/lego-rgb-r001.yaml` before continuing. Set `paths.output` to
-`../outputs/lego-rgb-r001/model.png`; keep the Lego data and initialization paths.
-Set and record the intended budget, learning-rate schedule, seed, and stopping
-policy. For a fixed completed-step comparison, set `convergence.enabled: false`.
-Leave the runnable config under config/: its relative paths are resolved there.
+## 2. Check your dataset and config
 
-Record provenance after finishing the config edits:
-
-```powershell
-git rev-parse HEAD | Set-Content "$runDir/commit.txt"
-git status --short | Set-Content "$runDir/git-status.txt"
-git diff HEAD --output="$runDir/working-tree.patch"
-Copy-Item -LiteralPath "config/$runId.yaml" -Destination "$runDir/config.yaml"
-Copy-Item -LiteralPath 'shared/training_config.py' -Destination "$runDir/training_config_source.py"
-python --version 2>&1 | Set-Content "$runDir/python-version.txt"
-python -m pip freeze | Set-Content "$runDir/packages.txt"
-nvidia-smi | Set-Content "$runDir/gpu.txt"
-Get-FileHash -LiteralPath 'data/lego/init.ply' -Algorithm SHA256 | Format-List | Out-File "$runDir/initialization-hash.txt"
+```bash
+python scripts/run_experiment.py config/materials_rgb.yaml --prepare-only
 ```
 
-The config snapshot plus defaults source records omitted settings. The snapshot
-is for provenance, not a runnable config at its new location. Git diff excludes
-untracked files: commit implementation/config changes or snapshot their contents
-as well. Record the dataset version/source and exact commands in the run record.
+Look for **Run prepared**. Open the printed run folder's `config.yaml` if you
+want to check the settings. This step checks files and saves the setup.
 
-## Check, train, then evaluate
+## 3. Run your first experiment
 
-Run each command separately and inspect the exit code and log. Stop and resolve
-failures before proceeding. These checks validate existing code; new kernels
-will require additional checks designed for their behavior.
+For a short first test, set `training.iterations: 200` in
+[materials_rgb.yaml](../config/materials_rgb.yaml) before running:
 
-```powershell
-python scripts/check_setup.py 2>&1 | Tee-Object -FilePath "$runDir/setup.log"
-$LASTEXITCODE | Set-Content "$runDir/setup-exit-code.txt"
-
-python 3dgs_gradient_check_gpu.py --device cpu 2>&1 | Tee-Object -FilePath "$runDir/gradient-cpu.log"
-$LASTEXITCODE | Set-Content "$runDir/gradient-cpu-exit-code.txt"
-
-python 3dgs_gradient_check_gpu.py --device cuda:0 2>&1 | Tee-Object -FilePath "$runDir/gradient-gpu.log"
-$LASTEXITCODE | Set-Content "$runDir/gradient-gpu-exit-code.txt"
-
-$trainTimer = [System.Diagnostics.Stopwatch]::StartNew()
-python -u 3dgs_trainer.py "config/$runId.yaml" 2>&1 | Tee-Object -FilePath "$runDir/train.log"
-$LASTEXITCODE | Set-Content "$runDir/train-exit-code.txt"
-$trainTimer.Stop()
-$trainTimer.Elapsed.TotalSeconds | Set-Content "$runDir/train-process-seconds.txt"
-
-python -u 3dgs_evaluator.py "$runDir/model.ply" data/lego --manifest transforms_test.json --arch gpu --resolution 256 --background white --sh-degree 0 --metrics psnr ssim lpips --output-dir "$runDir/test-renders" --csv "$runDir/test-metrics.csv" 2>&1 | Tee-Object -FilePath "$runDir/eval.log"
-$LASTEXITCODE | Set-Content "$runDir/eval-exit-code.txt"
+```bash
+python scripts/run_experiment.py config/materials_rgb.yaml \
+  --check-gradients --metrics psnr ssim \
+  --eval-manifest transforms_val.json
 ```
 
-Match evaluation resolution/background to the actual run. LPIPS requires its
-dependencies and pretrained weights; record the backbone (default: alex).
-If deliberately using only PSNR/SSIM for a quick check, record LPIPS as omitted.
-The evaluator produces per-view metrics and prints their means; it does not
-currently benchmark FPS, peak VRAM, or reflection-crop metrics.
+This checks gradients, trains, then evaluates validation views. Logs are
+saved automatically. Stop and inspect the stage's log if it fails.
 
-## Save the human-readable summary
+Each invocation creates a new folder under `outputs/`; its path is printed
+in the terminal. Preparation and training create separate folders.
 
-```powershell
-New-Item -ItemType Directory -Path 'docs/experiments' -Force | Out-Null
-Copy-Item -LiteralPath 'docs/run-record-template.md' -Destination "docs/experiments/$runId.md"
+## 4. Find your results
+
+Open the experiment folder printed by step 3:
+
+| Open | To see |
+| --- | --- |
+| `summary.md` | Status, completed iterations, and average scores |
+| `train.log` / `eval.log` | Terminal output and errors |
+| `model.png` / `test-renders/` | Rendered images |
+| `test-metrics.csv` | Per-view scores for the selected split (validation here) |
+
+The run folder also keeps the exact config, source snapshot, and provenance.
+Add your observations to the summary after looking at the images.
+
+## Individual commands for debugging
+
+Run only the stage you need. Direct training uses the output path in your YAML,
+currently `outputs/materials-rgb/model.png`, and saves a matching `model.ply`.
+
+**Check gradients** (choose GPU or CPU):
+
+```bash
+python 3dgs_gradient_check_gpu.py --device cuda:0
+python 3dgs_gradient_check_gpu.py --device cpu
 ```
 
-Fill that record from the saved evidence. Keep compact summaries and reproducible
-configs in Git; raw logs, renders, and trained models stay under outputs/. Back
-up artifacts separately if they must be retained across machines.
+**Train only:**
+
+```bash
+python 3dgs_trainer.py config/materials_rgb.yaml
+```
+
+**Evaluate that model only:**
+
+```bash
+python 3dgs_evaluator.py outputs/materials-rgb/model.ply data/materials \
+  --manifest transforms_val.json --arch gpu \
+  --width 256 --height 256 --background white --sh-degree 0 \
+  --metrics psnr ssim \
+  --output-dir outputs/materials-rgb/eval-val \
+  --csv outputs/materials-rgb/eval-val/metrics.csv
+```
+
+For a runner-created model, replace the PLY path with that run's `model.ply`.
+Match resolution and background to the saved config. The runner handles logging;
+direct commands print to the terminal unless you capture their output.
+
+## When you need more
+
+See the [full command reference](command-reference.md) for manual logging,
+LPIPS, final test-set evaluation, other resolutions, setup, and older assignment
+commands. Use `--help` to list runner options:
+
+```bash
+python scripts/run_experiment.py --help
+```

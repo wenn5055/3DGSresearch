@@ -25,8 +25,9 @@ from its saved code revision, environment, data, and configuration.
 
 Goal: measure the existing renderer on the primary research scene.
 
-- Obtain materials with train/validation/test manifests and images; ignore new
-  dataset directories before adding downloaded data to the workspace.
+- Obtain materials with train/validation/test manifests and images. The current
+  repository policy is to version materials alongside Lego; generated results
+  remain under ignored outputs/.
 - Verify camera conventions, resize behavior, background/alpha handling, scene
   scale, and initialization. Do not reuse Lego's initialization point cloud.
 - Save a scene-specific config and record a baseline run with a unique output path.

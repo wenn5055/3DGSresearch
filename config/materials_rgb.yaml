@@ -1,0 +1,34 @@
+# Starter configuration for 3dgs_trainer.py. Paths are resolved relative to *this file*, which is
+# why they start with `../`. Run it from the repository root:
+#
+#     python 3dgs_trainer.py config/materials_rgb.yaml
+#
+# Every key not set here takes its default from TrainingConfig.DEFAULTS in
+# shared/training_config.py; read that file for the full schema.
+
+paths:
+  data: ../data/materials
+  output: ../outputs/materials-rgb/model.png
+  init_ply: null
+
+runtime:
+  # Switch to `gpu` on a CUDA machine. CPU works but is roughly a second or two per iteration at
+  # this resolution, so lower `training.iterations` while you are debugging.
+  arch: gpu
+  seed: 7
+
+model:
+  width: 256
+  height: 256
+  capacity: 100000
+  # Ignored while `paths.init_ply` is set: the point cloud decides the starting count (45,733 for
+  # the supplied init.ply). It only takes effect for a random initialisation, with init_ply null.
+  initial_splats: 1000
+  background: white
+
+training:
+  iterations: 2000
+
+densification:
+  interval: 100
+  fraction: 0.2

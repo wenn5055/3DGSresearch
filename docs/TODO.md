@@ -15,6 +15,9 @@ implementation design and a reproducible RGB baseline on materials.
 - [ ] Write down the geometry parameterization, lighting representation, material
   parameters, and losses. Start from the recommendations in researchStages.md.
 - [ ] Adopt unique run IDs and [run-record-template.md](run-record-template.md).
+- [x] Implement a single-command RGB experiment runner for isolated outputs,
+  configuration/source/input snapshots, logs, training/evaluation, and failure records.
+  Usage: [CommandList.md](CommandList.md).
 - [ ] Label old Lego outputs as exploratory unless their original settings can
   be recovered from evidence.
 
@@ -23,8 +26,8 @@ implementation design and a reproducible RGB baseline on materials.
 - [ ] Record GPU/driver, Python, dependencies, Git revision, and local changes.
 - [ ] Run setup and baseline gradient checks; save logs and exit codes.
 - [ ] Run and evaluate a recorded Lego baseline using a dedicated config/output.
-- [ ] Ignore new dataset directories before downloading data; keep results in outputs/.
-- [ ] Obtain materials train/validation/test images and manifests.
+- [x] Set the data policy: keep Lego and materials in Git; generated results stay in outputs/.
+- [x] Obtain materials train/validation/test images and manifests; all referenced RGB images are present.
 - [ ] Verify data loading, cameras, resizing, background, scale, and initialization.
 - [ ] Create a materials config with a suitable initialization policy, output path,
   seed, training budget, learning-rate schedule, and stopping policy.
