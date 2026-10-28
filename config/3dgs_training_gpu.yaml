@@ -18,8 +18,8 @@ runtime:
   seed: 7
 
 model:
-  width: 256
-  height: 256
+  width: 800
+  height: 800
   capacity: 100000
   # Ignored while `paths.init_ply` is set: the point cloud decides the starting count (45,733 for
   # the supplied init.ply). It only takes effect for a random initialisation, with init_ply null.
@@ -27,7 +27,7 @@ model:
   background: white
 
 training:
-  iterations: 2000
+  iterations: 10000
 
 densification:
   interval: 100

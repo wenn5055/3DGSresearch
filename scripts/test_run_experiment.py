@@ -1,6 +1,7 @@
 """Exercise experiment orchestration with tiny subprocess fixtures, without a GPU."""
 
 import contextlib
+from datetime import datetime, timezone
 import io
 import json
 from pathlib import Path
@@ -64,6 +65,7 @@ class ExperimentRunnerTests(unittest.TestCase):
         # Ordinary mkdir inherits workspace permissions on restricted Windows hosts.
         self.root = scratch / f"runner-test-{uuid.uuid4().hex}"
         self.root.mkdir()
+        self.run_name = "scene-Oct28-1305-recorded-run"
         self.addCleanup(self.cleanup_fixture)
         (self.root / "config").mkdir()
         data = self.root / "data" / "scene"
@@ -100,11 +102,13 @@ class ExperimentRunnerTests(unittest.TestCase):
         args = runner.build_parser().parse_args([
             str(self.config), "--name", "recorded-run", "--metrics", "psnr", "ssim", *flags])
         with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()), \
-                patch.object(runner, "capture", return_value={"exit_code": None, "error": "fixture"}):
+                patch.object(runner, "capture", return_value={"exit_code": None, "error": "fixture"}), \
+                patch.object(runner, "datetime", wraps=datetime) as clock:
+            clock.now.side_effect = lambda tz: datetime(2026, 10, 28, 5, 5, tzinfo=timezone.utc).astimezone(tz)
             return runner.run_experiment(args, self.root)
 
     def record(self):
-        return json.loads((self.root / "outputs/recorded-run/run.json").read_text())
+        return json.loads((self.root / "outputs" / self.run_name / "run.json").read_text())
 
     def test_complete_run_matches_evaluation_and_preserves_source_config(self):
         original = self.config.read_bytes()
@@ -153,7 +157,7 @@ class ExperimentRunnerTests(unittest.TestCase):
         record = self.record()
         self.assertEqual(record["status"], "failed")
         self.assertEqual(record["stages"][0]["exit_code"], 5)
-        self.assertIn("failure detail", (self.root / "outputs/recorded-run/train.log").read_text())
+        self.assertIn("failure detail", (self.root / "outputs" / self.run_name / "train.log").read_text())
         self.assertFalse((self.root / "evaluation.called").exists())
 
     def test_missing_model_prevents_evaluation_even_with_zero_exit(self):
@@ -169,14 +173,15 @@ class ExperimentRunnerTests(unittest.TestCase):
             self.run_fixture()
         self.assertEqual(self.record()["status"], "failed")
         self.assertEqual(self.record()["training_result"]["completed_iterations"], 2)
-        self.assertTrue((self.root / "outputs/recorded-run/model.ply").is_file())
+        self.assertTrue((self.root / "outputs" / self.run_name / "model.ply").is_file())
 
     def test_existing_run_is_never_overwritten(self):
-        directory = self.root / "outputs" / "recorded-run"
+        directory = self.root / "outputs" / self.run_name
         directory.mkdir(parents=True)
         (directory / "sentinel").write_text("keep me")
-        with self.assertRaises(FileExistsError):
-            self.run_fixture()
+        new_directory = self.run_fixture("--prepare-only")
+        self.assertEqual(new_directory.name, f"{self.run_name}-2")
+        self.assertEqual(json.loads((new_directory / "run.json").read_text())["run_id"], new_directory.name)
         self.assertEqual((directory / "sentinel").read_text(), "keep me")
         self.assertFalse((directory / "run.json").exists())
 

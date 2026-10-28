@@ -11,6 +11,7 @@ validation, and the later trainers subclass it only to add their own keys.
 from __future__ import annotations
 
 from copy import deepcopy
+import math
 from pathlib import Path
 
 import yaml
@@ -52,6 +53,11 @@ class TrainingConfig:
         },
         "training": {
             "iterations": 2000,
+        },
+        "loss": {
+            "mode": "mse",
+            "dssim_weight": 0.2,
+            "dssim_window": 11,
         },
         "learning_rates": {
             "position_initial": 0.00016,
@@ -99,6 +105,8 @@ class TrainingConfig:
             "samples_per_tile": 256,
         },
         "adaptive": {
+            # Held-out MSE PSNR that latches the MSE -> dense MSE + D-SSIM transition.
+            "dssim_psnr_threshold": 25.0,
             "late_prune_growth_window": 3,
             "late_prune_growth_percent": 2.0,
         },
@@ -181,6 +189,7 @@ class TrainingConfig:
         runtime = self.values["runtime"]
         model = self.values["model"]
         training = self.values["training"]
+        loss = self.values["loss"]
         rates = self.values["learning_rates"]
         densification = self.values["densification"]
         compact = self.values["compact_box"]
@@ -189,6 +198,19 @@ class TrainingConfig:
         adaptive = self.values["adaptive"]
         convergence = self.values["convergence"]
         reporting = self.values["reporting"]
+        if loss["mode"] not in ("mse", "mse_dssim"):
+            raise ValueError("loss.mode must be 'mse' or 'mse_dssim'.")
+        weight = loss["dssim_weight"]
+        if (not isinstance(weight, (int, float)) or isinstance(weight, bool)
+                or not math.isfinite(weight) or not 0.0 <= weight <= 1.0):
+            raise ValueError("loss.dssim_weight must be a finite number in [0, 1].")
+        window = loss["dssim_window"]
+        if not isinstance(window, int) or isinstance(window, bool) or not 1 <= window <= 31 or window % 2 == 0:
+            raise ValueError("loss.dssim_window must be an odd integer in [1, 31].")
+        threshold = adaptive["dssim_psnr_threshold"]
+        if (not isinstance(threshold, (int, float)) or isinstance(threshold, bool)
+                or not math.isfinite(threshold) or not 0.0 <= threshold <= 100.0):
+            raise ValueError("adaptive.dssim_psnr_threshold must be a finite number in [0, 100] dB.")
         if runtime["arch"] not in ("cpu", "gpu"):
             raise ValueError("runtime.arch must be 'cpu' or 'gpu'.")
         if not isinstance(runtime["seed"], int) or isinstance(runtime["seed"], bool):

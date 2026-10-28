@@ -1,14 +1,9 @@
 """Train anisotropic 3D Gaussian splats from NeRF-synthetic posed images with Warp.
 
-Assignment 2 skeleton. Everything is here except the two backward kernels, whose gradient
-accumulation you write: `render_backward` for the dense path and `render_sparse_backward` for
-the sampled one. Both are marked TODO.
-
-Until you fill them in, every gradient buffer stays zero and Adam has nothing to apply, so no
-splat's position, scale, rotation, opacity or colour ever changes. Training still runs to
-completion, and `active` still grows because densification and pruning are driven separately, so
-`fixed_eval_ema` drifts a little as splats are cloned. What it will not do is improve. That is the
-expected starting behaviour, not a bug in the harness.
+Explicit dense and sampled backward kernels optimize position, scale, rotation, opacity and
+fixed RGB. The optional Unit 10 loss curriculum starts with MSE, then enables dense MSE +
+D-SSIM when held-out MSE PSNR reaches adaptive.dssim_psnr_threshold. Without a loss block,
+the trainer keeps its MSE-only objective.
 
 Check the dense kernel with the gradient checker, which compares your analytic gradients against
 central finite differences:
@@ -55,6 +50,7 @@ if str(_shared) not in sys.path:
     sys.path.insert(0, str(_shared))
 
 from trainable_gaussian import TrainableGaussianSet
+from dssim_loss import DSSIMComputer
 from gaussian_set import GaussianSet
 from profiling import profile_stage
 from splat_math import (
@@ -1038,6 +1034,7 @@ class WarpImageTrainer:
             "compact_box": deepcopy(TrainingConfig.DEFAULTS["compact_box"]),
             "multiview_adc": deepcopy(TrainingConfig.DEFAULTS["multiview_adc"]),
             "sparse": deepcopy(TrainingConfig.DEFAULTS["sparse"]),
+            "loss": deepcopy(TrainingConfig.DEFAULTS["loss"]),
         }
         if training_options is not None:
             for section, values in training_options.items():
@@ -1045,10 +1042,9 @@ class WarpImageTrainer:
         self.sparse_enabled = self.training_options["sparse"]["enabled"]
         self.samples_per_tile = self.training_options["sparse"]["samples_per_tile"]
         self.last_position_learning_rate = self.learning_rates["position_initial"]
-        # This trainer's objective is MSE and nothing else, so the phase is fixed at construction
-        # rather than recomputed each step. Later versions blend a second term into the loss and
-        # switch between terms during a run; they own that state on their own wrapper object and
-        # report it through the same attribute name, which is all the training loop reads.
+        self.loss_config = self.training_options["loss"]
+        self.dssim_stage = 0
+        self._dssim = None  # Allocate the image-loss workspace only after the stage transition.
         self.last_loss_phase = "sparse-mse" if self.sparse_enabled else "mse"
         self.background = wp.vec3(float(background[0]), float(background[1]), float(background[2]))
         self.tiles_x = (self.width + TILE - 1) // TILE
@@ -1220,6 +1216,7 @@ class WarpImageTrainer:
             outputs=[self.pixel_gradient],
             device=self.device,
         )
+        objective = self._auxiliary_loss(mse, view_ids, download_loss)
         wp.launch(
             render_backward,
             dim=len(view_ids) * self.width * self.height,
@@ -1234,7 +1231,7 @@ class WarpImageTrainer:
         )
         self.optimizers.pack_gradients(self.capacity)
         self.last_timings = {"tile": tile_seconds, "device": perf_counter() - device_started}
-        return mse
+        return objective
 
     def sparse_loss_and_gradients(self, view_ids, download_loss=True):
         if len(view_ids) != 1:
@@ -1297,16 +1294,44 @@ class WarpImageTrainer:
         return mse
 
     def loss_and_gradients(self, view_ids, download_loss=True):
-        """Train one step on the configured objective, sampled or dense.
-
-        `sparse.enabled` picks the path once, at construction. Later versions choose per
-        iteration -- a windowed objective needs contiguous pixel neighbourhoods that a scattered
-        per-tile sample cannot supply -- but they make that choice on their own wrapper object,
-        which drives this one through `dense_loss_and_gradients` directly when it must.
-        """
-        if self.sparse_enabled:
+        """Use sampled MSE during warm-up and whole images for the windowed objective."""
+        if self.sparse_enabled and not self._dssim_active():
+            self.last_loss_phase = "sparse-mse"
             return self.sparse_loss_and_gradients(view_ids, download_loss)
         return self.dense_loss_and_gradients(view_ids, download_loss)
+
+    def _dssim_active(self):
+        return self.loss_config["mode"] == "mse_dssim" and self.dssim_stage == 1
+
+    @property
+    def loss_stage(self):
+        return "dssim" if self._dssim_active() else "mse"
+
+    def advance_dssim_stage(self):
+        """Latch the loss curriculum; the controller calls this only on a held-out eval tick."""
+        if self.loss_config["mode"] != "mse_dssim":
+            raise ValueError("D-SSIM stage requires loss.mode: mse_dssim.")
+        self.dssim_stage = 1
+
+    def _dssim_computer(self):
+        if self._dssim is None:
+            self._dssim = DSSIMComputer(
+                self.width, self.height, self.max_views_per_batch, self.device,
+            )
+        return self._dssim
+
+    def _auxiliary_loss(self, mse, view_ids, download_loss):
+        """Rewrite the image gradient before the renderer propagates it to the splats."""
+        self.last_loss_phase = self.loss_stage
+        if not self._dssim_active():
+            return mse
+        weight = self.loss_config["dssim_weight"]
+        dssim = self._dssim_computer().compute(
+            self.image, self.targets, self.tiles.view_ids, self.pixel_gradient,
+            self.loss_config["dssim_window"], len(view_ids), weight,
+            download_loss=download_loss,
+        )
+        return (1.0 - weight) * mse + weight * dssim if download_loss else None
 
     def _render_view(self, view_id):
         """Forward-render one view into `self.image` and `self.loss`, both left on the device.
@@ -1330,22 +1355,32 @@ class WarpImageTrainer:
         )
 
     def evaluate(self, view_ids):
-        """Evaluate fixed views one at a time while reusing one persistent tile workspace.
+        """Evaluate the current training objective; image metrics still use plain MSE."""
+        return self.evaluate_components(view_ids)[0]
 
-        Reads back only the loss. The rendered image stays on the device, so a fixed-camera
-        evaluation costs no host transfer beyond one float per view.
-        """
+    def evaluate_components(self, view_ids):
+        """Return mean (objective, MSE, D-SSIM), preserving the first view for snapshots."""
         view_ids = np.asarray(view_ids, np.int32)
         if len(view_ids) < 1:
             raise ValueError("Evaluation requires at least one view.")
 
         # Render the first fixed camera last so self.image retains the snapshot view.
         ordered_view_ids = np.concatenate((view_ids[1:], view_ids[:1]))
-        total_loss = 0.0
+        total_mse = 0.0
+        total_dssim = 0.0
         for view_id in ordered_view_ids:
             self._render_view(view_id)
-            total_loss += float(self.loss.numpy()[0])
-        return total_loss / len(view_ids)
+            total_mse += float(self.loss.numpy()[0])
+            if self._dssim_active():
+                total_dssim += self._dssim_computer().compute(
+                    self.image, self.targets, self.tiles.view_ids, self.pixel_gradient,
+                    self.loss_config["dssim_window"], 1, self.loss_config["dssim_weight"],
+                    compute_gradient=False,
+                )
+        mse = total_mse / len(view_ids)
+        dssim = total_dssim / len(view_ids)
+        weight = self.loss_config["dssim_weight"] if self._dssim_active() else 0.0
+        return (1.0 - weight) * mse + weight * dssim, mse, dssim
 
     def render_single_view_image(self, view_id):
         """Render one view and bring the pixels back, for a snapshot or an ADC error map."""
@@ -1904,6 +1939,7 @@ def main() -> None:
             "compact_box": compact,
             "multiview_adc": adc,
             "sparse": sparse,
+            "loss": config["loss"],
         },
     )
     output = png_output_path(paths["output"])
@@ -1921,11 +1957,8 @@ def run_training(
 ) -> None:
     """Run the training loop: logging, snapshots, densification, and the final save.
 
-    Versions 1 and 2 share this loop unchanged: their trainers take the same calls, and what
-    differs between them -- the objective term, and which extra per-splat files travel beside each
-    PLY -- is decided inside the trainer, the second through `save_sidecars`. So this loop names
-    no parameter that only a later version has. Version 3 has its own loop, because its stage
-    transitions restructure the iteration rather than parameterise it.
+    The optional loss curriculum latches on held-out MSE PSNR. After the switch, convergence
+    reads the blended objective with a fresh baseline and counts iterations within that stage.
     """
     runtime = config["runtime"]
     training = config["training"]
@@ -1935,6 +1968,8 @@ def run_training(
     convergence = config["convergence"]
     reporting = config["reporting"]
     model = config["model"]
+    curriculum = config["loss"]["mode"] == "mse_dssim"
+    dssim_threshold = 10.0 ** (-adaptive["dssim_psnr_threshold"] / 10.0)
     device = trainer.device
 
     # Densification runs for the whole run. The active-splat growth plateau arms late pruning,
@@ -1953,6 +1988,14 @@ def run_training(
         print(
             f"Sparse MSE training is enabled with {trainer.samples_per_tile} sampled pixels per "
             f"{TILE}x{TILE} tile. Fixed evaluation and snapshots remain dense.",
+            flush=True,
+        )
+    if curriculum:
+        print(
+            f"Loss curriculum: MSE -> dense MSE + D-SSIM at held-out MSE EMA PSNR >= "
+            f"{adaptive['dssim_psnr_threshold']:.2f} dB; "
+            f"weight={config['loss']['dssim_weight']}, window={config['loss']['dssim_window']}. "
+            "Early stopping is armed only after the transition.",
             flush=True,
         )
     if adc["enabled"]:
@@ -1979,21 +2022,26 @@ def run_training(
 
     # Every trainer this loop drives reports which loss term is active from construction onward:
     # a fixed one here, a changing one in the versions that blend terms.
-    fixed_eval_loss = trainer.evaluate(eval_view_ids)
+    fixed_eval_loss, fixed_eval_mse, _ = trainer.evaluate_components(eval_view_ids)
     fixed_eval_iteration = 0
     loss_ema = ExponentialMovingAverage(reporting["loss_ema_decay"])
     fixed_eval_ema = ExponentialMovingAverage(reporting["loss_ema_decay"])
+    fixed_eval_mse_ema = ExponentialMovingAverage(reporting["loss_ema_decay"])
     fixed_eval_ema.update(fixed_eval_loss)
+    fixed_eval_mse_ema.update(fixed_eval_mse)
     print(
         f"{0:6d}: fixed_eval_ema={fixed_eval_ema.value:.6f}, "
         f"loss_phase={trainer.last_loss_phase}, "
+        f"stage={trainer.loss_stage}, fixed_eval_mse_ema={fixed_eval_mse_ema.value:.6f}, "
         + describe_evaluation_views(
             eval_view_ids, held_out_frame_ids, reporting["eval_manifest"],
         ),
         flush=True,
     )
     rng = np.random.default_rng(runtime["seed"])
-    convergence_tracker = ConvergenceTracker(convergence, fixed_eval_ema.value)
+    convergence_tracker = None if curriculum else ConvergenceTracker(convergence, fixed_eval_ema.value)
+    stage_start_iteration = 0
+    reset_loss_ema = False
     growth_tracker = GrowthPlateauTracker(
         adaptive["late_prune_growth_window"], adaptive["late_prune_growth_percent"],
     )
@@ -2027,7 +2075,7 @@ def run_training(
             view_ids,
             download_gradients=should_structure_update,
             iteration=iteration,
-            download_loss=should_log or is_eval_tick or should_snapshot,
+            download_loss=should_log or is_eval_tick or should_snapshot or reset_loss_ema,
         )
         if should_structure_update:
             adc_views = None
@@ -2060,26 +2108,51 @@ def run_training(
             trainer.reset_opacity()
         # A version that skips the loss download on quiet iterations reports None for them.
         if loss is not None:
+            if reset_loss_ema:
+                loss_ema = ExponentialMovingAverage(reporting["loss_ema_decay"])
+                reset_loss_ema = False
             loss_ema.update(loss)
         if is_eval_tick or should_snapshot:
-            fixed_eval_loss = trainer.evaluate(eval_view_ids)
+            fixed_eval_loss, fixed_eval_mse, _ = trainer.evaluate_components(eval_view_ids)
             fixed_eval_iteration = iteration
             fixed_eval_ema.update(fixed_eval_loss)
+            fixed_eval_mse_ema.update(fixed_eval_mse)
             # Convergence bookkeeping only advances on a true eval_every tick. A snapshot alone
             # still needs a fresh fixed_eval to render and log, but it must not change when
             # training stops -- otherwise snapshot_every silently reshapes the stopping schedule.
             # An opacity reset's transient is not evidence about convergence; see
             # OpacityResetWindow.
             if is_eval_tick and reset_window.accepts(fixed_eval_ema.value, iteration):
-                if reset_window.resumed_this_tick:
-                    convergence_tracker.rebaseline(fixed_eval_ema.value)
-                else:
-                    convergence_tracker.update(fixed_eval_ema.value, iteration)
+                if curriculum and trainer.dssim_stage == 0:
+                    if fixed_eval_mse_ema.value <= dssim_threshold:
+                        psnr = -10.0 * np.log10(max(fixed_eval_mse_ema.value, 1.0e-12))
+                        print(
+                            f"{iteration:6d}: fixed_eval MSE EMA reached {fixed_eval_mse_ema.value:.6f} "
+                            f"({psnr:.2f} dB >= {adaptive['dssim_psnr_threshold']:.2f} dB) "
+                            "-> advancing loss stage 'mse' -> 'dssim'.",
+                            flush=True,
+                        )
+                        trainer.advance_dssim_stage()
+                        stage_start_iteration = iteration
+                        # A blended objective cannot be compared with the old MSE baseline.
+                        fixed_eval_loss, _, _ = trainer.evaluate_components(eval_view_ids)
+                        fixed_eval_ema = ExponentialMovingAverage(reporting["loss_ema_decay"])
+                        fixed_eval_ema.update(fixed_eval_loss)
+                        convergence_tracker = ConvergenceTracker(convergence, float("inf"))
+                        reset_window = OpacityResetWindow()
+                        reset_loss_ema = True
+                elif convergence_tracker is not None:
+                    if reset_window.resumed_this_tick:
+                        convergence_tracker.rebaseline(fixed_eval_ema.value)
+                    else:
+                        convergence_tracker.update(fixed_eval_ema.value, iteration - stage_start_iteration)
         if should_log:
             print(
                 f"{iteration:6d}: ema={loss_ema.value:.6f}, "
                 f"loss_phase={trainer.last_loss_phase}, "
+                f"stage={trainer.loss_stage}, "
                 f"fixed_eval_ema={fixed_eval_ema.value:.6f}@{fixed_eval_iteration}, "
+                f"fixed_eval_mse_ema={fixed_eval_mse_ema.value:.6f}, "
                 f"active={trainer.active.sum()}, "
                 f"pairs={trainer.last_pair_count}, "
                 f"lr_xyz={trainer.last_position_learning_rate:.8f}, "
@@ -2092,7 +2165,7 @@ def run_training(
                 snapshot_ply = snapshots / f"out_{iteration:06d}.ply"
                 trainer.gaussian_set().to_ply(snapshot_ply)
                 trainer.save_sidecars(snapshot_ply)
-        if convergence_tracker.should_stop(iteration):
+        if convergence_tracker is not None and convergence_tracker.should_stop(iteration - stage_start_iteration):
             print(
                 f"Stopping at iteration {iteration}: the fixed_eval EMA has not improved by "
                 f"at least {convergence['min_delta']:.3g} for {convergence_tracker.stale_count} "
@@ -2100,6 +2173,13 @@ def run_training(
                 flush=True,
             )
             break
+    print(f"Final loss stage: {trainer.loss_stage}", flush=True)
+    if curriculum and trainer.dssim_stage == 0:
+        print(
+            f"D-SSIM was not activated: held-out MSE EMA PSNR did not reach "
+            f"{adaptive['dssim_psnr_threshold']:.2f} dB. This run trained with MSE only.",
+            flush=True,
+        )
     trainer.evaluate(eval_view_ids)
     output = save_rendered_image(trainer, output)
     if reporting["save_ply"]:

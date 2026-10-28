@@ -18,16 +18,31 @@ runtime:
   seed: 7
 
 model:
-  width: 256
-  height: 256
-  capacity: 100000
+  width: 800
+  height: 800
+  capacity: 1000000
   # Ignored while `paths.init_ply` is set: the point cloud decides the starting count (45,733 for
   # the supplied init.ply). It only takes effect for a random initialisation, with init_ply null.
   initial_splats: 1000
   background: white
 
 training:
-  iterations: 2000
+  iterations: 30000
+learning_rates:
+  position_max_steps: 60000
+
+loss:
+  mode: mse_dssim
+  dssim_weight: 0.2
+  dssim_window: 11
+
+adaptive:
+  # Previous Materials MSE runs plateaued below the course's 25 dB default.
+  # Switch on held-out validation MSE, leaving time for structural refinement.
+  dssim_psnr_threshold: 21.0
+
+# convergence:
+#   enabled: false
 
 densification:
   interval: 100

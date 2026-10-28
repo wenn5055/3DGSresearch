@@ -9,8 +9,8 @@ and use the supplied checks before moving on.
 ## Setup
 
 ```bash
-git clone https://github.com/weitsang/cp4282-as2.git
-cd cp4282-as2
+git clone https://github.com/wenn5055/3DGSresearch.git
+cd 3DGSresearch
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
@@ -76,6 +76,38 @@ Shared and support files:
 
 ## Evaluating your output
 
+To train and evaluate in a new run folder:
+
+```bash
+python scripts/run_experiment.py config/materials_rgb.yaml --metrics psnr ssim
+```
+
+Folders use the dataset name and Singapore time, e.g. `outputs/materials-Oct28-1305/`.
+Add `--name cap1k` to get `materials-Oct28-1305-cap1k`. Repeated names receive `-2`,
+`-3`, etc. Exact dates and UTC timestamps are saved in the run metadata.
+
+The Materials config enables the Unit 10 loss curriculum: MSE warm-up, then dense
+`0.8 * MSE + 0.2 * D-SSIM` with reflected 11x11 windows. It switches when the smoothed
+validation MSE reaches 21 dB PSNR (`adaptive.dssim_psnr_threshold`), chosen below the
+previous Materials MSE plateau. Configs without a `loss` block keep MSE-only training;
+set `loss.mode: mse` for a baseline comparison. The full settings are:
+
+```yaml
+loss:
+  mode: mse_dssim
+  dssim_weight: 0.2
+  dssim_window: 11
+adaptive:
+  dssim_psnr_threshold: 21.0
+```
+
+The gate uses held-out MSE, and early stopping starts only after D-SSIM activates.
+Logs show `stage`, `loss_phase`, the blended `fixed_eval_ema`, and the separate
+`fixed_eval_mse_ema`. A transition resets the objective baseline so the two loss scales
+are not compared. The final stage is saved in the run summary; if the gate is never
+reached, the trainer explicitly reports that the run used MSE only. Final PSNR and SSIM
+evaluation still uses the rendered images and ordinary MSE, independent of training loss.
+
 `3dgs_evaluator.py` renders every camera in a manifest, saves the images, and reports the metrics
 you ask for:
 
@@ -105,6 +137,7 @@ first.
 ```bash
 python -m compileall src scripts shared 3dgs_trainer.py 3dgs_gradient_check_gpu.py gaussian_first_tile_workspace_gpu.py 3dgs_1_syn_trainer.py 3dgs_k_syn_trainer.py image_metrics.py 3dgs_evaluator.py 3dgs_renderer_v1.py
 python scripts/check_setup.py
+python -m unittest discover -s scripts -p "test_*.py"
 ```
 
 After implementing `3dgs_trainer.py`'s backward pass, verify it with a finite-difference gradient

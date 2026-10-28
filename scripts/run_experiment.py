@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import argparse
 import csv
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 import hashlib
 from importlib import metadata as packages
 import json
@@ -17,12 +17,13 @@ import shutil
 import subprocess
 import sys
 import time
-import uuid
 import zipfile
 
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
+SINGAPORE_TIMEZONE = timezone(timedelta(hours=8), "SGT")
+MONTHS = ("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
 sys.path.insert(0, str(ROOT / "shared"))
 from training_config import TrainingConfig
 
@@ -147,6 +148,8 @@ def write_record(run_dir: Path, record: dict) -> None:
              f"- Final evaluation manifest: {record['evaluation']['manifest']}",
              f"- Seed: {config['runtime']['seed']}",
              f"- Configured iterations: {config['training']['iterations']}",
+             f"- Loss: {config['loss']['mode']}; D-SSIM weight: {config['loss']['dssim_weight']}; "
+             f"transition PSNR: {config['adaptive']['dssim_psnr_threshold']} dB",
              f"- Early stopping enabled: {config['convergence']['enabled']}",
              f"- Requested metrics: {', '.join(record['evaluation']['metrics'])}",
              "- Settings: [config.yaml](config.yaml); provenance and exact commands: [run.json](run.json)",
@@ -224,6 +227,9 @@ def collect_results(run_dir: Path, record: dict) -> None:
     else:
         record["training_result"] = {"completed_iterations": None,
                                      "stop_reason": "not found; inspect train.log"}
+    stage = re.search(r"^Final loss stage: (mse|dssim)$", text, re.MULTILINE)
+    if stage:
+        record["training_result"]["loss_stage"] = stage[1]
     model = run_dir / "model.ply"
     record["model_artifacts"] = [fingerprint(path) for path in sorted(run_dir.glob("model.*"))
                                  if path.is_file()]
@@ -251,7 +257,7 @@ def collect_metrics(run_dir: Path, record: dict) -> None:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("config", type=Path, help="Training YAML; its relative paths retain their original meaning.")
-    parser.add_argument("--name", help="Exact new run directory name; default is scene + UTC timestamp + random suffix.")
+    parser.add_argument("--name", help="Optional suffix, e.g. cap1k gives scene-Oct28-1305-cap1k (Singapore time). Repeated names get -2, -3, etc.")
     parser.add_argument("--note", default="", help="Research question/purpose to save in the summary.")
     parser.add_argument("--metrics", nargs="+", choices=("psnr", "ssim", "lpips"), default=["psnr", "ssim", "lpips"])
     parser.add_argument("--eval-manifest", default="transforms_test.json")
@@ -266,16 +272,28 @@ def run_experiment(args: argparse.Namespace, root: Path = ROOT) -> Path:
     config = TrainingConfig.load(source).printable()
     if not config["reporting"]["save_ply"]:
         raise ValueError("reporting.save_ply must be true for post-training evaluation")
-    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    now = datetime.now(SINGAPORE_TIMEZONE)
+    stamp = f"{MONTHS[now.month - 1]}{now.day:02d}-{now:%H%M}"
     scene = re.sub(r"[^A-Za-z0-9_-]", "_", Path(config["paths"]["data"]).name)
-    name = args.name or f"{scene}-{stamp}-{uuid.uuid4().hex[:8]}"
+    if args.name is not None and not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]*", args.name):
+        raise ValueError("Name suffix must contain letters/digits/dots/dashes/underscores, starting with a letter or digit")
+    name = f"{scene}-{stamp}" + (f"-{args.name}" if args.name else "")
     if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,119}", name):
         raise ValueError("Run name must be 1-120 letters/digits/dots/dashes/underscores, starting with a letter or digit")
-    run_dir = (root / "outputs" / name).resolve()
-    if not run_dir.is_relative_to((root / "outputs").resolve()):
-        raise ValueError("Run directory must be inside outputs/")
-    run_dir.parent.mkdir(parents=True, exist_ok=True)
-    run_dir.mkdir()  # Never reuse or overwrite another run, including a prepared/failed run.
+    base_name = name
+    outputs = (root / "outputs").resolve()
+    outputs.mkdir(parents=True, exist_ok=True)
+    suffix = 2
+    while True:
+        run_dir = (outputs / name).resolve()
+        if not run_dir.is_relative_to(outputs):
+            raise ValueError("Run directory must be inside outputs/")
+        try:
+            run_dir.mkdir()  # Reserve atomically; never reuse an existing run.
+            break
+        except FileExistsError:
+            name = f"{base_name}-{suffix}"
+            suffix += 1
     original_output = config["paths"]["output"]
     config["paths"]["output"] = str(run_dir / "model.png")
     record = {"run_id": name, "status": "preparing", "started_utc": utc_now(),
