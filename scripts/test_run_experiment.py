@@ -24,6 +24,10 @@ config = yaml.safe_load(Path(sys.argv[1]).read_text())
 assert Path(config['paths']['data']).is_absolute()
 assert Path(config['paths']['init_ply']).is_file()
 Path(config['paths']['output']).with_suffix('.ply').write_text('ply\\n')
+degree = config['model'].get('sh_degree', 0)
+if degree:
+    Path(config['paths']['output']).with_suffix('.sh.npz').write_text('fixture SH sidecar')
+    print(f'Final SH degree: {degree} (configured maximum: {degree})')
 print('trainer stderr retained', file=sys.stderr)
 print('Training finished after 2 iterations in 0.12s (0.060s/iter).')
 '''
@@ -42,7 +46,11 @@ for flag in ('manifest', 'arch', 'width', 'height', 'background', 'sh-degree',
 p.add_argument('--metrics', nargs='+')
 a = p.parse_args()
 assert a.arch == 'cpu' and a.width == '32' and a.height == '16'
-assert a.background == 'black' and a.sh_degree == '0'
+assert a.background == 'black'
+if a.sh_degree is None:
+    assert Path(a.ply).with_suffix('.sh.npz').is_file()
+else:
+    assert a.sh_degree == '0'
 Path('evaluation.called').write_text('called')
 frames = json.loads((Path(a.data) / a.manifest).read_text())['frames']
 keys = ['view', 'file', 'mse'] + [('psnr_db' if m == 'psnr' else m) for m in a.metrics]
@@ -140,6 +148,29 @@ class ExperimentRunnerTests(unittest.TestCase):
         self.assertFalse((self.root / "evaluation.called").exists())
         self.assertFalse((directory / "model.ply").exists())
         self.assertIn("--width", self.record()["planned_commands"]["eval"])
+
+    def test_sh_run_uses_sidecar_autodetection_and_records_the_saved_degree(self):
+        config = yaml.safe_load(self.config.read_text())
+        config["model"]["sh_degree"] = 3
+        self.config.write_text(yaml.safe_dump(config))
+        directory = self.run_fixture()
+        record = self.record()
+        self.assertNotIn("--sh-degree", record["planned_commands"]["eval"])
+        self.assertEqual(record["training_result"]["sh_degree"], 3)
+        self.assertTrue((directory / "model.sh.npz").is_file())
+
+    def test_missing_sh_sidecar_prevents_rgb_fallback(self):
+        config = yaml.safe_load(self.config.read_text())
+        config["model"]["sh_degree"] = 3
+        self.config.write_text(yaml.safe_dump(config))
+        (self.root / "3dgs_trainer.py").write_text(
+            "from pathlib import Path\nimport sys, yaml\n"
+            "config=yaml.safe_load(Path(sys.argv[1]).read_text())\n"
+            "Path(config['paths']['output']).with_suffix('.ply').write_text('ply')\n")
+        with self.assertRaises(FileNotFoundError):
+            self.run_fixture()
+        self.assertEqual(self.record()["status"], "failed")
+        self.assertFalse((self.root / "evaluation.called").exists())
 
     def test_gradient_failure_prevents_training_and_evaluation(self):
         (self.root / "3dgs_gradient_check_gpu.py").write_text("import sys; print('bad gradient'); sys.exit(7)")

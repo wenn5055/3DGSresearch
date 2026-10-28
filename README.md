@@ -108,6 +108,74 @@ are not compared. The final stage is saved in the run summary; if the gate is ne
 reached, the trainer explicitly reports that the run used MSE only. Final PSNR and SSIM
 evaluation still uses the rendered images and ordinary MSE, independent of training loss.
 
+### Spherical-harmonic baselines
+
+`model.sh_degree` selects the maximum appearance degree: `0` (the default) keeps
+fixed RGB; `1`, `2`, or `3` enable directional colour. Materials presets are provided:
+
+```bash
+python scripts/run_experiment.py config/materials_sh2.yaml --name sh2 --metrics psnr ssim
+python scripts/run_experiment.py config/materials_sh3.yaml --name sh3 --metrics psnr ssim
+```
+
+Both presets copy the current RGB experiment settings and change the appearance
+settings and output path. Compare saved configs when changing any preset later.
+They first fit RGB, switch to D-SSIM at 21 dB, then unlock SH bands at 22, 23, and
+24 dB of smoothed held-out MSE PSNR. Degree 2 stops unlocking after the second band.
+The gates are `adaptive.sh1_psnr_threshold`, `sh2_psnr_threshold`, and
+`sh3_psnr_threshold`; each can advance only on an evaluation tick, after the loss
+warm-up. Early stopping waits until the configured maximum degree unlocks. If a gate
+is never reached, the log and summary report the actual degree that was trained.
+
+The rest-coefficient learning rate is `learning_rates.feature_rest` (0.000125 by
+default). Locked bands have zero gradients and untouched optimizer state. Each band
+has its own Adam step count; density control copies the parent's coefficients to
+its children and resets SH optimizer state with the geometry optimizer.
+
+The existing per-splat RGB is the DC term. The higher bands add 3, 8, or 15 RGB
+coefficient vectors for degrees 1, 2, or 3. Colour is evaluated once per splat/view
+and reused by both dense and sparse rendering. Gradients include the appearance
+path through the splat-to-camera direction back to position.
+
+Every SH checkpoint consists of the ordinary RGB/geometric `.ply` plus a `.sh.npz`
+sidecar with coefficients in the same active-splat order. The sidecar records the
+active and maximum degrees and the basis/direction conventions. These follow the
+course's positive polynomial signs and splat-to-camera direction, with direct RGB
+as DC; they are not interchangeable with Graphdeco's SH checkpoint format.
+Keep both files together. Evaluation automatically loads the saved active degree;
+`--sh-degree 0` previews base RGB, and `--sh-degree 1/2/3` can truncate a checkpoint
+to a lower trained degree. Asking for an untrained degree or a missing explicitly
+requested sidecar is an error.
+
+### Tune the SH learning rate on validation
+
+The sweep compares half/default/double `learning_rates.feature_rest`
+(`0.0000625`, `0.000125`, `0.00025`), changing no other training settings:
+
+```bash
+python scripts/tune_sh_learning_rate.py config/materials_sh3.yaml
+```
+
+Candidates run sequentially and evaluate all validation views. Selection uses mean
+validation PSNR, with SSIM breaking exact ties. A candidate must finish the configured
+iteration budget and reach the configured SH degree to be eligible. The sweep saves
+`summary.md`, `validation-results.csv`, `sweep.json`, and the selected `best-config.yaml`
+under a dated `outputs/*-lr-sweep/` directory. Selection is provisional for one seed;
+test scores are not used to choose parameters.
+
+Use `--baseline-run outputs/EXISTING_RUN` to reuse a matching baseline model and
+re-evaluate it on validation. Configs and trainer/evaluator source hashes must match.
+Add `--wait-for outputs/RUN_A outputs/RUN_B` to wait for existing jobs before starting
+new GPU work. Add `--prepare-only` to save a plan without launching experiments.
+Continue a prepared/interrupted sweep with:
+
+```bash
+python scripts/tune_sh_learning_rate.py --resume outputs/SWEEP_DIRECTORY
+```
+
+Keep training/evaluation source files unchanged while a sweep runs; it stops if they
+change, preserving evidence instead of ranking different implementations together.
+
 `3dgs_evaluator.py` renders every camera in a manifest, saves the images, and reports the metrics
 you ask for:
 
@@ -120,9 +188,9 @@ It decides three things for you rather than making you pick a script:
 - **Device.** `--arch auto` (the default) uses CUDA when Warp reports it and CPU otherwise. Force
   it with `--arch cpu` or `--arch gpu`; asking for gpu without CUDA is an error, not a slow
   fallback.
-- **Appearance.** If a `<ply-stem>.sh.npz` sidecar sits beside the PLY, the render uses degree-2
-  view-dependent colour. `--sh-degree 0` ignores it, `--sh-degree 2` requires it, and `--sh-npz`
-  points at one stored elsewhere. This assignment produces no sidecar, so this stays off.
+- **Appearance.** If a `<ply-stem>.sh.npz` sidecar sits beside the PLY, the render uses its
+  saved active SH degree. `--sh-degree 0` ignores it, `--sh-degree 1/2/3` selects a trained
+  degree, and `--sh-npz` points at a sidecar stored elsewhere.
 - **Metrics.** `--metrics` takes any of `psnr`, `ssim`, `lpips`; all three run by default. LPIPS
   needs PyTorch, so drop it with `--metrics psnr ssim` if you have not installed the optional
   requirements.

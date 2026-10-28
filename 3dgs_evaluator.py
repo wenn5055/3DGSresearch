@@ -15,9 +15,9 @@ forcing gpu without CUDA is an error rather than a silent fallback -- a run that
 forty times longer than expected is worse than one that refused to start.
 
 Appearance. A model trained with spherical harmonics writes a `<ply-stem>.sh.npz` sidecar. If one
-is next to the PLY it is loaded and the evaluation renders degree-2 view-dependent colour;
-otherwise the PLY's degree-0 colour is used. `--sh-degree 2` demands the sidecar and fails if it
-is absent, `--sh-degree 0` ignores it, and `--sh-npz` points at one kept elsewhere.
+is next to the PLY, evaluation uses its saved active degree (0-3). Otherwise the PLY's degree-0
+colour is used. `--sh-degree 1/2/3` requires a sidecar trained to at least that degree;
+`--sh-degree 0` ignores it, and `--sh-npz` points at one kept elsewhere.
 
 Metrics. `--metrics` selects any of psnr, ssim and lpips; all three run by default. LPIPS needs
 PyTorch, which is slow to import and not always installed, so it is imported only when asked for.
@@ -46,6 +46,7 @@ if str(_shared) not in sys.path:
 
 from image_metrics import ssim_rgb
 from gaussian_set import GaussianSet
+from sh_appearance import load_sh_sidecar
 
 # The base trainer is `3dgs_trainer_v1` in the course repo and `3dgs_trainer` in the assignment
 # repo, where there is only one. Probing for both keeps this file identical in the two trees, the
@@ -116,47 +117,31 @@ def resolve_device(arch: str) -> str:
 
 
 def build_trainer(args, scene, targets, cameras, focal, distance, device):
-    """The renderer, with spherical harmonics loaded when they apply. Returns (trainer, using_sh)."""
+    """Validate the sidecar, then build the shared renderer. Returns (trainer, degree)."""
     capacity = len(scene.means)
     background = (
         np.ones(3, np.float32) if args.background == "white" else np.zeros(3, np.float32)
     )
-    base = WarpImageTrainer(
-        targets, cameras, focal, distance * 0.35, capacity, capacity, device, 0,
-        init_scene=scene, background=background,
-        tile_pair_capacity=args.tile_pair_capacity,
-    )
     sh_path = args.sh_npz if args.sh_npz is not None else args.ply.with_suffix(".sh.npz")
-    if args.sh_degree == 2 and not sh_path.exists():
+    if args.sh_degree != 0 and not sh_path.exists() and (args.sh_degree is not None or args.sh_npz is not None):
         raise FileNotFoundError(
-            f"--sh-degree 2 requested, but no spherical-harmonic sidecar at {sh_path}."
+            f"Spherical-harmonic rendering requested, but no sidecar at {sh_path}."
         )
-    if args.sh_degree == 0 or not sh_path.exists():
-        return base, False
-
-    with np.load(sh_path) as sh_file:
-        sh_values = np.asarray(sh_file["sh_rest"], dtype=np.float32)
-    if sh_values.shape != (capacity, 8, 3):
-        raise ValueError(
-            f"Expected {capacity} rows of degree-2 coefficients in {sh_path}, got "
-            f"{sh_values.shape}. The sidecar and the PLY must come from the same run."
-        )
-    # Imported here, not at module scope: the spherical-harmonic trainer is a later version of
-    # the course material, and the assignment repository ships only the base trainer. Loading it
-    # eagerly would make this script unimportable there even for the degree-0 runs that never
-    # touch it.
-    try:
-        SHTrainer = importlib.import_module("3dgs_trainer_v2").SHTrainer
-    except ModuleNotFoundError as error:
-        raise RuntimeError(
-            f"{sh_path} holds spherical-harmonic coefficients, but the trainer that renders them "
-            "is not available here. Pass --sh-degree 0 to evaluate the PLY's own colour instead."
-        ) from error
-    # The trainer takes targets and a loss configuration because it is built for training.
-    # Evaluation only calls its renderer, so the objective here is irrelevant.
-    trainer = SHTrainer(base, cameras, {"feature_rest": 0.0}, targets, {"mode": "mse"})
-    trainer.sh_rest.assign(wp.array(sh_values.reshape(-1, 3), dtype=wp.vec3, device=device))
-    return trainer, True
+    degree, max_degree, values = 0, 0, None
+    if args.sh_degree != 0 and sh_path.exists():
+        values, max_degree, saved_degree = load_sh_sidecar(sh_path, capacity)
+        degree = saved_degree if args.sh_degree is None else args.sh_degree
+        if degree > saved_degree:
+            raise ValueError(f"Requested SH degree {degree}, but {sh_path} only trained through degree {saved_degree}.")
+    trainer = WarpImageTrainer(
+        targets, cameras, focal, distance * 0.35, capacity, capacity, device, 0,
+        init_scene=scene, background=background, tile_pair_capacity=args.tile_pair_capacity,
+        sh_degree=max_degree if degree else 0,
+    )
+    if degree:
+        trainer.sh.coefficients.assign(values.reshape(-1, 3))
+        trainer.sh.degree = degree
+    return trainer, degree
 
 
 def evaluate(args: argparse.Namespace) -> None:
@@ -191,7 +176,7 @@ def evaluate(args: argparse.Namespace) -> None:
     print(
         f"Evaluating {len(scene.means):,} splats from {args.ply} against {len(frame_paths)} "
         f"view(s) in {manifest_path} at {width}x{height} on Warp {device}; "
-        f"appearance={'degree-2 SH' if using_sh else 'degree-0 RGB'}; "
+        f"appearance={f'degree-{using_sh} SH' if using_sh else 'degree-0 RGB'}; "
         f"metrics={', '.join(wanted)}.",
         flush=True,
     )
@@ -270,9 +255,9 @@ def main() -> None:
     parser.add_argument("--height", type=int, default=None, help="Overrides --resolution.")
     parser.add_argument("--background", choices=("white", "black"), default="white")
     parser.add_argument(
-        "--sh-degree", type=int, choices=(0, 2), default=None,
-        help="0 evaluates the PLY's own colour; 2 requires a spherical-harmonic sidecar. "
-             "Default: use the sidecar when one exists.",
+        "--sh-degree", type=int, choices=(0, 1, 2, 3), default=None,
+        help="0 uses base RGB; 1-3 require a sidecar trained to at least that degree. "
+             "Default: use the sidecar's saved active degree when one exists.",
     )
     parser.add_argument(
         "--sh-npz", type=Path, default=None,

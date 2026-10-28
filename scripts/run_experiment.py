@@ -150,6 +150,7 @@ def write_record(run_dir: Path, record: dict) -> None:
              f"- Configured iterations: {config['training']['iterations']}",
              f"- Loss: {config['loss']['mode']}; D-SSIM weight: {config['loss']['dssim_weight']}; "
              f"transition PSNR: {config['adaptive']['dssim_psnr_threshold']} dB",
+             f"- Configured maximum SH degree: {config['model']['sh_degree']}",
              f"- Early stopping enabled: {config['convergence']['enabled']}",
              f"- Requested metrics: {', '.join(record['evaluation']['metrics'])}",
              "- Settings: [config.yaml](config.yaml); provenance and exact commands: [run.json](run.json)",
@@ -230,11 +231,16 @@ def collect_results(run_dir: Path, record: dict) -> None:
     stage = re.search(r"^Final loss stage: (mse|dssim)$", text, re.MULTILINE)
     if stage:
         record["training_result"]["loss_stage"] = stage[1]
+    sh_stage = re.search(r"^Final SH degree: (\d+) \(configured maximum: (\d+)\)$", text, re.MULTILINE)
+    if sh_stage:
+        record["training_result"]["sh_degree"] = int(sh_stage[1])
     model = run_dir / "model.ply"
     record["model_artifacts"] = [fingerprint(path) for path in sorted(run_dir.glob("model.*"))
                                  if path.is_file()]
     if not model.is_file():
         raise FileNotFoundError(f"Trainer did not save {model}")
+    if record["config"]["model"]["sh_degree"] and not model.with_suffix(".sh.npz").is_file():
+        raise FileNotFoundError(f"SH training did not save {model.with_suffix('.sh.npz')}")
 
 
 def collect_metrics(run_dir: Path, record: dict) -> None:
@@ -318,10 +324,12 @@ def run_experiment(args: argparse.Namespace, root: Path = ROOT) -> Path:
                       "--arch", config["runtime"]["arch"],
                       "--width", str(config["model"]["width"]),
                       "--height", str(config["model"]["height"]),
-                      "--background", config["model"]["background"], "--sh-degree", "0",
+                      "--background", config["model"]["background"],
                       "--lpips-net", args.lpips_net, "--output-dir", str(run_dir / "test-renders"),
                       "--csv", str(run_dir / "test-metrics.csv"),
                       "--metrics", *record["evaluation"]["metrics"]]
+        if config["model"]["sh_degree"] == 0:
+            evaluation.extend(["--sh-degree", "0"])
         if config["model"]["tile_pair_capacity"] is not None:
             evaluation.extend(["--tile-pair-capacity", str(config["model"]["tile_pair_capacity"])])
         planned = []

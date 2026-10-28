@@ -51,6 +51,7 @@ if str(_shared) not in sys.path:
 
 from trainable_gaussian import TrainableGaussianSet
 from dssim_loss import DSSIMComputer
+from sh_appearance import SHAppearance
 from gaussian_set import GaussianSet
 from profiling import profile_stage
 from splat_math import (
@@ -1020,7 +1021,7 @@ class WarpImageTrainer:
 
     def __init__(self, targets, cameras, focal, scene_radius, capacity, initial_splats,
                  device, seed, init_scene=None, background=(1.0, 1.0, 1.0),
-                 learning_rates=None, tile_pair_capacity=None, training_options=None):
+                 learning_rates=None, tile_pair_capacity=None, training_options=None, sh_degree=0):
         self.focal = float(focal)
         self.height, self.width = targets.shape[1], targets.shape[2]
         self.capacity, self.device = capacity, wp.get_device(device)
@@ -1064,6 +1065,26 @@ class WarpImageTrainer:
 
         self._init_splats(capacity, initial_splats, init_scene, targets)
         self._init_buffers(cameras, targets, capacity)
+        self.sh = SHAppearance(capacity, sh_degree, self.learning_rates["feature_rest"], self.device) if sh_degree else None
+
+    @property
+    def active_sh_degree(self):
+        return self.sh.degree if self.sh is not None else 0
+
+    def advance_sh_stage(self):
+        if self.sh is None or self.sh.degree >= self.sh.max_degree:
+            raise ValueError("No higher SH band is configured.")
+        self.sh.degree += 1
+
+    def _render_colours(self, view):
+        if not self.active_sh_degree:
+            return self.color
+        return self.sh.forward(self.means, self.color, self.active_device, self.cameras, view)
+
+    def _appearance_backward(self, view):
+        if self.active_sh_degree:
+            self.sh.backward(self.means, self.active_device, self.cameras, view,
+                             self.optimizers.color_grad_flat, self.optimizers.mean_grad_flat)
 
     def _init_splats(self, capacity, initial_splats, init_scene, targets):
         """Allocate and populate every trainable per-splat parameter array."""
@@ -1197,10 +1218,11 @@ class WarpImageTrainer:
         device_started = perf_counter()
         self.loss.zero_()
         self.optimizers.zero_gradients()
+        render_colours = self._render_colours(int(view_ids[0]))
         wp.launch(
             render_forward,
             dim=len(view_ids) * self.width * self.height,
-            inputs=[self.means, self.log_scales, self.quaternions, self.opacity, self.color,
+            inputs=[self.means, self.log_scales, self.quaternions, self.opacity, render_colours,
                     self.cameras, self.targets, self.tiles.view_ids, offsets, pairs,
                     self.width, self.height, self.tiles_x, self.tiles_y,
                     TILE, self.focal, len(view_ids), self.background] + self.compact_box_args,
@@ -1220,7 +1242,7 @@ class WarpImageTrainer:
         wp.launch(
             render_backward,
             dim=len(view_ids) * self.width * self.height,
-            inputs=[self.means, self.log_scales, self.quaternions, self.opacity, self.color,
+            inputs=[self.means, self.log_scales, self.quaternions, self.opacity, render_colours,
                     self.cameras, self.tiles.view_ids, offsets, pairs,
                     self.width, self.height, self.tiles_x, self.tiles_y,
                     TILE, self.focal, self.image, self.pixel_gradient] + self.compact_box_args,
@@ -1229,6 +1251,7 @@ class WarpImageTrainer:
                      self.optimizers.color_grad_flat],
             device=self.device,
         )
+        self._appearance_backward(int(view_ids[0]))
         self.optimizers.pack_gradients(self.capacity)
         self.last_timings = {"tile": tile_seconds, "device": perf_counter() - device_started}
         return objective
@@ -1246,6 +1269,7 @@ class WarpImageTrainer:
         samples = self._draw_sparse_samples()
         self.sample_xy.assign(samples)
         view = int(view_ids[0])
+        render_colours = self._render_colours(view)
         wp.launch(
             gather_sample_targets,
             dim=self.num_sparse_samples,
@@ -1254,7 +1278,7 @@ class WarpImageTrainer:
             device=self.device,
         )
         shared_inputs = [
-            self.means, self.log_scales, self.quaternions, self.opacity, self.color,
+            self.means, self.log_scales, self.quaternions, self.opacity, render_colours,
             self.cameras, view, self.sample_xy, offsets, pairs, self.samples_per_tile,
             self.width, self.height, self.focal,
         ]
@@ -1289,6 +1313,7 @@ class WarpImageTrainer:
             ],
             device=self.device,
         )
+        self._appearance_backward(view)
         self.optimizers.pack_gradients(self.capacity)
         self.last_timings = {"tile": tile_seconds, "device": perf_counter() - device_started}
         return mse
@@ -1343,10 +1368,11 @@ class WarpImageTrainer:
         """
         offsets, pairs, _ = self.build_tiles(np.asarray([view_id], np.int32))
         self.loss.zero_()
+        render_colours = self._render_colours(int(view_id))
         wp.launch(
             render_forward,
             dim=self.width * self.height,
-            inputs=[self.means, self.log_scales, self.quaternions, self.opacity, self.color,
+            inputs=[self.means, self.log_scales, self.quaternions, self.opacity, render_colours,
                     self.cameras, self.targets, self.tiles.view_ids, offsets, pairs,
                     self.width, self.height, self.tiles_x, self.tiles_y, TILE, self.focal, 1,
                     self.background] + self.compact_box_args,
@@ -1516,6 +1542,8 @@ class WarpImageTrainer:
         device_started = perf_counter()
         self.last_position_learning_rate = self.position_learning_rate(iteration)
         self.optimizers.apply(self.last_position_learning_rate, self.capacity)
+        if self.sh is not None:
+            self.sh.step(self.active_device)
         wp.launch(
             constrain_parameters,
             dim=self.capacity,
@@ -1599,6 +1627,8 @@ class WarpImageTrainer:
         chosen_parents = np.asarray(parents[:pair_count], dtype=np.intp)
         chosen_children = np.asarray(free[:pair_count], dtype=np.intp)
         if len(chosen_parents):
+            if self.sh is not None:
+                self.sh.copy_children(chosen_parents, chosen_children)
             self.active[chosen_children] = True
             parent_scales = np.exp(log_scales[chosen_parents])
             is_split = parent_scales.max(axis=1) > split_size
@@ -1648,6 +1678,8 @@ class WarpImageTrainer:
             # gradient and are never rendered, and the densify event that eventually reuses a slot
             # as a clone/split destination resets state at that point.
             self.optimizers.reset()
+            if self.sh is not None:
+                self.sh.reset_optimizer()
         # Report the slots this call filled. Nothing here needs it -- every parameter a version-1
         # splat owns is overwritten above -- but a subclass carrying extra per-splat state has to
         # reset that state on exactly these slots, and it cannot recover the list afterwards: a
@@ -1657,14 +1689,8 @@ class WarpImageTrainer:
         return chosen_children
 
     def save_sidecars(self, path):
-        """Write any extra per-splat files that belong beside `path`, and return what was written.
-
-        Nothing here: this trainer's splats are fully described by the PLY. A version that carries
-        parameters the PLY has no field for overrides this and writes them alongside. The training
-        loop calls it unconditionally rather than testing for a version-specific method, so the
-        loop needs no vocabulary for what those parameters happen to be.
-        """
-        return []
+        """Save SH in the exact active-splat order exported by gaussian_set()."""
+        return [self.sh.save(path, self.active)] if self.sh is not None else []
 
     def gaussian_set(self):
         active = np.flatnonzero(self.active)
@@ -1934,6 +1960,7 @@ def main() -> None:
         init_scene=initial,
         background=background,
         learning_rates=rates,
+        sh_degree=model["sh_degree"],
         tile_pair_capacity=model["tile_pair_capacity"],
         training_options={
             "compact_box": compact,
@@ -1969,6 +1996,7 @@ def run_training(
     reporting = config["reporting"]
     model = config["model"]
     curriculum = config["loss"]["mode"] == "mse_dssim"
+    target_sh_degree = model["sh_degree"]
     dssim_threshold = 10.0 ** (-adaptive["dssim_psnr_threshold"] / 10.0)
     device = trainer.device
 
@@ -1996,6 +2024,14 @@ def run_training(
             f"{adaptive['dssim_psnr_threshold']:.2f} dB; "
             f"weight={config['loss']['dssim_weight']}, window={config['loss']['dssim_window']}. "
             "Early stopping is armed only after the transition.",
+            flush=True,
+        )
+    if target_sh_degree:
+        gates = ", ".join(f"sh{band}: {adaptive[f'sh{band}_psnr_threshold']:.2f} dB"
+                          for band in range(1, target_sh_degree + 1))
+        print(
+            f"SH curriculum: {gates}; gates read held-out MSE EMA after the loss warm-up. "
+            "Final convergence is armed only after the configured maximum SH degree unlocks.",
             flush=True,
         )
     if adc["enabled"]:
@@ -2033,13 +2069,14 @@ def run_training(
         f"{0:6d}: fixed_eval_ema={fixed_eval_ema.value:.6f}, "
         f"loss_phase={trainer.last_loss_phase}, "
         f"stage={trainer.loss_stage}, fixed_eval_mse_ema={fixed_eval_mse_ema.value:.6f}, "
+        f"sh_stage=sh{trainer.active_sh_degree}, "
         + describe_evaluation_views(
             eval_view_ids, held_out_frame_ids, reporting["eval_manifest"],
         ),
         flush=True,
     )
     rng = np.random.default_rng(runtime["seed"])
-    convergence_tracker = None if curriculum else ConvergenceTracker(convergence, fixed_eval_ema.value)
+    convergence_tracker = None if curriculum or target_sh_degree else ConvergenceTracker(convergence, fixed_eval_ema.value)
     stage_start_iteration = 0
     reset_loss_ema = False
     growth_tracker = GrowthPlateauTracker(
@@ -2138,19 +2175,38 @@ def run_training(
                         fixed_eval_loss, _, _ = trainer.evaluate_components(eval_view_ids)
                         fixed_eval_ema = ExponentialMovingAverage(reporting["loss_ema_decay"])
                         fixed_eval_ema.update(fixed_eval_loss)
-                        convergence_tracker = ConvergenceTracker(convergence, float("inf"))
+                        convergence_tracker = (None if trainer.active_sh_degree < target_sh_degree
+                                               else ConvergenceTracker(convergence, float("inf")))
                         reset_window = OpacityResetWindow()
                         reset_loss_ema = True
-                elif convergence_tracker is not None:
-                    if reset_window.resumed_this_tick:
-                        convergence_tracker.rebaseline(fixed_eval_ema.value)
-                    else:
-                        convergence_tracker.update(fixed_eval_ema.value, iteration - stage_start_iteration)
+                else:
+                    sh_advanced = False
+                    if trainer.active_sh_degree < target_sh_degree:
+                        next_degree = trainer.active_sh_degree + 1
+                        threshold = adaptive[f"sh{next_degree}_psnr_threshold"]
+                        if fixed_eval_mse_ema.value <= 10.0 ** (-threshold / 10.0):
+                            trainer.advance_sh_stage()
+                            stage_start_iteration = iteration
+                            sh_advanced = True
+                            print(
+                                f"{iteration:6d}: held-out MSE EMA "
+                                f"{-10.0 * np.log10(max(fixed_eval_mse_ema.value, 1.0e-12)):.2f} dB "
+                                f">= {threshold:.2f} dB -> advancing SH stage to sh{next_degree}.",
+                                flush=True,
+                            )
+                            if next_degree == target_sh_degree:
+                                convergence_tracker = ConvergenceTracker(convergence, float("inf"))
+                    if not sh_advanced and convergence_tracker is not None:
+                        if reset_window.resumed_this_tick:
+                            convergence_tracker.rebaseline(fixed_eval_ema.value)
+                        else:
+                            convergence_tracker.update(fixed_eval_ema.value, iteration - stage_start_iteration)
         if should_log:
             print(
                 f"{iteration:6d}: ema={loss_ema.value:.6f}, "
                 f"loss_phase={trainer.last_loss_phase}, "
                 f"stage={trainer.loss_stage}, "
+                f"sh_stage=sh{trainer.active_sh_degree}, "
                 f"fixed_eval_ema={fixed_eval_ema.value:.6f}@{fixed_eval_iteration}, "
                 f"fixed_eval_mse_ema={fixed_eval_mse_ema.value:.6f}, "
                 f"active={trainer.active.sum()}, "
@@ -2174,6 +2230,9 @@ def run_training(
             )
             break
     print(f"Final loss stage: {trainer.loss_stage}", flush=True)
+    print(f"Final SH degree: {trainer.active_sh_degree} (configured maximum: {target_sh_degree})", flush=True)
+    if trainer.active_sh_degree < target_sh_degree:
+        print("SH gates were not all reached; saved checkpoints render at the reported active degree.", flush=True)
     if curriculum and trainer.dssim_stage == 0:
         print(
             f"D-SSIM was not activated: held-out MSE EMA PSNR did not reach "

@@ -50,6 +50,7 @@ class TrainingConfig:
             "tile_pair_capacity": None,
             "scene_radius": None,
             "background": "white",
+            "sh_degree": 0,
         },
         "training": {
             "iterations": 2000,
@@ -66,6 +67,7 @@ class TrainingConfig:
             "position_delay_steps": 0,
             "position_delay_multiplier": 0.01,
             "feature_dc": 0.0025,
+            "feature_rest": 0.000125,
             "opacity": 0.05,
             "scale": 0.005,
             "rotation": 0.001,
@@ -107,6 +109,9 @@ class TrainingConfig:
         "adaptive": {
             # Held-out MSE PSNR that latches the MSE -> dense MSE + D-SSIM transition.
             "dssim_psnr_threshold": 25.0,
+            "sh1_psnr_threshold": 26.5,
+            "sh2_psnr_threshold": 27.5,
+            "sh3_psnr_threshold": 28.0,
             "late_prune_growth_window": 3,
             "late_prune_growth_percent": 2.0,
         },
@@ -198,6 +203,9 @@ class TrainingConfig:
         adaptive = self.values["adaptive"]
         convergence = self.values["convergence"]
         reporting = self.values["reporting"]
+        degree = model["sh_degree"]
+        if not isinstance(degree, int) or isinstance(degree, bool) or not 0 <= degree <= 3:
+            raise ValueError("model.sh_degree must be an integer in [0, 3].")
         if loss["mode"] not in ("mse", "mse_dssim"):
             raise ValueError("loss.mode must be 'mse' or 'mse_dssim'.")
         weight = loss["dssim_weight"]
@@ -211,6 +219,17 @@ class TrainingConfig:
         if (not isinstance(threshold, (int, float)) or isinstance(threshold, bool)
                 or not math.isfinite(threshold) or not 0.0 <= threshold <= 100.0):
             raise ValueError("adaptive.dssim_psnr_threshold must be a finite number in [0, 100] dB.")
+        previous = adaptive["dssim_psnr_threshold"] if loss["mode"] == "mse_dssim" else None
+        for band in range(1, 4):
+            key = f"sh{band}_psnr_threshold"
+            target = adaptive[key]
+            if (not isinstance(target, (int, float)) or isinstance(target, bool)
+                    or not math.isfinite(target) or not 0.0 <= target <= 100.0):
+                raise ValueError(f"adaptive.{key} must be a finite number in [0, 100] dB.")
+            if band <= degree:
+                if previous is not None and (target < previous or (band == 1 and target == previous)):
+                    raise ValueError("SH PSNR gates must be ordered, with sh1 strictly above the D-SSIM gate.")
+                previous = target
         if runtime["arch"] not in ("cpu", "gpu"):
             raise ValueError("runtime.arch must be 'cpu' or 'gpu'.")
         if not isinstance(runtime["seed"], int) or isinstance(runtime["seed"], bool):

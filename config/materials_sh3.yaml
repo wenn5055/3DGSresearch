@@ -1,0 +1,35 @@
+# Materials SH baseline. Geometry/loss settings copied from materials_rgb.yaml.
+# RGB warm-up -> D-SSIM -> SH bands, gated by held-out MSE PSNR.
+# Run with scripts/run_experiment.py so evaluation uses the saved SH sidecar.
+
+adaptive:
+  dssim_psnr_threshold: 21.0
+  sh1_psnr_threshold: 22.0
+  sh2_psnr_threshold: 23.0
+  sh3_psnr_threshold: 24.0
+densification:
+  fraction: 0.2
+  interval: 100
+learning_rates:
+  position_max_steps: 60000
+  feature_rest: 0.000125
+loss:
+  dssim_weight: 0.2
+  dssim_window: 11
+  mode: mse_dssim
+model:
+  background: white
+  capacity: 1000000
+  height: 800
+  initial_splats: 1000
+  width: 800
+  sh_degree: 3
+paths:
+  data: ../data/materials
+  init_ply: null
+  output: ../outputs/materials-sh3/model.png
+runtime:
+  arch: gpu
+  seed: 7
+training:
+  iterations: 30000
