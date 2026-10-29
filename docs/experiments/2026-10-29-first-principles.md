@@ -78,8 +78,15 @@ physical BRDF. State this accurately in the report.
 
 - 20:38: recorded start/deadline; read private proposal and current experiment
   records; GPU idle. Preserved pre-existing staged/unstaged patches under outputs.
-- 20:49: identified missing late base-SH capacity and selected a controlled
+- 20:40: identified missing late base-SH capacity and selected a controlled
   appearance experiment. No new normal-weight sweeps authorized by this protocol.
+- 20:44: optional late SH implemented. All 96 repository tests passed on CPU;
+  all 50 surfel tests passed on CUDA. Six new regressions cover full image
+  gradients (including appearance-to-position), locked bands, split inheritance,
+  schedule, sidecar restoration and missing/untrained appearance. A 16-step
+  32px GPU runner smoke reached SH3 and evaluated all 100 validation cameras:
+  `materials_red-rose-silver-Oct29-2043-late-sh-smoke`. Its metrics are not a
+  quality result. Committing the checked implementation before full training.
 
 ## Commit policy
 

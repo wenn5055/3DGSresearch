@@ -24,13 +24,19 @@ def build_trainer(args, scene, targets, cameras, focal, device):
     metadata_path = args.ply.with_suffix('.surfel.npz')
     metadata = read_surfel_sidecar(metadata_path, len(scene.means))
     environment = metadata['environment_logits']
+    requested_degree = getattr(args, 'sh_degree', None)
+    if requested_degree is not None and requested_degree > metadata['sh_degree']:
+        raise ValueError('Requested SH degree was not trained in this checkpoint.')
     background = np.ones(3, np.float32) if args.background == 'white' else np.zeros(3, np.float32)
     trainer = SurfelTrainer(targets, cameras, focal, metadata['scene_radius'], len(scene.means), len(scene.means), device, 0,
         init_scene=scene, background=background, tile_pair_capacity=args.tile_pair_capacity,
         training_view_count=0,
+        sh_degree=metadata['max_sh_degree'],
         surfel_options={'mode': metadata['mode'], 'environment_width': environment.shape[1],
                         'environment_height': environment.shape[0], 'save_debug': False})
     trainer.load_materials(metadata_path, len(scene.means), for_evaluation=True)
+    if requested_degree is not None and trainer.sh is not None:
+        trainer.sh.degree = requested_degree
     return trainer
 
 
@@ -80,7 +86,8 @@ def build_parser():
     parser.add_argument('--width', type=int)
     parser.add_argument('--height', type=int)
     parser.add_argument('--background', choices=('white', 'black'), default='white')
-    parser.add_argument('--sh-degree', type=int, choices=(0,), default=0)
+    parser.add_argument('--sh-degree', type=int, choices=(0, 1, 2, 3), default=None,
+                        help='Truncate saved base SH; default restores the checkpoint degree.')
     parser.add_argument('--metrics', nargs='+', choices=('psnr', 'ssim', 'lpips'), default=['psnr', 'ssim', 'lpips'])
     parser.add_argument('--lpips-net', choices=('alex', 'vgg', 'squeeze'), default='alex')
     parser.add_argument('--tile-pair-capacity', type=int)

@@ -15,6 +15,7 @@ from warp.optim import Adam
 
 from gaussian_set import GaussianSet
 from splat_math import quaternion_to_matrix
+from sh_appearance import load_sh_sidecar
 
 from .config import SurfelTrainingConfig, GEOMETRY_DEFAULTS
 from .geometry_losses import GeometryLoss, l1_image_loss
@@ -24,6 +25,15 @@ from . import kernels as k
 
 
 class TrainingOnlyInitialization:
+    def load_appearance(self, path, count):
+        coefficients, maximum, degree = load_sh_sidecar(path, count)
+        if self.sh is None or self.sh.max_degree != maximum:
+            raise ValueError('SH checkpoint maximum degree differs from the configured model.')
+        values = self.sh.coefficients.numpy().reshape(self.capacity, self.sh.rest_count, 3)
+        values[:count] = coefficients
+        self.sh.coefficients.assign(values.reshape(-1, 3))
+        self.sh.degree = degree
+
     def _init_splats(self, capacity, initial_splats, init_scene, targets):
         count = len(targets) if self.training_view_count is None else self.training_view_count
         if not isinstance(count, int) or isinstance(count, bool) or not 0 <= count <= len(targets):
@@ -57,8 +67,6 @@ class SurfelTrainer(TrainingOnlyInitialization, base.WarpImageTrainer):
         training = deepcopy(kwargs.pop("training_options", {}))
         training.setdefault("sparse", {})["enabled"] = False
         super().__init__(*args, training_options=training, **kwargs)
-        if self.sh is not None:
-            raise ValueError("The surfel passes require sh_degree=0.")
         self.tiles = SurfelTileWorkspace(self.capacity, 1, self.tiles_x, self.tiles_y, self.tile_pair_capacity, self.device)
         pixels = self.width * self.height
         self.attributes = wp.empty(self.capacity, dtype=k.GBuffer, device=self.device)
@@ -193,8 +201,9 @@ class SurfelTrainer(TrainingOnlyInitialization, base.WarpImageTrainer):
         self.last_pair_count = count
         tile_seconds = perf_counter() - started
         device_started = perf_counter()
+        render_colours = self._render_colours(view)
         wp.launch(k.build_attributes, dim=self.capacity,
-                  inputs=[self.means, self.quaternions, self.color, self.reflection_logits, self.cameras, view],
+                  inputs=[self.means, self.quaternions, render_colours, self.reflection_logits, self.cameras, view],
                   outputs=[self.attributes], device=self.device)
         wp.launch(k.raster_forward, dim=self.width * self.height,
                   inputs=[self.means, self.log_scales, self.quaternions, self.opacity, self.attributes,
@@ -239,7 +248,8 @@ class SurfelTrainer(TrainingOnlyInitialization, base.WarpImageTrainer):
                 self.last_geometry_terms = terms
                 objective += terms['weighted']
         wp.launch(k.raster_backward, dim=self.width * self.height,
-                  inputs=[self.means, self.log_scales, self.quaternions, self.opacity, self.color,
+                  inputs=[self.means, self.log_scales, self.quaternions, self.opacity,
+                          self.sh.colours if self.active_sh_degree else self.color,
                           self.attributes, self.cameras, view, offsets, pairs, self.width, self.height,
                           self.tiles_x, self.focal, int(self.surfel_options['depth_mode'] == 'ray_plane')]
                           + self.compact_box_args + [self.buffers, self.buffers.grad],
@@ -249,6 +259,7 @@ class SurfelTrainer(TrainingOnlyInitialization, base.WarpImageTrainer):
         wp.launch(k.normal_backward, dim=self.capacity,
                   inputs=[self.means, self.quaternions, self.cameras, view, self.normal_gradient],
                   outputs=[self.optimizers.mean_grad_flat, self.optimizers.quaternion_grad_flat], device=self.device)
+        self._appearance_backward(view)
         self.optimizers.pack_gradients(self.capacity)
         self.last_timings["device"] += perf_counter() - started
         return objective
@@ -363,6 +374,8 @@ class SurfelTrainer(TrainingOnlyInitialization, base.WarpImageTrainer):
         if count:
             parent_ids, child_ids = self.optimizers.inherit_children(parents, children)
             base.inherit_adam_rows(self.reflection_optimizer, parent_ids, child_ids)
+            if self.sh is not None:
+                self.sh.copy_children(parents, children)
         return children
 
     def gaussian_set(self):
@@ -372,10 +385,13 @@ class SurfelTrainer(TrainingOnlyInitialization, base.WarpImageTrainer):
 
     def save_sidecars(self, path):
         path = Path(path)
+        appearance = super().save_sidecars(path)
         sidecar = path.with_suffix('.surfel.npz')
         np.savez_compressed(sidecar, format_version=np.int32(1), geometry='rank2_local_z_zero',
                             mode=self.surfel_options['mode'], specular_active=np.bool_(self.specular_active),
                             depth_mode=self.surfel_options['depth_mode'],
+                            sh_degree=np.int32(self.active_sh_degree),
+                            max_sh_degree=np.int32(self.sh.max_degree if self.sh is not None else 0),
                             reflection_logits=self.reflection_logits.numpy()[self.active],
                             environment_logits=self.environment.numpy().reshape(self.env_height, self.env_width, 3),
                             scene_radius=np.float32(self.scene_radius))
@@ -384,7 +400,7 @@ class SurfelTrainer(TrainingOnlyInitialization, base.WarpImageTrainer):
             if self.surfel_options['mode'] == 'deferred':
                 environment = base.sigmoid(self.environment.numpy()).reshape(self.env_height, self.env_width, 3)
                 Image.fromarray(np.uint8(np.clip(environment, 0, 1) * 255)).save(path.with_name(path.stem + '.environment.png'))
-        return [sidecar]
+        return [sidecar] + appearance
 
     def save_debug(self, path):
         values = self.buffers.numpy().reshape(self.height, self.width, 9)
@@ -409,6 +425,10 @@ class SurfelTrainer(TrainingOnlyInitialization, base.WarpImageTrainer):
 
     def load_materials(self, path, count, for_evaluation=False):
         values = read_surfel_sidecar(path, count)
+        if values['max_sh_degree']:
+            self.load_appearance(Path(path).with_suffix('').with_suffix('.sh.npz'), count)
+            if self.active_sh_degree != values['sh_degree']:
+                raise ValueError('SH and surfel sidecars disagree on the active degree.')
         logits = self.reflection_logits.numpy()
         logits[:count] = values['reflection_logits']
         self.reflection_logits.assign(logits)
@@ -441,7 +461,12 @@ def read_surfel_sidecar(path, count):
             raise ValueError('Non-finite surfel material values.')
         radius = float(data['scene_radius'])
         activated = bool(data['specular_active'])
+        sh_degree = int(data['sh_degree']) if 'sh_degree' in data else 0
+        max_sh_degree = int(data['max_sh_degree']) if 'max_sh_degree' in data else 0
+        if not 0 <= sh_degree <= max_sh_degree <= 3:
+            raise ValueError('Invalid SH degree in surfel checkpoint.')
         if not np.isfinite(radius) or radius <= 0 or (mode == 'rgb' and activated):
             raise ValueError('Invalid surfel radius or shading-stage metadata.')
         return {'mode': mode, 'depth_mode': depth_mode, 'reflection_logits': reflection, 'environment_logits': environment,
+                'sh_degree': sh_degree, 'max_sh_degree': max_sh_degree,
                 'specular_active': activated, 'scene_radius': radius}

@@ -31,6 +31,8 @@ class SurfelTrainingConfig(TrainingConfig):
         "environment_width": 128,
         "environment_height": 64,
         "save_debug": True,
+        "sh_start_iteration": None,
+        "sh_band_interval": 2000,
         "photometric_loss": "inherit",
         "refinement": {
             "start_iteration": None,
@@ -59,8 +61,20 @@ class SurfelTrainingConfig(TrainingConfig):
             raise ValueError('model.geometry must be gaussian or surfel for project passes.')
         if geometry == 'gaussian' and settings['mode'] != 'rgb':
             raise ValueError('The Gaussian control pass uses surfel.mode: rgb.')
-        if self.values["model"]["sh_degree"] != 0:
-            raise ValueError("These surfel passes use fixed RGB or deferred reflection; set model.sh_degree: 0.")
+        degree = self.values['model']['sh_degree']
+        sh_start = settings['sh_start_iteration']
+        sh_interval = settings['sh_band_interval']
+        if isinstance(sh_interval, bool) or not isinstance(sh_interval, int) or sh_interval < 1:
+            raise ValueError('surfel.sh_band_interval must be a positive integer.')
+        if sh_start is not None and (isinstance(sh_start, bool) or not isinstance(sh_start, int) or sh_start < 1):
+            raise ValueError('surfel.sh_start_iteration must be null or a positive integer.')
+        if degree:
+            if sh_start is None or sh_start + (degree - 1) * sh_interval > self.values['training']['iterations']:
+                raise ValueError('Configure an SH schedule that unlocks every band within the training budget.')
+            if settings['mode'] == 'deferred' and sh_start <= settings['specular_start_iteration']:
+                raise ValueError('Unlock residual SH after deferred reflection starts.')
+            if settings['normal_propagation']['enabled'] and sh_start <= settings['normal_propagation']['until_iteration']:
+                raise ValueError('Unlock residual SH after normal propagation ends.')
         if self.values["sparse"]["enabled"]:
             raise ValueError("Surfel G-buffers require dense rendering; set sparse.enabled: false.")
         if settings["mode"] not in ("rgb", "deferred"):

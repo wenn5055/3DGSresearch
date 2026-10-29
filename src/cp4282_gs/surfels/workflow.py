@@ -43,6 +43,7 @@ def train(config_path):
         init_scene=initial, background=background, learning_rates=config['learning_rates'],
         tile_pair_capacity=model['tile_pair_capacity'], surfel_options=config['surfel'],
         training_view_count=len(targets),
+        sh_degree=model['sh_degree'],
         training_options={key: config[key] for key in ('loss', 'sparse', 'compact_box', 'multiview_adc')}, **extra)
     if paths['init_ply']:
         sidecar = paths['init_ply'].with_suffix('.surfel.npz')
@@ -51,6 +52,8 @@ def train(config_path):
             print('Warm start: geometry/materials loaded; optimizer state starts fresh.', flush=True)
         elif sidecar.exists():
             raise ValueError('Initialize the Gaussian control from a Gaussian PLY, not a flattened-surfel checkpoint.')
+        elif paths['init_ply'].with_suffix('.sh.npz').exists():
+            trainer.load_appearance(paths['init_ply'].with_suffix('.sh.npz'), len(initial.means))
     run_training(trainer, config, len(targets), eval_ids, frame_ids)
 
 
@@ -64,6 +67,10 @@ def run_training(trainer, config, training_views, eval_ids, frame_ids=None):
     print(f"Geometry: {config['model']['geometry']}; training-only initialization statistics; dense rendering.", flush=True)
     print(base.describe_evaluation_views(eval_ids, frame_ids, reporting['eval_manifest']), flush=True)
     want_deferred = settings['mode'] == 'deferred'
+    target_sh_degree = config['model']['sh_degree']
+    if target_sh_degree:
+        print(f"Late base SH: maximum degree {target_sh_degree}, first band at {settings['sh_start_iteration']}, "
+              f"band interval {settings['sh_band_interval']}.", flush=True)
     print(f"Surfel pass: {settings['mode']}; deferred start iteration: {settings['specular_start_iteration']}", flush=True)
     if config['model']['geometry'] == 'surfel':
         print(f"Surfel depth mode: {settings['depth_mode']}", flush=True)
@@ -106,6 +113,17 @@ def run_training(trainer, config, training_views, eval_ids, frame_ids=None):
     geometry_ready_before = not bool(geometry['normal_depth_weight'])
     for iteration in range(1, config['training']['iterations'] + 1):
         completed = iteration
+        if (trainer.active_sh_degree < target_sh_degree and iteration >=
+                settings['sh_start_iteration'] + trainer.active_sh_degree * settings['sh_band_interval']):
+            trainer.advance_sh_stage()
+            tracker = None
+            stage_start = iteration
+            loss_ema = base.ExponentialMovingAverage(reporting['loss_ema_decay'])
+            objective, _, _ = trainer.evaluate_components(eval_ids)
+            eval_ema = base.ExponentialMovingAverage(reporting['loss_ema_decay'])
+            eval_ema.update(objective)
+            reset_window = base.OpacityResetWindow()
+            print(f'{iteration:6d}: unlocking late base SH degree {trainer.active_sh_degree}.', flush=True)
         refining = refinement['start_iteration'] is not None and iteration >= refinement['start_iteration']
         if refining and iteration == refinement['start_iteration']:
             trainer._opacity_frozen_until = 0
@@ -203,18 +221,21 @@ def run_training(trainer, config, training_views, eval_ids, frame_ids=None):
                                 f"normal_pixels={terms['normal_pixels']}")
             print(f'{iteration:6d}: ema={loss_ema.value:.6f}, loss_phase={trainer.last_loss_phase}, '
                   f'stage={trainer.loss_stage}, surfel_stage={trainer.surfel_stage}, '
+                  f'sh_stage=sh{trainer.active_sh_degree}, '
                   f'fixed_eval_ema={eval_ema.value:.6f}, fixed_eval_mse_ema={mse_ema.value:.6f}, '
                   f'active={trainer.active.sum()}, pairs={trainer.last_pair_count}, '
                   f'lr_xyz={trainer.last_position_learning_rate:.8f}{geometry_log}', flush=True)
         if save:
             snapshot(snapshots / f'out_{iteration:06d}.png')
-        if geometry_ready and tracker is not None and tracker.should_stop(iteration - stage_start):
+        if (geometry_ready and trainer.active_sh_degree == target_sh_degree and tracker is not None
+                and tracker.should_stop(iteration - stage_start)):
             print(f'Stopping at iteration {iteration}: fixed validation objective plateaued.', flush=True)
             break
     trainer.evaluate(eval_ids)
     snapshot(output)
     print(f'Final loss stage: {trainer.loss_stage}', flush=True)
     print(f'Final surfel stage: {trainer.surfel_stage}', flush=True)
+    print(f'Final SH degree: {trainer.active_sh_degree} (configured maximum: {target_sh_degree})', flush=True)
     if loss_curriculum and trainer.dssim_stage == 0:
         print('D-SSIM was not activated: the validation PSNR gate was not reached.', flush=True)
     if want_deferred and not trainer.specular_active:
