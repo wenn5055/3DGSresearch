@@ -338,6 +338,26 @@ Source/provenance: `edited-mask-initializer/initialization.json`; independent
 metrics: `edited-mask-initializer-evaluation/summary.json`, both under the session
 output directory. The initializer itself never consumes these evaluation files.
 
+The same fixed initializer settings were also checked on original Materials:
+100k surfels, 512-cubed grid, only training alpha/cameras. Before training, all
+100 validation views at 400px give **18.2966 degrees** mesh-normal error,
+0.037549 depth MAE, 1.0000 normal-valid foreground fraction and 0.932668
+silhouette IoU. Preprocessing took 60.08 CPU seconds. This is evidence that the
+initialization generalizes beyond the edited scene, not a completed rendering
+result or a comparison against a trained original-scene model. Outputs:
+`materials-mask-initializer/` and `materials-mask-initializer-evaluation/` in the
+session directory; initializer PLY SHA-256
+`4f9acea4c85b93fcca19101ca4dffc35fd4de815c16263018b702cd51a736a64`.
+
+Visual-hull initialization is an established shape-from-silhouette technique,
+not a new algorithm claim. Laurentini's
+[1994 paper](https://doi.org/10.1109/34.273735) and the authors'
+[project description](https://cgvg.polito.it/vhull.html) explain the key limit:
+silhouette intersection identifies an outer compatible shape and cannot recover
+all nonconvex geometry. Finite views, mask dilation, voxel smoothing and splat
+support add further approximation in this implementation. The subsequent
+photometric/geometry training remains necessary.
+
 ## Sampling and growth bookkeeping correction, 22:08 Singapore
 
 Two regression tests reproduced additional orchestration defects:
