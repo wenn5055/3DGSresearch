@@ -4,11 +4,13 @@ Started 29 October 2026, 20:38 Singapore. Hard stop: 30 October, 06:38 Singapore
 Status: active investigation. This record supersedes the earlier decision to stop
 research only for the newly authorized investigation; archived runs stay intact.
 
-**Current status:** the pruning correction is committed and the revised
-`pruning_queue.py` is running. Corrected edited-scene deferred SH3 finished at
+**Current status:** subsequent full-resolution jobs are held for a backbone
+audit: the new Gaussian baseline scored only 23.09 dB versus the earlier tuned
+27.34 dB. Controlled fixed-MSE probes will separate foreground pruning and
+optimizer policy before more method comparisons. Corrected edited-scene deferred SH3 finished at
 37.0101 dB with 133,700 surfels; consistency + SH3 finished at 35.3783 dB.
 The completed SH-only control scores 36.7667 dB: the deferred gain is small and
-material/perceptual results are mixed. Original Materials/Ship runs are next. The
+material/perceptual results are mixed. Original Materials/Ship runs await the audit. The
 [complete course-notes audit](../course-notes-audit-2026-10-29.md) records why
 opacity cleanup and foreground detection are separate. Earlier queue/protocol
 sections below are historical; preserved run configs identify the policy used.
@@ -470,6 +472,41 @@ Evidence: [comparison](../../outputs/first-principles-2026-10-29/edited-pruning-
 and [performance](../../outputs/first-principles-2026-10-29/edited-pruning-val/performance.json).
 
 ## Remaining frozen checks
+
+### Backbone audit before continuing full-resolution jobs, 22:55 Singapore
+
+The first full Gaussian baseline completed at **23.09 dB / 0.89969 SSIM** on all
+100 validation views, far below the historical tuned SH3 result of 27.3372 dB.
+Its D-SSIM gate was reached only around 22k; this is a material training regression,
+not evidence that deferred reflection wins. Preserved run:
+`materials-Oct29-2223-pruned-proposal-materials-gaussian_sh3`.
+The controller was held without terminating its active child; that child then
+completed normally. The remaining full-scale jobs are pending, not discarded.
+
+New diagnostic `scripts/probe_optimizer_policy.py` scopes three policies to its
+own Gaussian RGB subprocess: inherited parent moments, fresh child moments with
+unchanged shared clocks, or legacy global resets. It preserves standard run/input/
+source fingerprints, records the policy explicitly, and never changes production
+trainer behavior. Two CPU and two CUDA tests verify exact live/child histories,
+clocks and restoration of the original method; an eight-step GPU runner smoke
+verified training, model reload, all-view evaluation and metadata.
+
+Bounded probes use 800px, 1M capacity, 1k initial points, seed 7, 10k steps,
+fixed dense MSE, no SH/reflection, common camera sampling and density settings.
+Compare inheritance versus legacy resets with foreground pruning on/off, plus
+fresh-child state with foreground pruning on. These measure early backbone
+convergence; they do not establish final specular quality or select a new renderer.
+Presets: `materials_backbone_probe.yaml` and
+`materials_backbone_unmasked_probe.yaml`; policy is an explicit runner argument.
+Example:
+
+```powershell
+.venv/Scripts/python.exe scripts/probe_optimizer_policy.py run `
+  config/materials_backbone_probe.yaml --policy fresh_children --name backbone-fresh-fg
+```
+
+Inspect these results before resuming the queued proposal models or changing
+optimizer policy. The original 06:38 Singapore hard stop remains in force.
 
 Evaluation now also records mesh-normal/depth error and valid-coverage fraction
 for each visible target material, with means in `geometry-summary.csv`. This

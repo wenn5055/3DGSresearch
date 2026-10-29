@@ -1,0 +1,16 @@
+# Matches materials_backbone_probe.yaml with foreground pruning disabled.
+paths:
+  data: ../data/materials
+  output: ../outputs/materials-backbone-unmasked-probe/model.png
+runtime: {arch: gpu, seed: 7}
+model: {width: 800, height: 800, capacity: 1000000, initial_splats: 1000, background: white, geometry: gaussian, sh_degree: 0}
+training: {iterations: 10000}
+learning_rates: {position_max_steps: 60000}
+loss: {mode: mse}
+densification: {interval: 100, fraction: 0.2}
+convergence: {enabled: false}
+reporting: {snapshot_every: 5000, log_every: 100}
+sparse: {enabled: false}
+surfel:
+  mode: rgb
+  foreground_pruning: {enabled: false}
