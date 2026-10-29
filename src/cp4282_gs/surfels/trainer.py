@@ -22,9 +22,32 @@ from .geometry_losses import GeometryLoss, l1_image_loss
 from . import normal_propagation as propagation_kernels
 from .geometry import SurfelTileWorkspace, base
 from . import kernels as k
+from .foreground_pruning import ForegroundPruner
 
 
 class TrainingOnlyInitialization:
+    def configure_foreground_pruning(self, training_alpha):
+        settings = self.surfel_options.get('foreground_pruning', {})
+        self.foreground_pruner = None
+        if settings.get('enabled', False):
+            count = self.training_view_count
+            if count is None or training_alpha is None or np.shape(training_alpha) != (count, self.height, self.width):
+                raise ValueError('Foreground pruning requires alpha masks for training views only.')
+            self.foreground_pruner = ForegroundPruner(training_alpha, self.cameras.numpy()[:count],
+                self.focal, self.capacity, settings)
+
+    def prune_foreground(self):
+        if self.foreground_pruner is None:
+            return None
+        geometry = 'surfel' if isinstance(self, SurfelTrainer) else 'gaussian'
+        prune, event = self.foreground_pruner.update(self.means.numpy(), self.log_scales.numpy(),
+            self.quaternions.numpy(), self.active, geometry)
+        self.active[prune] = False
+        if event['foreground_pruned']:
+            self.active_device.assign(self.active.astype(np.int32))
+        event['active_after'] = int(self.active.sum())
+        return event
+
     def load_appearance(self, path, count):
         coefficients, maximum, degree = load_sh_sidecar(path, count)
         if self.sh is None or self.sh.max_degree != maximum:
@@ -47,11 +70,18 @@ class TrainingOnlyInitialization:
 
 class GaussianRGBControl(TrainingOnlyInitialization, base.WarpImageTrainer):
     """Original 3D Gaussian renderer/optimizer with training-only colour statistics."""
-    def __init__(self, *args, training_view_count=None, surfel_options=None, **kwargs):
+    def __init__(self, *args, training_view_count=None, surfel_options=None, training_alpha=None, **kwargs):
         self.training_view_count = training_view_count
         self.surfel_options = surfel_options or {}
         self.specular_active = False
         super().__init__(*args, **kwargs)
+        self.configure_foreground_pruning(training_alpha)
+
+    def densify_and_prune(self, *args, **kwargs):
+        children = super().densify_and_prune(*args, **kwargs)
+        if self.foreground_pruner is not None:
+            self.foreground_pruner.reset_children(children)
+        return children
 
     @property
     def surfel_stage(self):
@@ -92,6 +122,7 @@ class SurfelTrainer(TrainingOnlyInitialization, base.WarpImageTrainer):
         self.last_geometry_terms = {'mask': 0.0, 'normal_depth': 0.0, 'normal_weight': 0.0,
                                     'normal_pixels': 0, 'weighted': 0.0}
         self.last_photometric_loss = None
+        self.configure_foreground_pruning(training_alpha)
         self.l1_loss = wp.zeros(1, dtype=wp.float32, device=self.device)
         self._opacity_frozen_until = 0
         self._propagation_seed = (int(self.rng.integers(1 << 30))
@@ -376,6 +407,8 @@ class SurfelTrainer(TrainingOnlyInitialization, base.WarpImageTrainer):
             base.inherit_adam_rows(self.reflection_optimizer, parent_ids, child_ids)
             if self.sh is not None:
                 self.sh.copy_children(parents, children)
+        if self.foreground_pruner is not None:
+            self.foreground_pruner.reset_children(children)
         return children
 
     def gaussian_set(self):

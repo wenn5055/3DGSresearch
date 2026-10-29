@@ -33,6 +33,7 @@ sparse:
   enabled: false
   samples_per_tile: 256
 surfel:
+  foreground_pruning: {enabled: true}
   environment_height: 64
   environment_lr: 0.01
   environment_width: 128

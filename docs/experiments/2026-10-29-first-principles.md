@@ -4,6 +4,13 @@ Started 29 October 2026, 20:38 Singapore. Hard stop: 30 October, 06:38 Singapore
 Status: active investigation. This record supersedes the earlier decision to stop
 research only for the newly authorized investigation; archived runs stay intact.
 
+**Latest steering:** the user flagged missing pruning and foreground/background
+detection. Both experiment queues were held; the running scout finished and its
+artifacts were retained. The immediate priority is the verified pruning fix and
+the [complete course-notes audit](../course-notes-audit-2026-10-29.md). Earlier
+frozen-policy plans below are historical; new runs must record the revised
+foreground-pruning policy and compare matching source/settings.
+
 ## Objective and evidence
 
 The private proposal asks whether deferred surfel shading improves highly specular

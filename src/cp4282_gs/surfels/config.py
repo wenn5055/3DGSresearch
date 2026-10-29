@@ -33,10 +33,20 @@ class SurfelTrainingConfig(TrainingConfig):
         "save_debug": True,
         "sh_start_iteration": None,
         "sh_band_interval": 2000,
+        "foreground_pruning": {
+            "enabled": False,
+            "start_iteration": 2000,
+            "interval": 500,
+            "views": 16,
+            "min_background_views": 3,
+            "persistence": 2,
+            "background_alpha_threshold": 0.01,
+            "margin_pixels": 2,
+        },
         "photometric_loss": "inherit",
         "refinement": {
             "start_iteration": None,
-            "prune_interval": 0,
+            "prune_interval": 500,
         },
         "normal_propagation": {
             "enabled": False,
@@ -102,6 +112,19 @@ class SurfelTrainingConfig(TrainingConfig):
         geometry_loss = self.values['geometry_loss']
         if settings['photometric_loss'] not in ('inherit', 'l1_dssim'):
             raise ValueError('surfel.photometric_loss must be inherit or l1_dssim.')
+        foreground = settings['foreground_pruning']
+        if not isinstance(foreground['enabled'], bool):
+            raise ValueError('foreground_pruning.enabled must be boolean.')
+        for key in ('start_iteration', 'interval', 'views', 'min_background_views', 'persistence', 'margin_pixels'):
+            value = foreground[key]
+            minimum = 0 if key in ('start_iteration', 'margin_pixels') else 1
+            if isinstance(value, bool) or not isinstance(value, int) or value < minimum:
+                raise ValueError(f'Invalid foreground_pruning.{key}.')
+        if foreground['min_background_views'] < 2 or foreground['min_background_views'] > foreground['views']:
+            raise ValueError('Foreground pruning needs at least two distinct background views, within the view budget.')
+        value = foreground['background_alpha_threshold']
+        if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or not 0 <= value < .5:
+            raise ValueError('foreground_pruning.background_alpha_threshold must be in [0, 0.5).')
         refinement = settings['refinement']
         start = refinement['start_iteration']
         if start is not None:

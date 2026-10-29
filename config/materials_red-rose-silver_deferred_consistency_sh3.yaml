@@ -36,7 +36,9 @@ surfel:
   environment_lr: 0.05
   refinement:
     start_iteration: 20001
-    prune_interval: 0
+    prune_interval: 500
+  foreground_pruning:
+    enabled: true
   normal_propagation:
     enabled: false
   sh_start_iteration: 20001

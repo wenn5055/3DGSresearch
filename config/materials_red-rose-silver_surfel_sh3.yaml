@@ -17,7 +17,8 @@ surfel:
   initial_reflection: 0.001
   reflection_lr: 0.006
   environment_lr: 0.05
-  refinement: {start_iteration: 20001, prune_interval: 0}
+  refinement: {start_iteration: 20001, prune_interval: 500}
+  foreground_pruning: {enabled: true}
   normal_propagation: {enabled: false}
   sh_start_iteration: 20001
   sh_band_interval: 2000

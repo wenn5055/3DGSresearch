@@ -36,8 +36,8 @@ def train(config_path):
     extra = {}
     if model['geometry'] == 'surfel':
         extra['geometry_options'] = geometry
-        if geometry['mask_weight'] or geometry['normal_depth_weight']:
-            extra['training_alpha'] = load_training_alpha(paths['data'], model['width'], model['height'])
+    if geometry['mask_weight'] or geometry['normal_depth_weight'] or config['surfel']['foreground_pruning']['enabled']:
+        extra['training_alpha'] = load_training_alpha(paths['data'], model['width'], model['height'])
     trainer = trainer_class(all_targets, all_cameras, focal, model['scene_radius'] or distance * 0.35,
         model['capacity'], model['initial_splats'], device, config['runtime']['seed'],
         init_scene=initial, background=background, learning_rates=config['learning_rates'],
@@ -81,13 +81,22 @@ def run_training(trainer, config, training_views, eval_ids, frame_ids=None):
               f"ramp={geometry['normal_ramp_iterations']}; validation gates remain photometric.", flush=True)
     loss_curriculum = config['loss']['mode'] == 'mse_dssim' and not getattr(trainer, 'uses_paper_loss', False)
     propagation = settings['normal_propagation']
+    foreground = settings['foreground_pruning']
+    if foreground['enabled']:
+        print(f"Foreground/background pruning: training alpha only; start={foreground['start_iteration']}, "
+              f"interval={foreground['interval']}, min_background_views={foreground['min_background_views']}, "
+              f"persistence={foreground['persistence']}, training_view_ids={trainer.foreground_pruner.views}. "
+              'Continues during quiet refinement; out-of-frame/occluded supports are not background.', flush=True)
     refinement = settings['refinement']
     if propagation['enabled']:
         print('Paper normal optimization: image/reflection gradients, opacity/scale propagation and colour noise; '
               f"normal-depth weight={geometry['normal_depth_weight']}.", flush=True)
     if refinement['start_iteration'] is not None:
         print(f"Quiet refinement from iteration {refinement['start_iteration']}: growth, opacity resets and "
-              f"propagation off; prune interval={refinement['prune_interval']} (0 keeps topology fixed).", flush=True)
+              f"propagation off; ADC/opacity prune interval={refinement['prune_interval']} "
+              '(0 disables scheduled ADC/opacity pruning).', flush=True)
+        if foreground['enabled']:
+            print('Foreground contradiction pruning remains active on its own interval during refinement.', flush=True)
     loss_ema = base.ExponentialMovingAverage(reporting['loss_ema_decay'])
     eval_ema = base.ExponentialMovingAverage(reporting['loss_ema_decay'])
     mse_ema = base.ExponentialMovingAverage(reporting['loss_ema_decay'])
@@ -167,10 +176,27 @@ def run_training(trainer, config, training_views, eval_ids, frame_ids=None):
             loss_ema.update(loss)
         if densify or late:
             views = rng.choice(training_views, min(adc['views'], training_views), replace=False) if adc['enabled'] else None
-            trainer.densify_and_prune(gradients, density['fraction'] if densify else 0.0,
+            active_before = int(trainer.active.sum())
+            children = trainer.densify_and_prune(gradients, density['fraction'] if densify else 0.0,
                                       view_ids=views, late_prune=late, percent_dense=density['percent_dense'])
+            active_after = int(trainer.active.sum())
+            print(f'{iteration:6d}: density: active_before={active_before}, '
+                  f'pruned={active_before + len(children) - active_after}, grown={len(children)}, '
+                  f'active_after={active_after}, late_prune={late}.', flush=True)
             if densify and not late_prune_armed and growth.update(int(trainer.active.sum())):
                 late_prune_armed = True
+        if (foreground['enabled'] and can_change_structure and iteration >= foreground['start_iteration']
+                and iteration % foreground['interval'] == 0):
+            event = trainer.prune_foreground()
+            if event['foreground_pruned']:
+                reset_window.warn_if_unrecovered(iteration)
+                reset_window.open(eval_ema.value, iteration)
+                tracker = None
+                stage_start = iteration
+            print(f"{iteration:6d}: foreground pruning: candidates={event['background_candidates']}, "
+                  f"pruned={event['foreground_pruned']}, unobserved={event['unobserved']}, "
+                  f"max_background_votes={event['max_background_votes']}, "
+                  f"active_before={event['active_before']}, active_after={event['active_after']}.", flush=True)
         # Leave the final trained model intact; a last-step clamp would save holes
         # before opacity has any opportunity to recover.
         opacity_reset = bool(not refining and density['opacity_reset_interval']
