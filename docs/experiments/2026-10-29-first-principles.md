@@ -360,7 +360,33 @@ It improves on the earlier no-SH consistency model (34.0690 dB), but trails the
 corrected unregularized model (37.0101 dB). Independent geometry, material scores
 and perceptual scores are pending; this alone does not select the winner.
 
-## Commit policy
+## Stronger historical SH3 reference, 22:17 Singapore
+
+Re-evaluated the earlier validation-selected SH3 learning-rate winner
+`materials-Oct28-2327-sh3-tune-lr-0p00025` on all 100 original Materials
+validation cameras at 800px, with the same evaluation-only chrome mesh masks.
+This is a stronger historical reference alongside the newly matched late-SH
+controls, not a claim of matching training settings/source/pruning policies.
+
+| Metric | Earlier tuned Gaussian SH3 |
+| --- | ---: |
+| Whole-image PSNR | 27.337226 dB |
+| Foreground PSNR | 21.428579 dB |
+| Chrome-pixel PSNR | 16.163473 dB |
+| SSIM | 0.933825 |
+| LPIPS AlexNet | 0.048299 |
+| Required checkpoint bytes | 170,285,798 |
+
+The repeated whole-image PSNR agrees with its original validation result.
+Fixed chrome crops show broad scene/landscape colours but blurred fine reflected
+detail; do not describe SH as producing no reflection at all. Higher scene PSNR
+alone will not establish that the deferred model fixes this limitation.
+Report: `outputs/first-principles-2026-10-29/materials-strong-baseline-val/`.
+This read-only quality audit ran while training continued, so GPU timing was
+explicitly skipped. Its brief GPU/CPU overlap also rules out interpreting the
+concurrent edited control's training time as an isolated speed benchmark.
+
+## Remaining frozen checks
 
 Evaluation now also records mesh-normal/depth error and valid-coverage fraction
 for each visible target material, with means in `geometry-summary.csv`. This
@@ -378,6 +404,8 @@ are explicitly one method treatment. Their all-view validation report includes
 independent mesh normals/depth, material/foreground metrics, LPIPS and idle-GPU
 render timing. No additional architecture or hyperparameter sweep is queued.
 The same original absolute deadline applies while waiting and during training.
+
+## Commit policy
 
 Commit the reviewed protocol, then verified implementation, then measured
 findings. Preserve pre-existing staged changes; explicitly commit only work from
