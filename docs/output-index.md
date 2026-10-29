@@ -60,6 +60,9 @@ Updated 29 Oct 2026 (Singapore).
 - [materials-Oct29-2107-reflection-gaussian-sh3](../outputs/materials-Oct29-2107-reflection-gaussian-sh3/) — Matched original-Materials appearance study: Gaussian SH3 control. Closest prior: materials-Oct29-2100-reflection-deferred-sh3; model.geometry: surfel → gaussian, surfel.mode: deferred → rgb. [completed; val]
 - [materials-Oct29-2117-reflection-surfel-sh3](../outputs/materials-Oct29-2117-reflection-surfel-sh3/) — Matched original-Materials appearance study: surfel SH3 control. Closest prior: materials-Oct29-2107-reflection-gaussian-sh3; model.geometry: gaussian → surfel. [completed; val]
 - [materials_red-rose-silver-Oct29-2136-foreground-pruning-smoke](../outputs/materials_red-rose-silver-Oct29-2136-foreground-pruning-smoke/) — surfel/deferred/SH3; 16 steps; 128 capacity. Closest prior: materials_red-rose-silver-Oct29-2044-late-sh3; densification.interval: 100 → 4, densification.opacity_reset_interval: 3000 → 0, model.capacity: 200000 → 128, model.height: 400 → 32, +20 other settings (see config). [completed; val]
+- [materials_red-rose-silver-Oct29-2139-pruned-deferred-sh3](../outputs/materials_red-rose-silver-Oct29-2139-pruned-deferred-sh3/) — Foreground-pruning corrected reflection study; training-only alpha, explicit removal/growth logs, frozen validation protocol. Closest prior: materials_red-rose-silver-Oct29-2044-late-sh3; surfel.foreground_pruning.background_alpha_threshold: (unset) → 0.01, surfel.foreground_pruning.enabled: (unset) → True, surfel.foreground_pruning.interval: (unset) → 500, surfel.foreground_pruning.margin_pixels: (unset) → 2, +5 other settings (see config). [completed; val]
+- [materials_red-rose-silver-Oct29-2154-pruned-consistency-sh3](../outputs/materials_red-rose-silver-Oct29-2154-pruned-consistency-sh3/) — Foreground-pruning corrected reflection study; training-only alpha, explicit removal/growth logs, frozen validation protocol. Closest prior: materials_red-rose-silver-Oct29-2139-pruned-deferred-sh3; geometry_loss.normal_depth_weight: 0.0 → 0.01. [completed; val]
+- [materials_red-rose-silver-Oct29-2207-pruned-surfel-sh3](../outputs/materials_red-rose-silver-Oct29-2207-pruned-surfel-sh3/) — Foreground-pruning corrected reflection study; training-only alpha, explicit removal/growth logs, frozen validation protocol. Closest prior: materials_red-rose-silver-Oct29-2139-pruned-deferred-sh3; surfel.mode: deferred → rgb. [running; val]
 
 ## Tuning
 
@@ -93,6 +96,6 @@ Updated 29 Oct 2026 (Singapore).
 - [tmpggz1922j](../outputs/tmpggz1922j/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [tmpvqlvzp4a](../outputs/tmpvqlvzp4a/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [warp-training_snapshots](../outputs/warp-training_snapshots/) — legacy direct-trainer snapshots; source run unrecorded here.
-- `audit-warp-cache`, `blender-optix-cache`, `dssim-test-warp-cache`, `geometry-loss-warp-cache`, `runner-validation-warp-cache`, `sh-test-warp-cache`, `surfel-test-warp-cache`, `warp-cache` — compiled Warp kernels reused by checks; not experiments.
+- `audit-warp-cache`, `blender-optix-cache`, `contribution-test-warp-cache`, `dssim-test-warp-cache`, `geometry-loss-warp-cache`, `runner-validation-warp-cache`, `sh-test-warp-cache`, `surfel-test-warp-cache`, `warp-cache` — compiled Warp kernels reused by checks; not experiments.
 
 Scores: [findings](findings.md). Commands: [project passes](project-passes.md).

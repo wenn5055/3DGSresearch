@@ -362,6 +362,16 @@ and perceptual scores are pending; this alone does not select the winner.
 
 ## Commit policy
 
+One bounded initializer follow-up is queued in `initialization_queue.py`, waiting
+for the entire proposal study and its timing reports to finish. It retrains the
+random-initialized consistency + SH3 control with the corrected sampling code,
+then trains the prepared mask-initialized variant. Both use the same code,
+settings, seed and 30k-step/200k-cap budget. Initial count, placement and orientation
+are explicitly one method treatment. Their all-view validation report includes
+independent mesh normals/depth, material/foreground metrics, LPIPS and idle-GPU
+render timing. No additional architecture or hyperparameter sweep is queued.
+The same original absolute deadline applies while waiting and during training.
+
 Commit the reviewed protocol, then verified implementation, then measured
 findings. Preserve pre-existing staged changes; explicitly commit only work from
 this investigation. Large runs and source/input fingerprints remain in outputs.
