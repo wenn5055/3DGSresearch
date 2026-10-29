@@ -406,6 +406,20 @@ This read-only quality audit ran while training continued, so GPU timing was
 explicitly skipped. Its brief GPU/CPU overlap also rules out interpreting the
 concurrent edited control's training time as an isolated speed benchmark.
 
+Archived-source audit: the earlier Gaussian control/tuned baseline reset the
+whole optimizer when creating children. The current pre-investigation code
+preserves unchanged histories and copies parent moments to children; it also
+fixes blocked inward RGB updates at clamp endpoints. New runs additionally
+separate camera/ADC RNG, enable mask contradictions and use a common late-SH
+schedule. The historical tuned baseline used sparse MSE warm-up and a different
+SH learning rate/curriculum. Therefore a slower new baseline cannot be attributed
+to foreground pruning alone. Source diff:
+`historical-control-source-audit.diff` in the session directory. Preserving live
+state and inheriting child state are separate choices: the former avoids global
+resets, while the latter still needs quality evidence against fresh child state
+as recommended in Unit 7. Passing state-copy tests does not establish that it
+improves reconstruction. The frozen study does not change this policy mid-run.
+
 ## Corrected edited-scene comparison, 22:23 Singapore
 
 All 100 validation views at 400px; common training-mask pruning, late SH schedule,
