@@ -12,6 +12,7 @@ import hashlib
 import html
 import importlib
 import json
+import re
 from pathlib import Path
 import sys
 from time import perf_counter
@@ -40,6 +41,15 @@ def fingerprint(path):
 def checkpoint_paths(run):
     return [path for name in ('model.ply', 'model.surfel.npz', 'model.sh.npz')
             if (path := run / name).exists()]
+
+
+def renderer_source_differences(run):
+    saved = {item['path']: item['sha256'] for item in json.loads((run / 'source-files.json').read_text(encoding='utf-8'))}
+    paths = [ROOT / name for name in ('3dgs_trainer.py', '3dgs_evaluator.py',
+             'gaussian_first_tile_workspace_gpu.py', 'image_metrics.py', 'scripts/evaluate_surfels.py')]
+    paths += [path for folder in ('shared', 'src') for path in (ROOT / folder).rglob('*.py')]
+    return [path.relative_to(ROOT).as_posix() for path in paths
+            if saved.get(path.relative_to(ROOT).as_posix()) != fingerprint(path)['sha256']]
 
 
 def psnr(error):
@@ -162,6 +172,7 @@ def evaluate(args):
              '3dgs_evaluator.py', 'image_metrics.py')]
             + [fingerprint(path) for directory in ('shared', 'src') for path in (ROOT / directory).rglob('*.py')],
         'training_sources': [fingerprint(run / 'source-files.json') for run in runs],
+        'training_vs_evaluation_source_differences': [renderer_source_differences(run) for run in runs],
         'checkpoints': [[fingerprint(path) for path in checkpoint_paths(run)] for run in runs]}
     if args.material_inspection:
         protocol['material_inspection'] = fingerprint(args.material_inspection)
@@ -172,12 +183,14 @@ def evaluate(args):
     (args.output / 'protocol.json').write_text(json.dumps(protocol, indent=2), encoding='utf-8')
     wp.init()
     device = gaussian_evaluator.resolve_device(args.arch)
+    protocol['evaluation_runtime'] = {'device': device, 'device_name': wp.get_device(device).name,
+                                      'warp_version': wp.__version__, 'python_version': sys.version}
     lpips = None
     if 'lpips' in args.metrics:
         import torch
         torch.set_num_threads(args.cpu_threads)
         lpips = gaussian_evaluator.LPIPSMetric('alex')
-    rows, crop_rows, summaries, timings, geometry_rows = [], [], [], [], []
+    rows, crop_rows, summaries, timings, geometry_rows, normal_labels = [], [], [], [], [], []
     image_paths = {int(view): [args.output / f'reference-{view}.png'] for view in selected}
     normal_paths = {int(view): [] for view in selected}
     for model_index, (run, record, label) in enumerate(zip(runs, records, labels)):
@@ -185,6 +198,8 @@ def evaluate(args):
         build_args = argparse.Namespace(ply=run / 'model.ply', background=background_name,
                                        tile_pair_capacity=None, sh_degree=None, sh_npz=None)
         is_surfel = (run / 'model.surfel.npz').exists()
+        if is_surfel:
+            normal_labels.append(label)
         if is_surfel:
             trainer = build_surfel(build_args, scene, targets, cameras, focal, device)
         else:
@@ -261,6 +276,10 @@ def evaluate(args):
                   'warp_pool_process_high_bytes': int(wp.get_mempool_used_mem_high(device)) if device != 'cpu' else None,
                   'memory_scope': 'evaluation process allocation pool; cumulative high watermark across models, not peak training VRAM',
                   'trainer_seconds': record.get('training_result', {}).get('trainer_seconds')}
+        memory_match = re.search(r'^Training Warp pool high bytes: (\d+)$',
+                                 (run / 'train.log').read_text(encoding='utf-8'), re.MULTILINE)
+        timing['training_warp_pool_high_bytes'] = int(memory_match[1]) if memory_match else None
+        timing['training_memory_scope'] = 'Fresh training process Warp allocation peak; excludes driver/context and external allocations. Missing for older runs.'
         timings.append(timing)
         summary = {'model': label}
         for field in ('psnr_db', 'ssim', 'foreground_psnr_db', 'lpips_alex',
@@ -282,22 +301,23 @@ def evaluate(args):
         crop_panels.append((f'View {view}, {region}, box {bounds}',
             [Image.open(path).crop(bounds) for path in image_paths[view]]))
     sheet(args.output / 'crop-comparison.png', crop_panels, ['Reference'] + labels, panel=240)
-    if all(len(normal_paths[view]) == len(labels) for view in selected):
+    if normal_labels:
         sheet(args.output / 'normals-comparison.png',
               [(f'View {view}', ([args.output / f'reference-normals-{view}.png'] if geometry_metadata else [])
-                + normal_paths[view]) for view in selected], (['Reference mesh'] if geometry_metadata else []) + labels)
+                + normal_paths[view]) for view in selected], (['Reference mesh'] if geometry_metadata else []) + normal_labels)
     fields = ('model', 'psnr_db', 'foreground_psnr_db', 'ssim', 'lpips_alex',
               *(f'{material}_psnr_db' for material in material_ids))
     table = '<table><tr>' + ''.join(f'<th>{field}</th>' for field in fields) + '</tr>'
     for row in summaries:
         table += '<tr>' + ''.join(f'<td>{html.escape(str(row[field]) if isinstance(row[field], str) or row[field] is None else format(row[field], ".6f"))}</td>' for field in fields) + '</tr>'
     table += '</table>'
+    normals_html = '<h2>Normals</h2><img src="normals-comparison.png">' if normal_labels else ''
     body = f'''<!doctype html><html lang="en"><meta charset="utf-8"><title>Reflection comparison</title>
 <style>body{{font:16px system-ui;max-width:1500px;margin:30px auto;padding:0 20px}}table{{border-collapse:collapse}}td,th{{padding:8px;border:1px solid #ccc}}img{{max-width:100%}}a{{color:#075ea8}}</style>
 <h1>Reflection comparison</h1><p>{html.escape(args.manifest)}, {width} x {height}; means of per-view scores; LPIPS AlexNet. Foreground: reference alpha at least 0.95.</p>
 {table}<p>Camera and component crops selected from poses/alpha before rendering. Material boxes use mesh bounds and can include occlusion. See <a href="protocol.json">protocol and config differences</a>, <a href="metrics.csv">per-view scores</a>, <a href="crop-metrics.csv">crop scores</a>, <a href="performance.json">performance</a>.</p>
 <h2>RGB</h2><img src="rgb-comparison.png"><h2>Fixed crops</h2><img src="crop-comparison.png">
-<h2>Normals</h2><img src="normals-comparison.png"></html>'''
+{normals_html}</html>'''
     (args.output / 'index.html').write_text(body, encoding='utf-8')
     protocol['status'] = 'completed'
     protocol['finished_utc'] = datetime.now(timezone.utc).isoformat()

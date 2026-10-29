@@ -108,6 +108,12 @@ physical BRDF. State this accurately in the report.
   400px/200k/30k presets with common seed, loss policy, learning rates, density
   schedule, no mask/normal regularization, and SH1/2/3 at 20k/22k/24k. Only
   geometry/appearance differ. The edited SH3 run is now in its SH1 phase.
+- 20:58: all-view mesh alignment audit: mean/minimum silhouette IoU is
+  0.999478/0.998302 on edited Materials and 0.999594/0.999061 on original
+  Materials (100 validation views each, 400px, alpha threshold 0.5). Added
+  per-process training Warp-pool peak logging; a GPU smoke recorded 2,600,788
+  bytes. This excludes driver/context/external allocations. The already-running
+  first SH3 job predates this logging and will have unknown training memory.
 
 ## Interpretation rules for this study
 
