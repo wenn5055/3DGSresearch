@@ -109,6 +109,9 @@ def run_training(trainer, config, training_views, eval_ids, frame_ids=None):
     late_prune_armed = False
     stage_start = 0
     rng = np.random.default_rng(config['runtime']['seed'])
+    # Structural schedules must not change the sequence of training cameras.
+    structure_rng = np.random.default_rng(np.random.SeedSequence([config['runtime']['seed'], 0xADC]))
+    print('Sampling: independent training-camera and ADC-view random streams.', flush=True)
 
     def snapshot(path):
         base.save_rendered_image(trainer, path.with_suffix('.png'))
@@ -175,7 +178,7 @@ def run_training(trainer, config, training_views, eval_ids, frame_ids=None):
         if loss is not None:
             loss_ema.update(loss)
         if densify or late:
-            views = rng.choice(training_views, min(adc['views'], training_views), replace=False) if adc['enabled'] else None
+            views = structure_rng.choice(training_views, min(adc['views'], training_views), replace=False) if adc['enabled'] else None
             active_before = int(trainer.active.sum())
             children = trainer.densify_and_prune(gradients, density['fraction'] if densify else 0.0,
                                       view_ids=views, late_prune=late, percent_dense=density['percent_dense'])
@@ -183,8 +186,6 @@ def run_training(trainer, config, training_views, eval_ids, frame_ids=None):
             print(f'{iteration:6d}: density: active_before={active_before}, '
                   f'pruned={active_before + len(children) - active_after}, grown={len(children)}, '
                   f'active_after={active_after}, late_prune={late}.', flush=True)
-            if densify and not late_prune_armed and growth.update(int(trainer.active.sum())):
-                late_prune_armed = True
         if (foreground['enabled'] and can_change_structure and iteration >= foreground['start_iteration']
                 and iteration % foreground['interval'] == 0):
             event = trainer.prune_foreground()
@@ -197,6 +198,9 @@ def run_training(trainer, config, training_views, eval_ids, frame_ids=None):
                   f"pruned={event['foreground_pruned']}, unobserved={event['unobserved']}, "
                   f"max_background_votes={event['max_background_votes']}, "
                   f"active_before={event['active_before']}, active_after={event['active_after']}.", flush=True)
+        # Include every deletion at this event in the net-growth history.
+        if densify and not late_prune_armed and growth.update(int(trainer.active.sum())):
+            late_prune_armed = True
         # Leave the final trained model intact; a last-step clamp would save holes
         # before opacity has any opportunity to recover.
         opacity_reset = bool(not refining and density['opacity_reset_interval']

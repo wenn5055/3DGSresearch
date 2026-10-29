@@ -4,12 +4,14 @@ Started 29 October 2026, 20:38 Singapore. Hard stop: 30 October, 06:38 Singapore
 Status: active investigation. This record supersedes the earlier decision to stop
 research only for the newly authorized investigation; archived runs stay intact.
 
-**Latest steering:** the user flagged missing pruning and foreground/background
-detection. Both experiment queues were held; the running scout finished and its
-artifacts were retained. The immediate priority is the verified pruning fix and
-the [complete course-notes audit](../course-notes-audit-2026-10-29.md). Earlier
-frozen-policy plans below are historical; new runs must record the revised
-foreground-pruning policy and compare matching source/settings.
+**Current status:** the pruning correction is committed and the revised
+`pruning_queue.py` is running. Corrected edited-scene deferred SH3 finished at
+37.0101 dB with 133,700 surfels; consistency + SH3 finished at 35.3783 dB.
+The SH-only control and independent geometry/material comparisons are next,
+followed by the original Materials/Ship proposal study. The
+[complete course-notes audit](../course-notes-audit-2026-10-29.md) records why
+opacity cleanup and foreground detection are separate. Earlier queue/protocol
+sections below are historical; preserved run configs identify the policy used.
 
 ## Objective and evidence
 
@@ -335,6 +337,28 @@ Reproduce the initializer:
 Source/provenance: `edited-mask-initializer/initialization.json`; independent
 metrics: `edited-mask-initializer-evaluation/summary.json`, both under the session
 output directory. The initializer itself never consumes these evaluation files.
+
+## Sampling and growth bookkeeping correction, 22:08 Singapore
+
+Two regression tests reproduced additional orchestration defects:
+
+1. Growth history was updated before the same-step foreground deletion. It now
+   sees the final population after both density and foreground operations.
+   Otherwise a net deletion could be mistaken for a growth plateau.
+2. Density view selection consumed the training-camera RNG. A changed pruning
+   schedule consequently changed the camera sequence. ADC now has an independent
+   deterministic stream; camera sampling depends only on the run seed.
+
+Both regressions passed on CPU and CUDA; all 111 CPU tests passed. The three
+corrected edited-scene runs had already loaded the earlier common workflow and
+retain that source in their archives. Subsequent proposal-scale runs will all
+use the corrected workflow. Do not treat comparisons across that boundary as
+isolating only a configuration change. Renderer equations are unchanged.
+
+The corrected consistency + SH3 run completed at 35.378275 dB / 0.988175 SSIM.
+It improves on the earlier no-SH consistency model (34.0690 dB), but trails the
+corrected unregularized model (37.0101 dB). Independent geometry, material scores
+and perceptual scores are pending; this alone does not select the winner.
 
 ## Commit policy
 
