@@ -23,6 +23,7 @@ class SurfelTrainingConfig(TrainingConfig):
     DEFAULTS['geometry_loss'] = deepcopy(GEOMETRY_DEFAULTS)
     DEFAULTS["surfel"] = {
         "mode": "rgb",
+        "depth_mode": "centre",
         "specular_start_iteration": 10000,
         "initial_reflection": 0.1,
         "reflection_lr": 0.01,
@@ -31,6 +32,10 @@ class SurfelTrainingConfig(TrainingConfig):
         "environment_height": 64,
         "save_debug": True,
         "photometric_loss": "inherit",
+        "refinement": {
+            "start_iteration": None,
+            "prune_interval": 0,
+        },
         "normal_propagation": {
             "enabled": False,
             "interval": 1000,
@@ -60,6 +65,10 @@ class SurfelTrainingConfig(TrainingConfig):
             raise ValueError("Surfel G-buffers require dense rendering; set sparse.enabled: false.")
         if settings["mode"] not in ("rgb", "deferred"):
             raise ValueError("surfel.mode must be rgb or deferred.")
+        if settings['depth_mode'] not in ('centre', 'ray_plane'):
+            raise ValueError('surfel.depth_mode must be centre or ray_plane.')
+        if geometry == 'gaussian' and settings['depth_mode'] != 'centre':
+            raise ValueError('Ray-plane depth requires model.geometry: surfel.')
         for key in ("environment_width", "environment_height"):
             value = settings[key]
             if not isinstance(value, int) or isinstance(value, bool) or not 2 <= value <= 2048:
@@ -79,6 +88,16 @@ class SurfelTrainingConfig(TrainingConfig):
         geometry_loss = self.values['geometry_loss']
         if settings['photometric_loss'] not in ('inherit', 'l1_dssim'):
             raise ValueError('surfel.photometric_loss must be inherit or l1_dssim.')
+        refinement = settings['refinement']
+        start = refinement['start_iteration']
+        if start is not None:
+            if isinstance(start, bool) or not isinstance(start, int) or not 1 <= start <= self.values['training']['iterations']:
+                raise ValueError('refinement.start_iteration must be null or an iteration within training.')
+            if settings['mode'] == 'deferred' and start <= settings['specular_start_iteration']:
+                raise ValueError('Refinement must start after reflection activation.')
+        interval = refinement['prune_interval']
+        if isinstance(interval, bool) or not isinstance(interval, int) or interval < 0:
+            raise ValueError('refinement.prune_interval must be a non-negative integer.')
         propagation = settings['normal_propagation']
         if not isinstance(propagation['enabled'], bool):
             raise ValueError('normal_propagation.enabled must be boolean.')
@@ -101,8 +120,6 @@ class SurfelTrainingConfig(TrainingConfig):
         if propagation['enabled']:
             if geometry != 'surfel' or settings['mode'] != 'deferred':
                 raise ValueError('Paper normal propagation requires deferred surfels.')
-            if geometry_loss['normal_depth_weight'] != 0:
-                raise ValueError('Paper normal propagation replaces the depth-normal penalty; set normal_depth_weight: 0.')
             if propagation['until_iteration'] <= settings['specular_start_iteration']:
                 raise ValueError('Normal propagation must extend beyond reflection activation.')
             if propagation['until_iteration'] >= self.values['training']['iterations']:

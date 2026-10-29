@@ -52,6 +52,7 @@ if str(_shared) not in sys.path:
 from trainable_gaussian import TrainableGaussianSet
 from dssim_loss import DSSIMComputer
 from sh_appearance import SHAppearance
+from optimizer_state import copy_state_rows, inherit_adam_rows
 from gaussian_set import GaussianSet
 from profiling import profile_stage
 from splat_math import (
@@ -562,8 +563,8 @@ def render_backward(
             # Two adjoints to derive:
             #   colour  -- how much of the pixel gradient this splat's colour receives, given
             #              the transmittance in front of it and its own alpha. Note the forward
-            #              clamps colour to [0, 1], so a channel sitting at the clamp passes
-            #              nothing back.
+            #              clamps colour to [0, 1]. At an endpoint use the interior
+            #              derivative so projected updates can recover inward.
             #   alpha   -- raising alpha adds this splat's colour and removes whatever the
             #              splats behind it contribute. `remaining_rgb` below is that trailing
             #              contribution, recovered from the final pixel value rather than by a
@@ -623,17 +624,17 @@ def render_backward(
 
             raw_colour = color[splat]
 
-            if raw_colour[0] > 0.0 and raw_colour[0] < 1.0:
+            if raw_colour[0] >= 0.0 and raw_colour[0] <= 1.0:
                 wp.atomic_add(
                     color_grad_flat, splat * 3 + 0, colour_adjoint[0]
                 )
 
-            if raw_colour[1] > 0.0 and raw_colour[1] < 1.0:
+            if raw_colour[1] >= 0.0 and raw_colour[1] <= 1.0:
                 wp.atomic_add(
                     color_grad_flat, splat * 3 + 1, colour_adjoint[1]
                 )
 
-            if raw_colour[2] > 0.0 and raw_colour[2] < 1.0:
+            if raw_colour[2] >= 0.0 and raw_colour[2] <= 1.0:
                 wp.atomic_add(
                     color_grad_flat, splat * 3 + 2, colour_adjoint[2]
                 )
@@ -859,17 +860,17 @@ def render_sparse_backward(
 
             raw_colour = color[splat]
 
-            if raw_colour[0] > 0.0 and raw_colour[0] < 1.0:
+            if raw_colour[0] >= 0.0 and raw_colour[0] <= 1.0:
                 wp.atomic_add(
                     color_grad_flat, splat * 3 + 0, colour_adjoint[0]
                 )
 
-            if raw_colour[1] > 0.0 and raw_colour[1] < 1.0:
+            if raw_colour[1] >= 0.0 and raw_colour[1] <= 1.0:
                 wp.atomic_add(
                     color_grad_flat, splat * 3 + 1, colour_adjoint[1]
                 )
 
-            if raw_colour[2] > 0.0 and raw_colour[2] < 1.0:
+            if raw_colour[2] >= 0.0 and raw_colour[2] <= 1.0:
                 wp.atomic_add(
                     color_grad_flat, splat * 3 + 2, colour_adjoint[2]
                 )
@@ -1010,6 +1011,20 @@ class SplatOptimizers:
         self.quaternion_m.zero_()
         self.quaternion_v.zero_()
         self.quaternion_adam_t = 0
+
+    def inherit_children(self, parents, children):
+        """Preserve existing trajectories and copy parent state into reused slots.
+
+        Split children inherit the pre-split history as a warm start, just as
+        clones do. No global timestep or unchanged slot is reset.
+        """
+        parent_ids = wp.array(np.asarray(parents, np.int32), dtype=wp.int32, device=self.device)
+        child_ids = wp.array(np.asarray(children, np.int32), dtype=wp.int32, device=self.device)
+        for optimizer in self.optimizers:
+            inherit_adam_rows(optimizer, parent_ids, child_ids)
+        for values in (self.quaternion_m, self.quaternion_v):
+            wp.launch(copy_state_rows, len(children), inputs=[values, parent_ids, child_ids], device=self.device)
+        return parent_ids, child_ids
 
     def reset_opacity(self):
         """Clear only the opacity optimizer's moments, for a periodic opacity ceiling reset."""
@@ -1669,17 +1684,8 @@ class WarpImageTrainer:
             (self.color, color, wp.vec3),
         ):
             array.assign(wp.array(values.astype(np.float32), dtype=dtype, device=self.device))
-        if children_to_add:
-            # Only a densify event needs this. A late-prune-only event passes fraction == 0.0, so
-            # it adds no children -- resetting there would wipe Adam's moments for the entire
-            # population to service zero new splats, repeatedly kneecapping momentum during refine
-            # now that late-prune fires continuously. Pruned slots do keep stale moments while
-            # inactive, which is harmless: they are excluded from tile building so they take no
-            # gradient and are never rendered, and the densify event that eventually reuses a slot
-            # as a clone/split destination resets state at that point.
-            self.optimizers.reset()
-            if self.sh is not None:
-                self.sh.reset_optimizer()
+        if pair_count:
+            self.optimizers.inherit_children(chosen_parents, chosen_children)
         # Report the slots this call filled. Nothing here needs it -- every parameter a version-1
         # splat owns is overwritten above -- but a subclass carrying extra per-splat state has to
         # reset that state on exactly these slots, and it cannot recover the list afterwards: a
@@ -2097,10 +2103,11 @@ def run_training(
         completed_iteration = iteration
         view_ids = np.asarray([rng.integers(len(targets))], dtype=np.int32)
         should_densify = bool(
-            densification["interval"] and iteration % densification["interval"] == 0
+            iteration < training["iterations"]
+            and densification["interval"] and iteration % densification["interval"] == 0
         )
         should_late_prune = bool(
-            adc["enabled"]
+            iteration < training["iterations"] and adc["enabled"]
             and late_prune_armed
             and iteration % adc["late_prune_interval"] == 0
         )
@@ -2137,7 +2144,7 @@ def run_training(
                         flush=True,
                     )
         if (
-            densification["opacity_reset_interval"]
+            iteration < training["iterations"] and densification["opacity_reset_interval"]
             and iteration % densification["opacity_reset_interval"] == 0
         ):
             reset_window.warn_if_unrecovered(iteration)

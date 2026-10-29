@@ -8,6 +8,37 @@ from .geometry import alpha_at_pixel, base, camera_position, normal_objective, s
 GBuffer = wp.types.vector(length=9, dtype=wp.float32)
 
 
+@wp.func
+def ray_plane_depth(mean: wp.vec3, normal: wp.vec3, camera: wp.mat44, ray: wp.vec3):
+    """Camera-z intersection depth; retain centre depth for degenerate intersections.
+
+    The ray has z=1. Normals and means are world-space, and camera is world-to-camera.
+    A grazing ray or an intersection behind the near plane has no useful plane
+    depth under the existing EWA footprint, so keep its original centre depth.
+    """
+    point = camera * wp.vec4(mean[0], mean[1], mean[2], 1.0)
+    n = wp.vec3(wp.dot(wp.vec3(camera[0, 0], camera[0, 1], camera[0, 2]), normal),
+                wp.dot(wp.vec3(camera[1, 0], camera[1, 1], camera[1, 2]), normal),
+                wp.dot(wp.vec3(camera[2, 0], camera[2, 1], camera[2, 2]), normal))
+    denominator = wp.dot(n, ray)
+    depth = point[2]
+    # Test the cosine, independent of ray length or normal magnitude.
+    if denominator * denominator > 1.0e-6 * wp.dot(n, n) * wp.dot(ray, ray):
+        intersection = wp.dot(n, wp.vec3(point[0], point[1], point[2])) / denominator
+        if intersection > base.NEAR_PLANE:
+            depth = intersection
+    return depth
+
+
+@wp.func
+def pixel_attributes(attributes: GBuffer, mean: wp.vec3, camera: wp.mat44, ray: wp.vec3, plane_depth: int):
+    value = attributes
+    if plane_depth != 0:
+        normal = wp.vec3(value[3], value[4], value[5])
+        value[6] = ray_plane_depth(mean, normal, camera, ray)
+    return value
+
+
 # Forward adjoints keep nested wp.grad() dependencies available to the explicit backward.
 # Only deferred_shader is recorded on the training tape.
 @wp.kernel
@@ -30,11 +61,13 @@ def raster_forward(means: wp.array(dtype=wp.vec3), log_scales: wp.array(dtype=wp
                    quaternions: wp.array(dtype=wp.vec4), opacity: wp.array(dtype=wp.float32),
                    attributes: wp.array(dtype=GBuffer), cameras: wp.array(dtype=wp.mat44), view: int,
                    offsets: wp.array(dtype=wp.int32), pairs: wp.array(dtype=wp.uint64),
-                   width: int, height: int, tiles_x: int, focal: float,
+                   width: int, height: int, tiles_x: int, focal: float, plane_depth: int,
                    compact: int, beta: float, alpha_min: float, buffers: wp.array(dtype=GBuffer)):
     pixel = wp.tid()
     px, py = pixel % width, pixel // width
     record = (py // base.TILE) * tiles_x + px // base.TILE
+    ray = wp.vec3((float(px) + 0.5 - float(width) * 0.5) / focal,
+                  (float(py) + 0.5 - float(height) * 0.5) / focal, 1.0)
     value = GBuffer(0.0)
     transmittance = float(1.0)
     for entry in range(offsets[record], offsets[record + 1]):
@@ -42,7 +75,8 @@ def raster_forward(means: wp.array(dtype=wp.vec3), log_scales: wp.array(dtype=wp
         alpha = alpha_at_pixel(means[i], log_scales[i], quaternions[i], opacity[i], cameras[view],
                                float(px) + 0.5, float(py) + 0.5, float(width), float(height), focal, compact, beta, alpha_min)
         if alpha > 0.0:
-            value += transmittance * alpha * attributes[i]
+            attribute = pixel_attributes(attributes[i], means[i], cameras[view], ray, plane_depth)
+            value += transmittance * alpha * attribute
             transmittance *= 1.0 - alpha
             if transmittance < base.TRANSMITTANCE_CUTOFF:
                 break
@@ -108,7 +142,7 @@ def raster_backward(means: wp.array(dtype=wp.vec3), log_scales: wp.array(dtype=w
                     quaternions: wp.array(dtype=wp.vec4), opacity: wp.array(dtype=wp.float32),
                     colours: wp.array(dtype=wp.vec3), attributes: wp.array(dtype=GBuffer),
                     cameras: wp.array(dtype=wp.mat44), view: int, offsets: wp.array(dtype=wp.int32),
-                    pairs: wp.array(dtype=wp.uint64), width: int, height: int, tiles_x: int, focal: float,
+                    pairs: wp.array(dtype=wp.uint64), width: int, height: int, tiles_x: int, focal: float, plane_depth: int,
                     compact: int, beta: float, alpha_min: float, buffers: wp.array(dtype=GBuffer),
                     buffer_gradient: wp.array(dtype=GBuffer), mean_grad: wp.array(dtype=wp.float32),
                     scale_grad: wp.array(dtype=wp.float32), quaternion_grad: wp.array(dtype=wp.float32),
@@ -117,6 +151,8 @@ def raster_backward(means: wp.array(dtype=wp.vec3), log_scales: wp.array(dtype=w
     pixel = wp.tid()
     px, py = pixel % width, pixel // width
     record = (py // base.TILE) * tiles_x + px // base.TILE
+    ray = wp.vec3((float(px) + 0.5 - float(width) * 0.5) / focal,
+                  (float(py) + 0.5 - float(height) * 0.5) / focal, 1.0)
     final, gradient = buffers[pixel], buffer_gradient[pixel]
     prefix = GBuffer(0.0)
     transmittance = float(1.0)
@@ -126,26 +162,35 @@ def raster_backward(means: wp.array(dtype=wp.vec3), log_scales: wp.array(dtype=w
         alpha = alpha_at_pixel(means[i], log_scales[i], quaternions[i], opacity[i], camera,
                                float(px) + 0.5, float(py) + 0.5, float(width), float(height), focal, compact, beta, alpha_min)
         if alpha > 0.0:
+            attribute = pixel_attributes(attributes[i], means[i], camera, ray, plane_depth)
             weight = transmittance * alpha
             next_transmittance = transmittance * (1.0 - alpha)
-            behind = (final - prefix - weight * attributes[i]) / wp.max(next_transmittance, 1.0e-8)
-            alpha_gradient = transmittance * wp.dot(gradient, attributes[i] - behind)
+            behind = (final - prefix - weight * attribute) / wp.max(next_transmittance, 1.0e-8)
+            alpha_gradient = transmittance * wp.dot(gradient, attribute - behind)
             dm, ds, dq, do, dc, dpx, dpy, dw, dh, df, de, db, da = wp.grad(alpha_at_pixel)(
                 means[i], log_scales[i], quaternions[i], opacity[i], camera,
                 float(px) + 0.5, float(py) + 0.5, float(width), float(height), focal, compact, beta, alpha_min)
+            depth_mean = wp.vec3(camera[2, 0], camera[2, 1], camera[2, 2])
+            depth_normal = wp.vec3(0.0)
+            if plane_depth != 0 and gradient[6] != 0.0:
+                normal = wp.vec3(attribute[3], attribute[4], attribute[5])
+                depth_mean, depth_normal, depth_camera, depth_ray = wp.grad(ray_plane_depth)(
+                    means[i], normal, camera, ray)
             for axis in range(3):
-                depth_gradient = weight * gradient[6] * camera[2, axis]
-                wp.atomic_add(mean_grad, 3 * i + axis, alpha_gradient * dm[axis] + depth_gradient)
+                depth_gradient = weight * gradient[6]
+                wp.atomic_add(mean_grad, 3 * i + axis, alpha_gradient * dm[axis] + depth_gradient * depth_mean[axis])
                 wp.atomic_add(scale_grad, 3 * i + axis, alpha_gradient * ds[axis])
-                wp.atomic_add(normal_grad, 3 * i + axis, weight * gradient[3 + axis])
-                if colours[i][axis] > 0.0 and colours[i][axis] < 1.0:
+                wp.atomic_add(normal_grad, 3 * i + axis, weight * gradient[3 + axis] + depth_gradient * depth_normal[axis])
+                # Interior derivative at the bounds permits inward recovery under
+                # projected RGB updates. Values outside the clamp remain masked.
+                if colours[i][axis] >= 0.0 and colours[i][axis] <= 1.0:
                     wp.atomic_add(colour_grad, 3 * i + axis, weight * gradient[axis])
             for axis in range(4):
                 wp.atomic_add(quaternion_grad, 4 * i + axis, alpha_gradient * dq[axis])
             wp.atomic_add(opacity_grad, i, alpha_gradient * do)
             strength = attributes[i][8]
             wp.atomic_add(reflection_grad, i, weight * gradient[8] * strength * (1.0 - strength))
-            prefix += weight * attributes[i]
+            prefix += weight * attribute
             transmittance = next_transmittance
             if transmittance < base.TRANSMITTANCE_CUTOFF:
                 break

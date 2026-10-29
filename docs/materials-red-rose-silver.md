@@ -40,6 +40,42 @@ Blender ground-truth normal/depth passes are not needed by these presets.
 
 ## 2. Train RGB surfels with mask and normal losses
 
+### Completed consistency comparison — tuning closed
+
+The [matched sweep](../outputs/materials_red-rose-silver-Oct29-1852-deferred-normal-sweep/summary.md)
+selected weight 0 for validation RGB quality (34.5822 dB versus 34.0690 for 0.01).
+The 0.01 run has smoother normal/depth previews and remains the regularized
+comparison. At the user's request, stop tuning here and move on to final renders
+and write-up; Blender reference-normal/depth evaluation is deferred.
+The command below is retained to reproduce the comparison.
+
+Final test evaluation and write-up are complete:
+[experiment record](experiments/2026-10-29-normal-consistency-final.md) and
+[matched figure gallery](../outputs/materials-red-rose-silver-final-comparison-2026-10-29/index.html).
+Weight 0 achieved 34.5007 test dB versus 34.1435 for 0.01; the latter has smoother
+normal diagnostics. All 200 test cameras were evaluated at 400x400.
+
+The optimizer fixes and quiet final refinement are implemented; see the
+[design update log](project-plan.md#design-update-log) and
+[pre-fix audit](training-code-audit-2026-10-29.md).
+Reproduce the matched **normal-depth weight 0 versus 0.01** experiment:
+
+```bash
+python scripts/tune_deferred_normal_loss.py config/materials_red-rose-silver_deferred_consistency.yaml --weights 0 0.01
+```
+
+Both candidates use 400px images, capacity 200k, seed 7, 30k steps, L1 + D-SSIM +
+mask BCE, propagation disabled and fixed topology for the final 10k steps.
+Position decay ends at 30k. Only normal-depth coefficient varies; the 0.01 arm
+ramps from 2k to 4k. Standalone presets:
+[control](../config/materials_red-rose-silver_deferred_consistency_control.yaml) and
+[consistency](../config/materials_red-rose-silver_deferred_consistency.yaml).
+The D-SSIM definition stays `(1-SSIM)/2`. Inspect normal/depth and foreground
+quality alongside the validation image score; final quality is not established
+by the implementation checks.
+
+### Earlier RGB geometry comparison
+
 ```bash
 python scripts/run_project.py \
   config/materials_red-rose-silver_rgb_geometry.yaml \
@@ -58,14 +94,15 @@ reconstruction quality has not yet been measured for this preset.
 python scripts/run_project.py config/materials_red-rose-silver_deferred_mini.yaml --name mini-paper-mask --metrics psnr ssim
 ```
 
-Current full sweep: [live summary](../outputs/materials_red-rose-silver-Oct29-1656-deferred-propagation-sweep/summary.md).
-The 1.5 factor is running first. Follow
-`outputs/materials_red-rose-silver-Oct29-1656-deferred-propagation-sweep/launcher.log`
-for candidate progress; each candidate's run folder contains its live `train.log`.
+Completed propagation sweep:
+[summary](../outputs/materials_red-rose-silver-Oct29-1656-deferred-propagation-sweep/summary.md).
+Factor 1.5 won on validation PSNR; this selection does not establish normal accuracy.
+That archived sweep predates the optimizer fixes and quiet refinement. New full/mini
+30k propagation presets keep topology fixed after 24k, and the 10k preset after 8k.
 
 The deferred preset now uses **0.8 L1 + 0.2 D-SSIM + 0.1 mask BCE** from step 1.
-The former depth-normal penalty is disabled. The RGB command above remains the
-historical comparison; use deferred training for the new normal method.
+Depth-normal consistency is disabled in these propagation presets. It is enabled
+in the new consistency preset above. The RGB command remains an earlier comparison.
 
 [3DGS-DR sections 3.2-3.3](https://arxiv.org/html/2404.18454v1#S3.SS2) has no separate
 normal-loss equation. Normals receive image gradients through reflected environment
@@ -122,8 +159,8 @@ python scripts/tune_deferred_normal_loss.py --resume outputs/YOUR_SWEEP_DIRECTOR
 
 Completed candidates are kept; an interrupted candidate restarts from scratch.
 Keep training/evaluation sources and train/validation inputs unchanged during a
-sweep. Override factors with `--scales 1 1.3 1.5`. The old `--weights` grid applies
-only to historical configs without paper normal propagation.
+sweep. Override factors with `--scales 1 1.3 1.5`. Use `--weights` for configurations
+with propagation disabled, including the new consistency comparison above.
 
 The previous depth-normal sweep was interrupted at the user's request. Its
 snapshots and recorded RGB result remain under `outputs/`; do not resume that
@@ -136,6 +173,25 @@ The scheduled cutoff, interleaving and opacity freeze follow the
 [released training loop](https://github.com/gapszju/3DGS-DR/blob/main/train.py);
 reflection thresholds and tangent expansion also follow the
 [released model updates](https://github.com/gapszju/3DGS-DR/blob/main/scene/gaussian_model.py).
+
+## Ray-plane depth experiment
+
+The new preset changes only depth mode and output destination relative to
+`materials_red-rose-silver_deferred_consistency.yaml`:
+
+```bash
+python scripts/run_project.py \
+  config/materials_red-rose-silver_deferred_ray_plane.yaml \
+  --name ray-plane-depth --metrics psnr ssim
+```
+
+It computes each surfel's per-pixel plane-intersection depth and differentiates
+through it. The existing normal-depth weight remains 0.01. Growth/pruning settings
+are unchanged: 1k initial surfels, 200k maximum, the same density schedule, and no
+growth, pruning or opacity resets for the final 10k steps. No additional normal
+smoothing or depth-distortion penalty is enabled. EWA footprints and centre-based
+sorting remain; degenerate plane intersections fall back to centre depth. This
+isolates a depth-model change; improved crater recovery still needs evaluation.
 
 Verification includes analytical/finite-difference image, mask, quaternion and
 reflection gradients; propagation thresholds, inactive slots and normal-axis

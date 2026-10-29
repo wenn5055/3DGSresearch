@@ -125,11 +125,23 @@ python scripts/run_project.py config/materials_surfel_deferred_geometry.yaml --n
   convergence checks and final PSNR/SSIM stay photometric. Normal-loss warm-up must
   finish before early stopping is allowed; these presets disable early stopping.
 
-Current depth is the opacity-normalized blend of surfel-centre camera-z depths,
-not exact ray/plane intersection depth. Consistency constrains this approximation;
-it does not establish correct geometry or guarantee smooth normals. Preserve this
-renderer when comparing loss ablations. Check foreground coverage, depth/normal
-maps and validation image scores before selecting loss weights.
+The default `surfel.depth_mode: centre` uses the opacity-normalized blend of
+surfel-centre camera-z depths. The opt-in `ray_plane` mode instead intersects each
+pixel ray with each contributing surfel plane before blending depths. Its explicit
+backward includes position, normal/orientation and compositing-weight derivatives.
+Near-parallel rays (absolute cosine <=0.001) and intersections at/before the near
+plane fall back to centre depth, with the corresponding centre-depth derivative.
+The EWA footprint, centre-based sorting and alpha compositing remain unchanged;
+this is not the full perspective-accurate 2DGS renderer or a guarantee of correct
+surface reconstruction. Check foreground coverage, depth/normal maps and validation
+image scores. Keep depth mode fixed when comparing normal-loss weights.
+
+The new `config/materials_red-rose-silver_deferred_ray_plane.yaml` differs from the
+three-ball consistency preset only in depth mode and output path. It preserves
+the 200k capacity, 1k initial surfels, density interval/fraction, opacity resets,
+disabled propagation and the final 10k steps with fixed topology and no opacity
+resets. Sidecars record depth mode; evaluation restores it, and legacy sidecars
+without that field use centre depth. Warm starts use the requested training mode.
 
 The geometry terms follow the mask and consistency ideas in
 [Gaussian Surfels §3.3](https://arxiv.org/html/2404.17774v2#S3.SS3), with the explicit

@@ -65,6 +65,8 @@ def run_training(trainer, config, training_views, eval_ids, frame_ids=None):
     print(base.describe_evaluation_views(eval_ids, frame_ids, reporting['eval_manifest']), flush=True)
     want_deferred = settings['mode'] == 'deferred'
     print(f"Surfel pass: {settings['mode']}; deferred start iteration: {settings['specular_start_iteration']}", flush=True)
+    if config['model']['geometry'] == 'surfel':
+        print(f"Surfel depth mode: {settings['depth_mode']}", flush=True)
     geometry = config['geometry_loss']
     if geometry['mask_weight'] or geometry['normal_depth_weight']:
         print(f"Geometry losses (training alpha only): mask={geometry['mask_weight']}, "
@@ -72,9 +74,13 @@ def run_training(trainer, config, training_views, eval_ids, frame_ids=None):
               f"ramp={geometry['normal_ramp_iterations']}; validation gates remain photometric.", flush=True)
     loss_curriculum = config['loss']['mode'] == 'mse_dssim' and not getattr(trainer, 'uses_paper_loss', False)
     propagation = settings['normal_propagation']
+    refinement = settings['refinement']
     if propagation['enabled']:
         print('Paper normal optimization: image/reflection gradients, opacity/scale propagation and colour noise; '
-              'alpha-mask BCE retained; depth-normal penalty disabled.', flush=True)
+              f"normal-depth weight={geometry['normal_depth_weight']}.", flush=True)
+    if refinement['start_iteration'] is not None:
+        print(f"Quiet refinement from iteration {refinement['start_iteration']}: growth, opacity resets and "
+              f"propagation off; prune interval={refinement['prune_interval']} (0 keeps topology fixed).", flush=True)
     loss_ema = base.ExponentialMovingAverage(reporting['loss_ema_decay'])
     eval_ema = base.ExponentialMovingAverage(reporting['loss_ema_decay'])
     mse_ema = base.ExponentialMovingAverage(reporting['loss_ema_decay'])
@@ -100,6 +106,13 @@ def run_training(trainer, config, training_views, eval_ids, frame_ids=None):
     geometry_ready_before = not bool(geometry['normal_depth_weight'])
     for iteration in range(1, config['training']['iterations'] + 1):
         completed = iteration
+        refining = refinement['start_iteration'] is not None and iteration >= refinement['start_iteration']
+        if refining and iteration == refinement['start_iteration']:
+            trainer._opacity_frozen_until = 0
+            tracker = None
+            stage_start = iteration
+            reset_window = base.OpacityResetWindow()
+            print(f'{iteration:6d}: entering quiet refinement.', flush=True)
         geometry_ready = (not geometry['normal_depth_weight'] or iteration >=
                           geometry['normal_start_iteration'] + geometry['normal_ramp_iterations'])
         if geometry_ready and not geometry_ready_before:
@@ -119,10 +132,14 @@ def run_training(trainer, config, training_views, eval_ids, frame_ids=None):
             eval_ema.update(objective)
             reset_window = base.OpacityResetWindow()
             print(f'{iteration:6d}: advancing surfel stage rgb -> deferred (scheduled geometry warm-up complete).', flush=True)
-        propagating = propagation['enabled'] and trainer.specular_active and iteration <= propagation['until_iteration']
+        propagating = (not refining and propagation['enabled'] and trainer.specular_active
+                       and iteration <= propagation['until_iteration'])
         interval = propagation['densification_interval'] if propagating and density['interval'] else density['interval']
-        densify = bool(interval and iteration % interval == 0)
-        late = adc['enabled'] and late_prune_armed and iteration % adc['late_prune_interval'] == 0
+        can_change_structure = iteration < config['training']['iterations']
+        densify = bool(not refining and can_change_structure and interval and iteration % interval == 0)
+        late = bool(can_change_structure and (
+            (refining and refinement['prune_interval'] and iteration % refinement['prune_interval'] == 0)
+            or (not refining and adc['enabled'] and late_prune_armed and iteration % adc['late_prune_interval'] == 0)))
         evaluate = iteration % reporting['eval_every'] == 0
         save = iteration % reporting['snapshot_every'] == 0
         log = iteration % reporting['log_every'] == 0
@@ -138,14 +155,14 @@ def run_training(trainer, config, training_views, eval_ids, frame_ids=None):
                 late_prune_armed = True
         # Leave the final trained model intact; a last-step clamp would save holes
         # before opacity has any opportunity to recover.
-        opacity_reset = bool(density['opacity_reset_interval']
+        opacity_reset = bool(not refining and density['opacity_reset_interval']
                              and iteration < config['training']['iterations']
                              and iteration % density['opacity_reset_interval'] == 0)
         if opacity_reset:
             reset_window.warn_if_unrecovered(iteration)
             reset_window.open(eval_ema.value, iteration)
             trainer.reset_opacity()
-        if propagation['enabled']:
+        if propagation['enabled'] and not refining:
             event = trainer.propagate_normals(iteration, opacity_reset=opacity_reset)
             if event:
                 reset_window.warn_if_unrecovered(iteration)

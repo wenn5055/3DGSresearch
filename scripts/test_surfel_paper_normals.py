@@ -126,13 +126,23 @@ class PaperNormalTests(unittest.TestCase):
         self.assertEqual(trainer._opacity_frozen_until, 0)
         self.assertIsNone(trainer.propagate_normals(6))
 
-    def test_configuration_rejects_mixing_old_penalty_with_propagation(self):
+    def test_configuration_allows_explicit_hybrid_geometry_loss(self):
         config = deepcopy(SurfelTrainingConfig.DEFAULTS)
+        config['training']['iterations'] = 30000
         config['surfel'].update(mode='deferred', photometric_loss='l1_dssim')
         config['surfel']['normal_propagation']['enabled'] = True
         config['geometry_loss']['normal_depth_weight'] = 0.01
-        with self.assertRaisesRegex(ValueError, 'replaces'):
-            SurfelTrainingConfig(config).validate()
+        SurfelTrainingConfig(config).validate()
+
+    def test_hybrid_image_mask_normal_gradients_match_finite_differences(self):
+        trainer = self.trainer(propagation=True)
+        trainer.geometry_options.update(normal_depth_weight=0.01, normal_start_iteration=0, normal_ramp_iterations=0)
+        trainer.loss_and_gradients([0])
+        self.assertGreater(trainer.last_geometry_terms['normal_pixels'], 0)
+        axis = int(np.argmax(np.abs(trainer.optimizers.quaternion_grad_flat.numpy()[:4])))
+        analytic = float(trainer.optimizers.quaternion_grad_flat.numpy()[axis])
+        numeric = reference.finite_difference(trainer, trainer.quaternions, wp.vec4, (0, axis), .001)
+        self.assertAlmostEqual(analytic, numeric, delta=max(5e-4, abs(numeric) * .04))
 
     def test_workflow_preserves_final_opacity_instead_of_clamping_last_step(self):
         trainer = self.trainer(propagation=True)

@@ -88,8 +88,6 @@ class SurfelTrainer(TrainingOnlyInitialization, base.WarpImageTrainer):
         self._opacity_frozen_until = 0
         self._propagation_seed = (int(self.rng.integers(1 << 30))
                                   if options['normal_propagation']['enabled'] else 0)
-        if options['normal_propagation']['enabled'] and self.geometry_options['normal_depth_weight']:
-            raise ValueError('Paper normal propagation replaces the old depth-normal penalty.')
         if self.geometry_options['mask_weight'] or self.geometry_options['normal_depth_weight']:
             if training_alpha is None:
                 raise ValueError('Enabled geometry losses require training alpha masks.')
@@ -201,7 +199,8 @@ class SurfelTrainer(TrainingOnlyInitialization, base.WarpImageTrainer):
         wp.launch(k.raster_forward, dim=self.width * self.height,
                   inputs=[self.means, self.log_scales, self.quaternions, self.opacity, self.attributes,
                           self.cameras, view, offsets, pairs, self.width, self.height, self.tiles_x,
-                          self.focal] + self.compact_box_args, outputs=[self.buffers], device=self.device)
+                          self.focal, int(self.surfel_options['depth_mode'] == 'ray_plane')]
+                          + self.compact_box_args, outputs=[self.buffers], device=self.device)
         inputs = [self.buffers, self.environment, self.env_width, self.env_height, self.cameras, view,
                   self.width, self.height, self.focal, int(self.specular_active), self.background]
         if record:
@@ -242,7 +241,8 @@ class SurfelTrainer(TrainingOnlyInitialization, base.WarpImageTrainer):
         wp.launch(k.raster_backward, dim=self.width * self.height,
                   inputs=[self.means, self.log_scales, self.quaternions, self.opacity, self.color,
                           self.attributes, self.cameras, view, offsets, pairs, self.width, self.height,
-                          self.tiles_x, self.focal] + self.compact_box_args + [self.buffers, self.buffers.grad],
+                          self.tiles_x, self.focal, int(self.surfel_options['depth_mode'] == 'ray_plane')]
+                          + self.compact_box_args + [self.buffers, self.buffers.grad],
                   outputs=[self.optimizers.mean_grad_flat, self.optimizers.scale_grad_flat,
                            self.optimizers.quaternion_grad_flat, self.optimizers.opacity_grad,
                            self.optimizers.color_grad_flat, self.normal_gradient, self.reflection_gradient], device=self.device)
@@ -360,9 +360,9 @@ class SurfelTrainer(TrainingOnlyInitialization, base.WarpImageTrainer):
                               (self.opacity, logits), (self.color, colour), (self.reflection_logits, reflection)):
             field.assign(values.astype(np.float32))
         self.active_device.assign(self.active.astype(np.int32))
-        if requested:
-            self.optimizers.reset()
-            self.reflection_optimizer.reset_internal_state()
+        if count:
+            parent_ids, child_ids = self.optimizers.inherit_children(parents, children)
+            base.inherit_adam_rows(self.reflection_optimizer, parent_ids, child_ids)
         return children
 
     def gaussian_set(self):
@@ -375,6 +375,7 @@ class SurfelTrainer(TrainingOnlyInitialization, base.WarpImageTrainer):
         sidecar = path.with_suffix('.surfel.npz')
         np.savez_compressed(sidecar, format_version=np.int32(1), geometry='rank2_local_z_zero',
                             mode=self.surfel_options['mode'], specular_active=np.bool_(self.specular_active),
+                            depth_mode=self.surfel_options['depth_mode'],
                             reflection_logits=self.reflection_logits.numpy()[self.active],
                             environment_logits=self.environment.numpy().reshape(self.env_height, self.env_width, 3),
                             scene_radius=np.float32(self.scene_radius))
@@ -419,6 +420,7 @@ class SurfelTrainer(TrainingOnlyInitialization, base.WarpImageTrainer):
             self.specular_active = values['specular_active']
         if for_evaluation:
             self.specular_active = values['specular_active']
+            self.surfel_options['depth_mode'] = values['depth_mode']
 
 
 def read_surfel_sidecar(path, count):
@@ -426,6 +428,9 @@ def read_surfel_sidecar(path, count):
         if int(data['format_version']) != 1 or str(data['geometry'].item()) != 'rank2_local_z_zero':
             raise ValueError('Unsupported surfel checkpoint format or geometry.')
         mode = str(data['mode'].item())
+        depth_mode = str(data['depth_mode'].item()) if 'depth_mode' in data else 'centre'
+        if depth_mode not in ('centre', 'ray_plane'):
+            raise ValueError('Unsupported surfel checkpoint depth mode.')
         reflection = np.asarray(data['reflection_logits'], np.float32)
         environment = np.asarray(data['environment_logits'], np.float32)
         if mode not in ('rgb', 'deferred') or reflection.shape != (count,):
@@ -438,5 +443,5 @@ def read_surfel_sidecar(path, count):
         activated = bool(data['specular_active'])
         if not np.isfinite(radius) or radius <= 0 or (mode == 'rgb' and activated):
             raise ValueError('Invalid surfel radius or shading-stage metadata.')
-        return {'mode': mode, 'reflection_logits': reflection, 'environment_logits': environment,
+        return {'mode': mode, 'depth_mode': depth_mode, 'reflection_logits': reflection, 'environment_logits': environment,
                 'specular_active': activated, 'scene_radius': radius}

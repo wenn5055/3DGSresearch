@@ -335,3 +335,90 @@ strength is only 0.1009. The map starts from mean training colour and is not sup
 with a garden panorama. Base RGB, uncertain normals and reflection strengths can
 explain the images together; a recognizable recovered garden is not guaranteed.
 Lighting/material separation remains a later investigation.
+
+## 2026-10-29 — Training audit fixes and geometry experiment design
+
+**Question:** Why do noisy normals persist despite improved deferred RGB results?
+
+The [pre-fix code audit](training-code-audit-2026-10-29.md) reproduced blocked RGB
+endpoint recovery and global Adam resets during density events, including events
+that add no children. It also identified continued final-step growth, footprint-based
+pruning limitations, and the lack of active normal-depth consistency in the recent
+propagation presets. These findings do not establish one isolated cause of normal
+error. The [design update log](project-plan.md#design-update-log) records the
+implementation choices and next controlled experiment.
+
+**Implemented:** inward RGB recovery; inherited parent Adam moments with unchanged
+clocks and preserved existing-splat histories (including SH/reflection); no reset for
+zero-child events; configurable quiet refinement with independent pruning; prevention
+of final-step structure updates; optional hybrid propagation/normal-depth loss.
+The current 30k propagation presets enter quiet refinement at 24,001, and the 10k
+preset at 8,001. D-SSIM remains `(1-SSIM)/2` and is now identified in run summaries.
+
+**Verification:** all **84 tests passed on CPU**, and the same suite passed with
+surfel and SH tests using **CUDA**. New checks cover inward recovery in dense/sparse/
+surfel rendering, preserved parent and inherited child state for clones/splits,
+zero-child events, SH band clocks, hybrid finite differences, and quiet refinement
+with/without pruning. Logs: [CPU](../outputs/implementation-cpu-tests.log),
+[CUDA configuration](../outputs/implementation-cuda-tests.log).
+
+A [64-step GPU integration run](../outputs/materials_red-rose-silver-Oct29-1846-optimizer-consistency-smoke-2/summary.md)
+completed training, checkpoint reload and evaluation on all 100 validation views.
+It activated reflection at step 8 and quiet refinement at 49; active count stayed
+3,396 through step 64. Its random scene had zero valid normal-depth pixels at the
+logged steps, so active consistency gradients are established by the separate
+gradient tests, not this smoke run. An initial integration attempt failed because
+Warp used a cache outside the workspace; repeating with the documented project
+cache completed. These checks do not measure a reconstruction improvement.
+
+**Next measurement:** matched fresh 400px/200k-capacity, 30k-step deferred runs with
+normal-depth coefficients **0 versus 0.01**, propagation off in both, and final 10k
+steps fixed in topology. Only coefficient and output path differ between the new
+[control](../config/materials_red-rose-silver_deferred_consistency_control.yaml) and
+[consistency](../config/materials_red-rose-silver_deferred_consistency.yaml) presets.
+Compare foreground RGB and reference normal/depth accuracy; do not infer surface
+accuracy solely from PSNR selection. Full-budget results remain pending.
+
+## 2026-10-29 — Frozen consistency ablation: completed test comparison
+
+Following the user's decision to close tuning, both 30k-step checkpoints were
+evaluated on all **200 test views at 400x400**, without retraining. Saved configs
+match except coefficient/output path, and rendering dependencies match the training
+source snapshots. The test split was not used to select another weight.
+
+| Normal-depth weight | Test PSNR | Test SSIM | Foreground PSNR |
+| --- | ---: | ---: | ---: |
+| **0** | **34.5007 dB** | **0.987244** | **23.4455 dB** |
+| 0.01 | 34.1435 dB | 0.984849 | 23.2170 dB |
+
+The regularized model trails the mean by 0.3572 dB / 0.002394 SSIM, while improving
+PSNR on 75/200 views and foreground PSNR on 85/200. Foreground alpha >=0.95 occupies
+6.9234% of each image on average; full-image scores include substantial background.
+Both have low mean alpha-zero background coverage (0.00004056 / 0.00004174).
+
+Four illustration views (r_0, r_72, r_123, r_146) were selected by pose diversity
+before model rendering. Eight identical reference-alpha component crops expose
+reflection detail. Normal maps in the 0.01 arm are visibly smoother across these
+views, with remaining structured patches; both models retain reflection blur and
+mottling against reference RGB. Shared depth scales and saved raw buffers support
+the comparison. These observations establish a visible coherence tradeoff, not
+measured normal accuracy; Blender reference geometry evaluation remains deferred.
+
+Evidence and report-ready prose:
+[final experiment record](experiments/2026-10-29-normal-consistency-final.md),
+[HTML figures](../outputs/materials-red-rose-silver-final-comparison-2026-10-29/index.html),
+[200-view metrics](../outputs/materials-red-rose-silver-final-comparison-2026-10-29/test-metrics.csv),
+[crop bounds/scores](../outputs/materials-red-rose-silver-final-comparison-2026-10-29/crop-metrics.csv),
+and [provenance](../outputs/materials-red-rose-silver-final-comparison-2026-10-29/comparison.json).
+All results here concern the edited three-ball scene and seed 7; do not merge them
+with the earlier full Materials-scene benchmarks.
+
+## 2026-10-29 — Ray-plane depth follow-up
+
+Implemented opt-in per-pixel ray-plane depth and its full geometry/compositing
+gradients. The matched 30k three-ball run preserved the density policy, 200k cap
+and fixed final 10k steps. Validation PSNR fell from **34.0690 to 33.1900 dB**;
+foreground PSNR fell from **23.1015 to 22.3733 dB**. Selected normal maps retain
+patches and the environment remains noisy. Keep centre depth as the default;
+the depth change alone does not resolve shape ambiguity. All 44 surfel tests pass
+on CPU/CUDA. See the [experiment and comparison](experiments/2026-10-29-ray-plane-depth.md).
