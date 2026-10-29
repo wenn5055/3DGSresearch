@@ -87,6 +87,44 @@ physical BRDF. State this accurately in the report.
   32px GPU runner smoke reached SH3 and evaluated all 100 validation cameras:
   `materials_red-rose-silver-Oct29-2043-late-sh-smoke`. Its metrics are not a
   quality result. Committing the checked implementation before full training.
+- 20:46: checked effective Blender object material slots (not shared mesh
+  datablock materials). The edited silver object is `Aluminium`, with glossy
+  roughness 0.4472 and a connected procedural bump normal. The red object uses
+  `AnodizedMetal`; gold uses `CooperYellowish`. The actual `Chrome` material is
+  on `SolidModel.008` in the original scene and has zero glossy roughness. The
+  edited scene does not contain this chrome object. Expecting a crisp forest
+  reflection from the rough silver reference was the wrong visual target.
+- 20:54: added repeatable material inspection and evaluation-only Blender
+  ray-cast geometry export. Camera/pixel alignment checked against edited-scene
+  alpha at 400px: silhouette IoU 0.99955, 0.99945, 0.99916 and 0.99963 for views
+  0, 13, 21 and 25. Exported all 100 validation views for original and edited
+  scenes. Mesh normals intentionally exclude shader bump; they are independent
+  geometric references, not exact shading normals or training supervision.
+- 20:56: comparison tooling passed same-checkpoint equality, mixed Gaussian/
+  surfel checkpoint, and per-material mesh-mask integration smokes on CPU. It
+  records whole-image/foreground/material PSNR, SSIM, optional AlexNet LPIPS,
+  fixed crops, geometry diagnostics, checkpoint size, synchronized render cost,
+  and explicitly scoped evaluation-pool memory. Prepared four original-Materials
+  400px/200k/30k presets with common seed, loss policy, learning rates, density
+  schedule, no mask/normal regularization, and SH1/2/3 at 20k/22k/24k. Only
+  geometry/appearance differ. The edited SH3 run is now in its SH1 phase.
+
+## Interpretation rules for this study
+
+The original-Materials four-arm study uses MSE then D-SSIM under a shared
+validation-MSE gate. Actual gate times can differ; report them. The edited-scene
+study instead retains its existing L1/D-SSIM/mask objective. These are separate
+protocols and their scene means must not be ranked together.
+
+Report exact visible-material pixel metrics from Blender ray hits separately
+from projected bounding-box crop metrics. Boxes can include pedestals, background
+and occlusion; they are useful figures but not a material segmentation.
+
+Performance timings include host tile preparation, device forward rendering and
+MSE, with warm-up and synchronization; exclude image download, image writing and
+perceptual metrics. Evaluation Warp allocator watermarks do not measure total or
+peak training VRAM. Do not label them as such. Compressed model size includes PLY
+and required material/SH sidecars, excluding diagnostic buffer files.
 
 ## Commit policy
 

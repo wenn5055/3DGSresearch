@@ -52,6 +52,9 @@ Updated 29 Oct 2026 (Singapore).
 - [materials_red-rose-silver-Oct29-1852-deferred-tune-normal-0-0](../outputs/materials_red-rose-silver-Oct29-1852-deferred-tune-normal-0-0/) — Validation-only deferred normal_weight sweep: materials_red-rose-silver-Oct29-1852-deferred-normal-sweep Closest prior: materials_red-rose-silver-Oct29-1755-mini-paper-mask; surfel.normal_propagation.enabled: True → False, surfel.refinement.prune_interval: (unset) → 0, surfel.refinement.start_iteration: (unset) → 20001. [completed; val]
 - [materials_red-rose-silver-Oct29-1906-deferred-tune-normal-1-0p01](../outputs/materials_red-rose-silver-Oct29-1906-deferred-tune-normal-1-0p01/) — Validation-only deferred normal_weight sweep: materials_red-rose-silver-Oct29-1852-deferred-normal-sweep Closest prior: materials_red-rose-silver-Oct29-1852-deferred-tune-normal-0-0; geometry_loss.normal_depth_weight: 0.0 → 0.01. [completed; val]
 - [materials_red-rose-silver-Oct29-2013-ray-plane-depth](../outputs/materials_red-rose-silver-Oct29-2013-ray-plane-depth/) — Ray-plane depth and matching gradients; normal weight 0.01; unchanged density/pruning schedule; fixed topology for final 10k steps. Closest prior: materials_red-rose-silver-Oct29-1906-deferred-tune-normal-1-0p01; surfel.depth_mode: (unset) → ray_plane. [completed; val]
+- [materials_red-rose-silver-Oct29-2043-late-sh-smoke](../outputs/materials_red-rose-silver-Oct29-2043-late-sh-smoke/) — surfel/deferred/SH3; 16 steps; 128 capacity. Closest prior: materials_red-rose-silver-Oct29-1852-deferred-tune-normal-0-0; densification.interval: 100 → 4, densification.opacity_reset_interval: 3000 → 0, model.capacity: 200000 → 128, model.height: 400 → 32, +13 other settings (see config). [completed; val]
+- [materials_red-rose-silver-Oct29-2044-late-sh3](../outputs/materials_red-rose-silver-Oct29-2044-late-sh3/) — First-principles appearance ablation: SH1/2/3 unlocked at 20001/22001/24001; no normal-depth loss or propagation. Closest prior: materials_red-rose-silver-Oct29-1852-deferred-tune-normal-0-0; model.sh_degree: 0 → 3, reporting.snapshot_every: 1000 → 5000, surfel.depth_mode: (unset) → centre, surfel.sh_band_interval: (unset) → 2000, +1 other settings (see config). [running; val]
+- [materials_red-rose-silver-Oct29-2050-gaussian-late-sh-smoke](../outputs/materials_red-rose-silver-Oct29-2050-gaussian-late-sh-smoke/) — gaussian/rgb/SH3; 16 steps; 128 capacity. Closest prior: materials_red-rose-silver-Oct29-1852-deferred-tune-normal-0-0; densification.interval: 100 → 4, densification.opacity_reset_interval: 3000 → 0, geometry_loss.mask_weight: 0.1 → 0, model.capacity: 200000 → 128, +18 other settings (see config). [completed; val]
 
 ## Tuning
 
@@ -68,6 +71,7 @@ Updated 29 Oct 2026 (Singapore).
 - [deferred-normal-sweep-smoke-4d327692](../outputs/deferred-normal-sweep-smoke-4d327692/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [dssim-smoke-input-64a59d5c](../outputs/dssim-smoke-input-64a59d5c/) — tiny D-SSIM check config.
 - [eval](../outputs/eval/) — legacy evaluation images/CSV; source checkpoint unrecorded here.
+- [first-principles-2026-10-29](../outputs/first-principles-2026-10-29/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [implementation-smoke-configs](../outputs/implementation-smoke-configs/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [materials-red-rose-silver-final-comparison-2026-10-29](../outputs/materials-red-rose-silver-final-comparison-2026-10-29/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [paper-normal-smoke-64265072](../outputs/paper-normal-smoke-64265072/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
@@ -75,7 +79,9 @@ Updated 29 Oct 2026 (Singapore).
 - [pdf-reader](../outputs/pdf-reader/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [project-smoke-input-9a94e30b](../outputs/project-smoke-input-9a94e30b/) — tiny project-pass configs and launcher logs.
 - [project-smoke-input-geometry-4001cc4d](../outputs/project-smoke-input-geometry-4001cc4d/) — tiny project-pass configs and launcher logs.
-- [ray-plane-depth-review-2026-10-29](../outputs/ray-plane-depth-review-2026-10-29/) — Frozen centre/ray-plane comparison on 100 validation views; matched RGB, normal, depth and environment figures, density audit and per-view metrics. See comparison.json.
+- [ray-plane-commit-3b3ed01d](../outputs/ray-plane-commit-3b3ed01d/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
+- [ray-plane-depth-review-2026-10-29](../outputs/ray-plane-depth-review-2026-10-29/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
+- [ray-plane-o3_7r6fr](../outputs/ray-plane-o3_7r6fr/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [red-rose-silver-capture-verified](../outputs/red-rose-silver-capture-verified/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [runner-validation-inputs-f2cfb4b9](../outputs/runner-validation-inputs-f2cfb4b9/) — small manifests/config for runner checks.
 - [sh-smoke-input-2f60e9eb](../outputs/sh-smoke-input-2f60e9eb/) — tiny SH check config/launcher log.
