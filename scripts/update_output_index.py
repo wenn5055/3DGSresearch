@@ -127,9 +127,12 @@ def refresh_output_index(root=ROOT):
         previous.append(record)
     lines += ['', '## Tuning', '']
     for name, sweep in sweeps:
-        rates = ' / '.join(f"{c['rate']:g}" for c in sweep['candidates'])
-        winner = f" Selected {sweep['best_rate']:g} by validation PSNR." if sweep.get('best_rate') is not None else ''
-        lines.append(f'- [{name}](../outputs/{name}/) — SH coefficient LR: {rates}; validation only.{winner} [{sweep["status"]}]')
+        normal_sweep = sweep.get('kind') == 'deferred_normal_weight'
+        key, best_key = ('weight', 'best_weight') if normal_sweep else ('rate', 'best_rate')
+        label = 'Deferred normal-loss weight' if normal_sweep else 'SH coefficient LR'
+        values = ' / '.join(f"{c[key]:g}" for c in sweep['candidates'])
+        winner = f" Selected {sweep[best_key]:g} by validation PSNR." if sweep.get(best_key) is not None else ''
+        lines.append(f'- [{name}](../outputs/{name}/) — {label}: {values}; validation only.{winner} [{sweep["status"]}]')
     lines += ['', '## Supporting folders', '']
     caches = []
     purposes = {'dssim-smoke-input-': 'tiny D-SSIM check config.',

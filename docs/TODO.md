@@ -5,6 +5,16 @@ for rationale and stage completion criteria. Immediate milestone: a measured Mat
 comparison of the three project passes. Current implementation details and commands:
 [project-passes.md](project-passes.md); measured results: [findings.md](findings.md).
 
+## Consultation follow-up — 29 October
+
+Details and verified sources: [consultation notes](consultation-2026-10-29.md).
+
+- [x] User saves edited `materials_red-rose-silver.blend` (three balls remain).
+- [x] Obtain a Materials Blender scene copy and view-capture source; scene opens in Blender 5.0.1.
+- [x] Prepare pose-replay capture script and RGB/deferred training presets; [commands](materials-red-rose-silver.md).
+- [ ] Render the edited red/rose/silver dataset with NeRF camera metadata and disjoint splits.
+- [ ] Compare normal-loss training on the subset; inspect normal/depth maps and validation scores.
+
 ## First: decisions and experiment records
 
 - [ ] Add any course rubric, relevant lecture notes, and professor feedback to

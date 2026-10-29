@@ -36,6 +36,7 @@ Updated 29 Oct 2026 (Singapore).
 - [materials-Oct29-1347-rgb-mask-smoke-2](../outputs/materials-Oct29-1347-rgb-mask-smoke-2/) — 8-step/64px check: load training alpha, train mask BCE, densify, save/evaluate. Not quality evidence. [completed; val]
 - [materials-Oct29-1348-rgb-geometry-smoke](../outputs/materials-Oct29-1348-rgb-geometry-smoke/) — vs mask smoke: add normal-depth schedule and loss; tiny random scene, no valid normal pixels at final step. [completed; val]
 - [materials-Oct29-1348-deferred-geometry-smoke](../outputs/materials-Oct29-1348-deferred-geometry-smoke/) — vs RGB geometry smoke: activate deferred reflection too; 8-step/64px integration check. [completed; val]
+- [materials_red-rose-silver-Oct29-1557-rgb-normal](../outputs/materials_red-rose-silver-Oct29-1557-rgb-normal/) — surfel/rgb/SH0; 30000 steps; 1000000 capacity. [running; val]
 
 ## Tuning
 
@@ -43,13 +44,16 @@ Updated 29 Oct 2026 (Singapore).
 
 ## Supporting folders
 
+- [consultation-2026-10-29](../outputs/consultation-2026-10-29/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [dssim-smoke-input-64a59d5c](../outputs/dssim-smoke-input-64a59d5c/) — tiny D-SSIM check config.
 - [eval](../outputs/eval/) — legacy evaluation images/CSV; source checkpoint unrecorded here.
 - [project-smoke-input-9a94e30b](../outputs/project-smoke-input-9a94e30b/) — tiny project-pass configs and launcher logs.
 - [project-smoke-input-geometry-4001cc4d](../outputs/project-smoke-input-geometry-4001cc4d/) — tiny project-pass configs and launcher logs.
+- [red-rose-silver-capture-check](../outputs/red-rose-silver-capture-check/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
+- [red-rose-silver-capture-verified](../outputs/red-rose-silver-capture-verified/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [runner-validation-inputs-f2cfb4b9](../outputs/runner-validation-inputs-f2cfb4b9/) — small manifests/config for runner checks.
 - [sh-smoke-input-2f60e9eb](../outputs/sh-smoke-input-2f60e9eb/) — tiny SH check config/launcher log.
 - [warp-training_snapshots](../outputs/warp-training_snapshots/) — legacy direct-trainer snapshots; source run unrecorded here.
-- `dssim-test-warp-cache`, `geometry-loss-warp-cache`, `runner-validation-warp-cache`, `sh-test-warp-cache`, `surfel-test-warp-cache` — compiled Warp kernels reused by checks; not experiments.
+- `blender-optix-cache`, `dssim-test-warp-cache`, `geometry-loss-warp-cache`, `runner-validation-warp-cache`, `sh-test-warp-cache`, `surfel-test-warp-cache` — compiled Warp kernels reused by checks; not experiments.
 
 Scores: [findings](findings.md). Commands: [project passes](project-passes.md).

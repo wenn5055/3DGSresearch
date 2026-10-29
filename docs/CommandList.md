@@ -2,6 +2,10 @@
 
 Use **Git Bash on Windows**, from the repository root.
 
+Latest edited-scene workflow: [red/rose/silver capture and training](materials-red-rose-silver.md).
+That guide includes venv activation, Blender capture, resume instructions, and both
+normal-loss training commands. Earlier full-Materials commands remain below.
+
 ## Project passes (28 October 2026)
 
 These are independent runs; the project runner evaluates validation by default.
