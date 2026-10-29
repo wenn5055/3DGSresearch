@@ -55,7 +55,7 @@ source snapshots retain their original policy.
 
 This is conservative silhouette-based empty-space rejection. It does **not**
 detect hidden redundant layers inside the foreground, recover concavities from
-silhouettes, or implement Unit 14's raster contribution accumulation. In a white
+silhouettes, or use contribution scores to delete surfels. In a white
 background, even total blending weight alone can be misleading: an opaque white
 floater can have high weight and almost no RGB removal error. Foreground-aware
 evidence and visibility/redundancy are distinct checks.
@@ -67,6 +67,35 @@ supports, duplicate camera rejection, training-only masks, child reuse, and
 pruning during growth-free refinement. A full GPU runner smoke removed 22 then
 6 background surfels, and later removed 43 during refinement with zero growth.
 These counts verify operation, not final reconstruction quality.
+
+### Unit 14 contribution measurement: now measured directly
+
+Added `scripts/measure_surfel_contributions.py`, a read-only raster pass that
+accumulates actual front-to-back `T * alpha` per splat across **all 100 training
+cameras**. It separately accumulates weights on foreground/background using the
+original soft alpha and checks their conservation against rendered coverage.
+This is independent of the bounding-box ADC proxy and does not prune anything.
+
+| Frozen 200k checkpoint | Exactly zero contribution | Bottom 40% share of total weight | At least 99% background weight |
+| --- | ---: | ---: | ---: |
+| Edited scene, late SH3 and mask loss | 5,434 | 1.2336% | 0 |
+| Original-scene unmasked deferred-SH3 scout | 8,312 | 0.3742% | 1,751 |
+
+In the edited model, 302 never-contributing surfels have opacity at least 0.005;
+two have opacity at least 0.1. Conversely, some surfels below the opacity floor
+still contribute. This directly verifies the course's distinction between
+opacity and visibility. It also shows why a full 200k allocation is not evidence
+of 200k useful surface elements.
+
+Three CPU and three CUDA tests verify exact front-to-back weights, soft-mask
+partition, early-terminated occlusion, and the counterexample of an opaque white
+background splat with high total weight and zero foreground contribution.
+Visibility is not a safe deletion-error bound for the nonlinear deferred shader;
+importance-based compaction still requires measured image quality and recovery.
+
+Weights and provenance:
+`outputs/first-principles-2026-10-29/contributions-edited-unpruned/` and
+`outputs/first-principles-2026-10-29/contributions-materials-unmasked/`.
 
 ## Remaining course differences and scope
 
