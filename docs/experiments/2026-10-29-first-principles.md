@@ -1,10 +1,11 @@
 # Return to the proposal: reflection quality
 
 Started 29 October 2026, 20:38 Singapore. Hard stop: 30 October, 06:38 Singapore.
-Status: active investigation. This record supersedes the earlier decision to stop
-research only for the newly authorized investigation; archived runs stay intact.
+Status: **stopped at the user's request, 29 October, approximately 23:02 Singapore**.
+All research training processes and waiting controllers were terminated; logs,
+completed models and the partial probe's 5k snapshot are retained.
 
-**Current status:** subsequent full-resolution jobs are held for a backbone
+**Handoff:** subsequent full-resolution jobs remain unrun pending a backbone
 audit: the new Gaussian baseline scored only 23.09 dB versus the earlier tuned
 27.34 dB. Controlled fixed-MSE probes will separate foreground pruning and
 optimizer policy before more method comparisons. Corrected edited-scene deferred SH3 finished at
@@ -526,6 +527,19 @@ render timing. No additional architecture or hyperparameter sweep is queued.
 The same original absolute deadline applies while waiting and during training.
 
 ## Commit policy
+
+### User-requested stop
+
+The user requested an immediate stop and wrap-up within one minute. Stopped the
+backbone controller and its training subtree, plus the waiting initialization
+controller; verified no research Python jobs remain. State JSON files record
+`stopped-by-user`. The first backbone inheritance/foreground probe was interrupted
+at last logged step **8,300/10,000**, with its 5,000-step PLY snapshot preserved;
+its run/stage metadata is marked interrupted. It has **no completed quality result**.
+The other four probes, paired initializer training, remaining Materials/Ship
+models and their test reports have not run. No optimizer policy was selected or
+changed in production. Resume by inspecting this partial probe and completing
+the bounded backbone audit before claiming a method comparison.
 
 Commit the reviewed protocol, then verified implementation, then measured
 findings. Preserve pre-existing staged changes; explicitly commit only work from

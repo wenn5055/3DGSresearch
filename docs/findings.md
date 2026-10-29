@@ -422,3 +422,24 @@ foreground PSNR fell from **23.1015 to 22.3733 dB**. Selected normal maps retain
 patches and the environment remains noisy. Keep centre depth as the default;
 the depth change alone does not resolve shape ambiguity. All 44 surfel tests pass
 on CPU/CUDA. See the [experiment and comparison](experiments/2026-10-29-ray-plane-depth.md).
+
+
+## 2026-10-29 ? First-principles reflection audit; stopped at user request
+
+Training-alpha foreground pruning and continued late cleanup are implemented and
+verified. On the edited scene, the corrected deferred SH3 model retains 133,700
+surfels versus 200,000, scoring 37.0101 versus 37.1227 validation dB. The matched
+SH-only surfel control scores 36.7667 dB: the deferred gain is modest and material/
+LPIPS results are mixed. Consistency plus SH3 reduces independent normal error
+from 46.36 to 22.78 degrees, with a PSNR tradeoff to 35.3783 dB.
+
+The first new full-resolution Gaussian SH3 baseline regressed to 23.09 dB versus
+27.3372 for the earlier tuned baseline. Remaining full runs were held to audit
+shared optimizer/pruning changes; this is not evidence of a deferred victory.
+The first controlled backbone probe was interrupted at the user's request, with
+a 5k snapshot retained. All research jobs/controllers are stopped. No completed
+backbone ablation or trained visual-hull comparison exists yet.
+
+Evidence and exact resume state: [investigation log](experiments/2026-10-29-first-principles.md)
+and [course-notes audit](course-notes-audit-2026-10-29.md). The completed edited
+comparison is in `outputs/first-principles-2026-10-29/edited-pruning-val/index.html`.
