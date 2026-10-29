@@ -301,6 +301,11 @@ def evaluate(args):
         crop_panels.append((f'View {view}, {region}, box {bounds}',
             [Image.open(path).crop(bounds) for path in image_paths[view]]))
     sheet(args.output / 'crop-comparison.png', crop_panels, ['Reference'] + labels, panel=240)
+    material_panels = [(f'View {view}, {region}, box {bounds}',
+        [Image.open(path).crop(bounds) for path in image_paths[view]])
+        for (view, region), bounds in boxes.items() if region in args.materials]
+    if material_panels:
+        sheet(args.output / 'material-crops.png', material_panels, ['Reference'] + labels, panel=300)
     if normal_labels:
         sheet(args.output / 'normals-comparison.png',
               [(f'View {view}', ([args.output / f'reference-normals-{view}.png'] if geometry_metadata else [])
@@ -312,11 +317,12 @@ def evaluate(args):
         table += '<tr>' + ''.join(f'<td>{html.escape(str(row[field]) if isinstance(row[field], str) or row[field] is None else format(row[field], ".6f"))}</td>' for field in fields) + '</tr>'
     table += '</table>'
     normals_html = '<h2>Normals</h2><img src="normals-comparison.png">' if normal_labels else ''
+    material_html = '<h2>Target material crops</h2><img src="material-crops.png">' if material_panels else ''
     body = f'''<!doctype html><html lang="en"><meta charset="utf-8"><title>Reflection comparison</title>
 <style>body{{font:16px system-ui;max-width:1500px;margin:30px auto;padding:0 20px}}table{{border-collapse:collapse}}td,th{{padding:8px;border:1px solid #ccc}}img{{max-width:100%}}a{{color:#075ea8}}</style>
 <h1>Reflection comparison</h1><p>{html.escape(args.manifest)}, {width} x {height}; means of per-view scores; LPIPS AlexNet. Foreground: reference alpha at least 0.95.</p>
 {table}<p>Camera and component crops selected from poses/alpha before rendering. Material boxes use mesh bounds and can include occlusion. See <a href="protocol.json">protocol and config differences</a>, <a href="metrics.csv">per-view scores</a>, <a href="crop-metrics.csv">crop scores</a>, <a href="performance.json">performance</a>.</p>
-<h2>RGB</h2><img src="rgb-comparison.png"><h2>Fixed crops</h2><img src="crop-comparison.png">
+{material_html}<h2>RGB</h2><img src="rgb-comparison.png"><h2>Fixed crops</h2><img src="crop-comparison.png">
 {normals_html}</html>'''
     (args.output / 'index.html').write_text(body, encoding='utf-8')
     protocol['status'] = 'completed'

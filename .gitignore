@@ -6,3 +6,6 @@ outputs/
 
 # Personal reference documents
 /local-context/
+
+# Reproducible external benchmark download; source/revision recorded in docs.
+/data/ship/

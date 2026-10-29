@@ -132,6 +132,58 @@ perceptual metrics. Evaluation Warp allocator watermarks do not measure total or
 peak training VRAM. Do not label them as such. Compressed model size includes PLY
 and required material/SH sidecars, excluding diagnostic buffer files.
 
+## First completed result: edited-scene appearance capacity
+
+All 100 validation cameras, 400x400, seed 7, 30k steps, 200k surfels, identical
+L1/D-SSIM/mask policy, no normal-depth penalty or propagation. New run:
+`materials_red-rose-silver-Oct29-2044-late-sh3`. Historical comparison:
+`materials_red-rose-silver-Oct29-1852-deferred-tune-normal-0-0`.
+
+| Metric, mean per view | Deferred SH0 | Deferred + late SH3 | Change |
+| --- | ---: | ---: | ---: |
+| Whole-image PSNR | 34.5821 | 37.1227 | +2.5405 dB |
+| Foreground PSNR | 23.4441 | 26.0282 | +2.5841 dB |
+| SSIM | 0.987773 | 0.991101 | +0.003328 |
+| LPIPS, AlexNet | 0.011082 | 0.005744 | -0.005337 |
+| Visible aluminium pixels PSNR | 22.6782 | 26.9912 | +4.3131 dB |
+| Visible gold pixels PSNR | 22.1731 | 23.8271 | +1.6540 dB |
+| Visible red pixels PSNR | 23.7010 | 26.3415 | +2.6405 dB |
+
+Every view improved in PSNR, foreground PSNR, SSIM and LPIPS. Every view also
+improved for each of the three visible-material pixel metrics. Material masks
+come from independent Blender first-hit geometry and reference alpha >=0.95;
+they were not used to train these models. This supports the missing-appearance
+capacity diagnosis, particularly for the rough silver material.
+
+It does **not** show recovered geometry. Mean per-view mesh-normal angular error
+is 45.9639 versus 45.6769 degrees; mean per-view absolute mesh-depth error is
+0.03737 versus 0.03348 scene units. At least 99.96% of reference foreground
+pixels meet the prediction-coverage/normal-validity criteria on average.
+These are geometric mesh normals, excluding procedural shading bump. Improved
+RGB fitting with almost unchanged normal error is evidence against interpreting
+the image gain as normal recovery.
+
+The hybrid also forfeits the proposal's four-material-scalar memory argument:
+SH3 adds 45 scalar coefficients per surfel. Required compressed checkpoint size
+increased from 14,364,057 to 48,307,710 bytes. At 400px the measured forward
+pipeline median was 9.92 versus 10.49 ms/view (100.8 versus 95.3 FPS), including
+host tile preparation and MSE, excluding image download and metric computation.
+This is a small fixed-camera microbenchmark, not a real-time application claim.
+Trainer-reported times were 836.80 and 890.18 seconds under different session
+workloads; do not treat their ratio as a controlled training-speed result.
+
+The legacy comparison has different source snapshots and snapshot cadence (1k
+versus 5k); SH0 rendering behavior is covered by the new regressions. Current
+renderer re-evaluation reproduces its archived mean within 0.00002 dB. A fresh
+SH0 control is queued to check reproducibility under current source. Original
+Materials controls remain necessary before claiming a deferred advantage over SH.
+
+Evidence: [comparison gallery](../../outputs/first-principles-2026-10-29/edited-appearance-val/index.html),
+[per-view metrics](../../outputs/first-principles-2026-10-29/edited-appearance-val/metrics.csv),
+[geometry metrics](../../outputs/first-principles-2026-10-29/edited-appearance-val/geometry-metrics.csv),
+[performance](../../outputs/first-principles-2026-10-29/edited-appearance-val/performance.json),
+and [protocol/source differences](../../outputs/first-principles-2026-10-29/edited-appearance-val/protocol.json).
+
 ## Commit policy
 
 Commit the reviewed protocol, then verified implementation, then measured
