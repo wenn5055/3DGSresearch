@@ -7,8 +7,8 @@ research only for the newly authorized investigation; archived runs stay intact.
 **Current status:** the pruning correction is committed and the revised
 `pruning_queue.py` is running. Corrected edited-scene deferred SH3 finished at
 37.0101 dB with 133,700 surfels; consistency + SH3 finished at 35.3783 dB.
-The SH-only control and independent geometry/material comparisons are next,
-followed by the original Materials/Ship proposal study. The
+The completed SH-only control scores 36.7667 dB: the deferred gain is small and
+material/perceptual results are mixed. Original Materials/Ship runs are next. The
 [complete course-notes audit](../course-notes-audit-2026-10-29.md) records why
 opacity cleanup and foreground detection are separate. Earlier queue/protocol
 sections below are historical; preserved run configs identify the policy used.
@@ -385,6 +385,55 @@ Report: `outputs/first-principles-2026-10-29/materials-strong-baseline-val/`.
 This read-only quality audit ran while training continued, so GPU timing was
 explicitly skipped. Its brief GPU/CPU overlap also rules out interpreting the
 concurrent edited control's training time as an isolated speed benchmark.
+
+## Corrected edited-scene comparison, 22:23 Singapore
+
+All 100 validation views at 400px; common training-mask pruning, late SH schedule,
+200k capacity and 30k steps. RGB/deferred models share the same mask objective;
+the consistency treatment additionally uses normal-depth weight 0.01. All three
+loaded the same workflow before the later sampling/bookkeeping fix.
+
+| Quantity | SH-only surfels | Deferred SH3 | Deferred + consistency + SH3 |
+| --- | ---: | ---: | ---: |
+| Whole-image PSNR, dB | 36.7667 | **37.0101** | 35.3783 |
+| Foreground PSNR, dB | 25.6518 | **25.9521** | 24.4407 |
+| SSIM | 0.990424 | **0.990965** | 0.988175 |
+| LPIPS AlexNet, lower better | **0.005906** | 0.006156 | 0.007531 |
+| Aluminium PSNR, dB | **27.0947** | 26.4041 | 26.2124 |
+| Gold PSNR, dB | 23.1157 | **24.0276** | 21.8595 |
+| Red PSNR, dB | **26.1631** | 26.1406 | 25.1055 |
+| Mesh-normal error, degrees | 44.9912 | 46.3633 | **22.7840** |
+| Mesh-depth MAE, scene units | 0.034234 | 0.033787 | **0.025940** |
+| Active surfels | 132,394 | 133,700 | 133,146 |
+| Required checkpoint bytes | **31,493,594** | 32,342,148 | 32,052,130 |
+| Scoped forward FPS, idle GPU | 121.85 | 132.01 | 139.85 |
+
+Deferred versus SH-only improves whole-image PSNR on 67/100 views, foreground
+PSNR on 71/100, SSIM on 76/100, and LPIPS on only 39/100. Gold pixels improve
+on 91/100 views; aluminium improves on 18/100 and red on 46/100. The gold gain
+is 0.9119 dB, while aluminium loses 0.6905 dB. This is a mixed result, not a
+general reflection-quality win. Fixed crops still show grain and smoothed gold
+detail. SH capacity solved part of the appearance deficit, not the whole problem.
+
+Consistency lowers independent normal error in all 100 views. Per-material
+normal errors are 21.18/21.24/21.81 degrees on aluminium/gold/red, versus
+48.84/52.36/47.04 for unregularized deferred SH3. At least 99.89% of each material's
+reference foreground remains valid in the consistency model. The geometry gain
+is real but still insufficient for accurate sharp reflection; its image penalty
+is also real. This supports the bounded geometry-initialization test, not more
+normal-weight sweeps.
+
+Fresh-process training Warp allocation-pool peaks were 639,216,940 bytes for all
+three. These are allocator peaks, not total VRAM. Training seconds were
+877.74/841.44/792.61; session workload differences prevent controlled speed-ratio
+claims. Render timing was measured while no training job was active, with the
+previously documented four-view/ten-repeat forward scope. FPS ordering reflects
+the different learned geometry/work, not just shader overhead.
+
+Evidence: [comparison](../../outputs/first-principles-2026-10-29/edited-pruning-val/index.html),
+[per-view scores](../../outputs/first-principles-2026-10-29/edited-pruning-val/metrics.csv),
+[material geometry](../../outputs/first-principles-2026-10-29/edited-pruning-val/geometry-summary.csv),
+and [performance](../../outputs/first-principles-2026-10-29/edited-pruning-val/performance.json).
 
 ## Remaining frozen checks
 
