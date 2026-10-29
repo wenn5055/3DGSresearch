@@ -70,7 +70,11 @@ def run_training(trainer, config, training_views, eval_ids, frame_ids=None):
         print(f"Geometry losses (training alpha only): mask={geometry['mask_weight']}, "
               f"normal_depth={geometry['normal_depth_weight']}, start={geometry['normal_start_iteration']}, "
               f"ramp={geometry['normal_ramp_iterations']}; validation gates remain photometric.", flush=True)
-    loss_curriculum = config['loss']['mode'] == 'mse_dssim'
+    loss_curriculum = config['loss']['mode'] == 'mse_dssim' and not getattr(trainer, 'uses_paper_loss', False)
+    propagation = settings['normal_propagation']
+    if propagation['enabled']:
+        print('Paper normal optimization: image/reflection gradients, opacity/scale propagation and colour noise; '
+              'alpha-mask BCE retained; depth-normal penalty disabled.', flush=True)
     loss_ema = base.ExponentialMovingAverage(reporting['loss_ema_decay'])
     eval_ema = base.ExponentialMovingAverage(reporting['loss_ema_decay'])
     mse_ema = base.ExponentialMovingAverage(reporting['loss_ema_decay'])
@@ -115,7 +119,9 @@ def run_training(trainer, config, training_views, eval_ids, frame_ids=None):
             eval_ema.update(objective)
             reset_window = base.OpacityResetWindow()
             print(f'{iteration:6d}: advancing surfel stage rgb -> deferred (scheduled geometry warm-up complete).', flush=True)
-        densify = bool(density['interval'] and iteration % density['interval'] == 0)
+        propagating = propagation['enabled'] and trainer.specular_active and iteration <= propagation['until_iteration']
+        interval = propagation['densification_interval'] if propagating and density['interval'] else density['interval']
+        densify = bool(interval and iteration % interval == 0)
         late = adc['enabled'] and late_prune_armed and iteration % adc['late_prune_interval'] == 0
         evaluate = iteration % reporting['eval_every'] == 0
         save = iteration % reporting['snapshot_every'] == 0
@@ -130,10 +136,22 @@ def run_training(trainer, config, training_views, eval_ids, frame_ids=None):
                                       view_ids=views, late_prune=late, percent_dense=density['percent_dense'])
             if densify and not late_prune_armed and growth.update(int(trainer.active.sum())):
                 late_prune_armed = True
-        if density['opacity_reset_interval'] and iteration % density['opacity_reset_interval'] == 0:
+        # Leave the final trained model intact; a last-step clamp would save holes
+        # before opacity has any opportunity to recover.
+        opacity_reset = bool(density['opacity_reset_interval']
+                             and iteration < config['training']['iterations']
+                             and iteration % density['opacity_reset_interval'] == 0)
+        if opacity_reset:
             reset_window.warn_if_unrecovered(iteration)
             reset_window.open(eval_ema.value, iteration)
             trainer.reset_opacity()
+        if propagation['enabled']:
+            event = trainer.propagate_normals(iteration, opacity_reset=opacity_reset)
+            if event:
+                reset_window.warn_if_unrecovered(iteration)
+                reset_window.open(eval_ema.value, iteration)
+                print(f"{iteration:6d}: normal propagation: expanded={event['expanded']}, "
+                      f"colours_reset={event['colours_reset']}; opacity floor={propagation['opacity_floor']}.", flush=True)
         if evaluate or save:
             objective, mse, _ = trainer.evaluate_components(eval_ids)
             eval_ema.update(objective)

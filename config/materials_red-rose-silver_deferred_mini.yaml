@@ -1,0 +1,25 @@
+# Smaller images/model; full schedule for reflection-driven normal refinement.
+paths:
+  data: ../data/materials_red-rose-silver
+  output: ../outputs/materials-red-rose-silver-deferred-mini/model.png
+runtime: {arch: gpu, seed: 7}
+model: {width: 400, height: 400, capacity: 200000, initial_splats: 1000, background: white}
+training: {iterations: 30000}
+learning_rates: {position_max_steps: 30000}
+loss: {dssim_weight: 0.2}
+densification: {interval: 100, fraction: 0.2, opacity_reset_interval: 3000}
+convergence: {enabled: false}
+reporting: {snapshot_every: 1000}
+surfel:
+  mode: deferred
+  photometric_loss: l1_dssim
+  specular_start_iteration: 3000
+  initial_reflection: 0.001
+  reflection_lr: 0.006
+  environment_lr: 0.05
+  normal_propagation:
+    enabled: true
+    interval: 1000
+    until_iteration: 24000
+    scale_factor: 1.5
+geometry_loss: {mask_weight: 0.1, normal_depth_weight: 0.0}

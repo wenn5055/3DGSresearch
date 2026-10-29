@@ -1,0 +1,65 @@
+# Paper-inspired reflection-driven normal optimization, retaining alpha-mask BCE.
+paths:
+  data: ../data/materials_red-rose-silver
+  output: ../outputs/materials_red-rose-silver-deferred-geometry/model.png
+  init_ply: null
+runtime:
+  arch: gpu
+  seed: 7
+model:
+  width: 800
+  height: 800
+  capacity: 1000000
+  initial_splats: 1000
+  background: white
+  sh_degree: 0
+  geometry: surfel
+training:
+  iterations: 10000
+learning_rates:
+  position_max_steps: 20000
+loss:
+  mode: mse_dssim
+  dssim_weight: 0.2
+  dssim_window: 11
+adaptive:
+  dssim_psnr_threshold: 21.0
+densification:
+  interval: 100
+  fraction: 0.2
+  opacity_reset_interval: 200
+sparse:
+  enabled: false
+  samples_per_tile: 256
+reporting:
+  snapshot_every: 1000
+surfel:
+  mode: deferred
+  specular_start_iteration: 1000
+  initial_reflection: 0.001
+  reflection_lr: 0.006
+  environment_lr: 0.05
+  environment_width: 128
+  environment_height: 64
+  save_debug: true
+  photometric_loss: l1_dssim
+  normal_propagation:
+    enabled: true
+    interval: 1000
+    until_iteration: 8000
+    scale_factor: 1.5
+    scale_reflection_threshold: 0.02
+    color_reflection_threshold: 0.1
+    color_noise: 0.1
+    opacity_floor: 0.9
+    reflection_floor: 0.001
+    opacity_freeze_iterations: 200
+    densification_interval: 500
+geometry_loss:
+  mask_weight: 0.1
+  normal_depth_weight: 0.0
+  normal_start_iteration: 200
+  normal_ramp_iterations: 500
+  min_coverage: 0.1
+  foreground_threshold: 0.95
+  max_relative_depth_jump: 0.05

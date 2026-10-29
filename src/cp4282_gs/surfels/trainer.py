@@ -17,7 +17,8 @@ from gaussian_set import GaussianSet
 from splat_math import quaternion_to_matrix
 
 from .config import SurfelTrainingConfig, GEOMETRY_DEFAULTS
-from .geometry_losses import GeometryLoss
+from .geometry_losses import GeometryLoss, l1_image_loss
+from . import normal_propagation as propagation_kernels
 from .geometry import SurfelTileWorkspace, base
 from . import kernels as k
 
@@ -50,9 +51,7 @@ class GaussianRGBControl(TrainingOnlyInitialization, base.WarpImageTrainer):
 class SurfelTrainer(TrainingOnlyInitialization, base.WarpImageTrainer):
     def __init__(self, *args, surfel_options=None, training_view_count=None,
                  geometry_options=None, training_alpha=None, **kwargs):
-        options = deepcopy(SurfelTrainingConfig.DEFAULTS["surfel"])
-        if surfel_options:
-            options.update(surfel_options)
+        options = SurfelTrainingConfig._merge(SurfelTrainingConfig.DEFAULTS['surfel'], surfel_options or {})
         self.surfel_options = options
         self.training_view_count = training_view_count
         training = deepcopy(kwargs.pop("training_options", {}))
@@ -85,6 +84,12 @@ class SurfelTrainer(TrainingOnlyInitialization, base.WarpImageTrainer):
         self.last_geometry_terms = {'mask': 0.0, 'normal_depth': 0.0, 'normal_weight': 0.0,
                                     'normal_pixels': 0, 'weighted': 0.0}
         self.last_photometric_loss = None
+        self.l1_loss = wp.zeros(1, dtype=wp.float32, device=self.device)
+        self._opacity_frozen_until = 0
+        self._propagation_seed = (int(self.rng.integers(1 << 30))
+                                  if options['normal_propagation']['enabled'] else 0)
+        if options['normal_propagation']['enabled'] and self.geometry_options['normal_depth_weight']:
+            raise ValueError('Paper normal propagation replaces the old depth-normal penalty.')
         if self.geometry_options['mask_weight'] or self.geometry_options['normal_depth_weight']:
             if training_alpha is None:
                 raise ValueError('Enabled geometry losses require training alpha masks.')
@@ -98,6 +103,84 @@ class SurfelTrainer(TrainingOnlyInitialization, base.WarpImageTrainer):
     @property
     def surfel_stage(self):
         return "deferred" if self.specular_active else "rgb"
+
+    @property
+    def uses_paper_loss(self):
+        return self.surfel_options['photometric_loss'] == 'l1_dssim'
+
+    @property
+    def loss_stage(self):
+        return 'l1_dssim' if self.uses_paper_loss else super().loss_stage
+
+    def _dssim_active(self):
+        return self.uses_paper_loss or super()._dssim_active()
+
+    def _l1(self, view, compute_gradient=True):
+        self.l1_loss.zero_()
+        wp.launch(l1_image_loss, self.width * self.height,
+                  inputs=[self.image, self.targets, int(view), self.width * self.height, int(compute_gradient)],
+                  outputs=[self.l1_loss, self.pixel_gradient], device=self.device)
+
+    def _auxiliary_loss(self, mse, view_ids, download_loss):
+        if not self.uses_paper_loss:
+            return super()._auxiliary_loss(mse, view_ids, download_loss)
+        self.last_loss_phase = 'l1_dssim'
+        self._l1(view_ids[0])
+        weight = self.loss_config['dssim_weight']
+        dssim = self._dssim_computer().compute(
+            self.image, self.targets, self.tiles.view_ids, self.pixel_gradient,
+            self.loss_config['dssim_window'], 1, weight, download_loss=download_loss)
+        return (1 - weight) * float(self.l1_loss.numpy()[0]) + weight * dssim if download_loss else None
+
+    def evaluate_components(self, view_ids):
+        if not self.uses_paper_loss:
+            return super().evaluate_components(view_ids)
+        views = np.asarray(view_ids, np.int32)
+        if len(views) == 0:
+            raise ValueError('Evaluation requires at least one view.')
+        objective, mse, structural = 0.0, 0.0, 0.0
+        weight = self.loss_config['dssim_weight']
+        for view in np.concatenate((views[1:], views[:1])):
+            self._render_view(view)
+            mse += float(self.loss.numpy()[0])
+            self._l1(view, compute_gradient=False)
+            dssim = self._dssim_computer().compute(
+                self.image, self.targets, self.tiles.view_ids, self.pixel_gradient,
+                self.loss_config['dssim_window'], 1, weight, compute_gradient=False)
+            objective += (1 - weight) * float(self.l1_loss.numpy()[0]) + weight * dssim
+            structural += dssim
+        return objective / len(views), mse / len(views), structural / len(views)
+
+    def propagate_normals(self, iteration, opacity_reset=False):
+        settings = self.surfel_options['normal_propagation']
+        if (not settings['enabled'] or not self.specular_active
+                or iteration > settings['until_iteration']):
+            return None
+        reflection_limit = float(np.log(settings['reflection_floor'] / (1 - settings['reflection_floor'])))
+        if opacity_reset:
+            # Alternate low-opacity pruning periods and propagation, never both together.
+            wp.launch(propagation_kernels.raise_reflection_floor, self.capacity,
+                      inputs=[self.active_device, self.reflection_logits, reflection_limit], device=self.device)
+            self.reflection_optimizer.reset_internal_state()
+            self._opacity_frozen_until = 0
+            return None
+        if iteration % settings['interval']:
+            return None
+        counts = wp.zeros(2, dtype=wp.int32, device=self.device)
+        wp.launch(propagation_kernels.propagate, self.capacity,
+                  inputs=[self.active_device, self.opacity, self.reflection_logits, self.log_scales, self.color,
+                          int(self._propagation_seed + iteration),
+                          float(np.log(settings['opacity_floor'] / (1 - settings['opacity_floor']))),
+                          reflection_limit, float(np.log(settings['scale_factor'])),
+                          float(np.log(self.scene_radius * base.SCALE_CLAMP_MAX_FRACTION)),
+                          settings['scale_reflection_threshold'], settings['color_reflection_threshold'],
+                          settings['color_noise']], outputs=[counts], device=self.device)
+        for optimizer in (self.optimizers.opacity_optimizer, self.optimizers.scale_optimizer,
+                          self.optimizers.color_optimizer, self.reflection_optimizer):
+            optimizer.reset_internal_state()
+        self._opacity_frozen_until = iteration + settings['opacity_freeze_iterations']
+        expanded, colours = counts.numpy()
+        return {'expanded': int(expanded), 'colours_reset': int(colours)}
 
     def activate_specular(self):
         if self.surfel_options["mode"] != "deferred":
@@ -172,6 +255,8 @@ class SurfelTrainer(TrainingOnlyInitialization, base.WarpImageTrainer):
 
     def step(self, view_ids, download_gradients=False, download_loss=True, iteration=1):
         self.current_iteration = iteration
+        self.optimizers.opacity_optimizer.lr = (0.0 if iteration <= self._opacity_frozen_until
+                                                else self.learning_rates['opacity'])
         loss, gradient = super().step(view_ids, download_gradients, download_loss, iteration)
         if self.specular_active:
             started = perf_counter()

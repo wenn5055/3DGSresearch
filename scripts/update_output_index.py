@@ -127,9 +127,12 @@ def refresh_output_index(root=ROOT):
         previous.append(record)
     lines += ['', '## Tuning', '']
     for name, sweep in sweeps:
-        normal_sweep = sweep.get('kind') == 'deferred_normal_weight'
+        propagation_sweep = sweep.get('kind') == 'deferred_normal_propagation'
+        normal_sweep = sweep.get('kind') in ('deferred_normal_weight', 'deferred_normal_propagation')
         key, best_key = ('weight', 'best_weight') if normal_sweep else ('rate', 'best_rate')
         label = 'Deferred normal-loss weight' if normal_sweep else 'SH coefficient LR'
+        if propagation_sweep:
+            best_key, label = 'best_scale', 'Deferred normal-propagation scale'
         values = ' / '.join(f"{c[key]:g}" for c in sweep['candidates'])
         winner = f" Selected {sweep[best_key]:g} by validation PSNR." if sweep.get(best_key) is not None else ''
         lines.append(f'- [{name}](../outputs/{name}/) — {label}: {values}; validation only.{winner} [{sweep["status"]}]')

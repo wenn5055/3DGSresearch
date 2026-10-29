@@ -36,24 +36,40 @@ Updated 29 Oct 2026 (Singapore).
 - [materials-Oct29-1347-rgb-mask-smoke-2](../outputs/materials-Oct29-1347-rgb-mask-smoke-2/) — 8-step/64px check: load training alpha, train mask BCE, densify, save/evaluate. Not quality evidence. [completed; val]
 - [materials-Oct29-1348-rgb-geometry-smoke](../outputs/materials-Oct29-1348-rgb-geometry-smoke/) — vs mask smoke: add normal-depth schedule and loss; tiny random scene, no valid normal pixels at final step. [completed; val]
 - [materials-Oct29-1348-deferred-geometry-smoke](../outputs/materials-Oct29-1348-deferred-geometry-smoke/) — vs RGB geometry smoke: activate deferred reflection too; 8-step/64px integration check. [completed; val]
-- [materials_red-rose-silver-Oct29-1557-rgb-normal](../outputs/materials_red-rose-silver-Oct29-1557-rgb-normal/) — surfel/rgb/SH0; 30000 steps; 1000000 capacity. [running; val]
+- [materials_red-rose-silver-Oct29-1557-rgb-normal](../outputs/materials_red-rose-silver-Oct29-1557-rgb-normal/) — surfel/rgb/SH0; 30000 steps; 1000000 capacity. [completed; val]
+- [materials_red-rose-silver-Oct29-1629-deferred-tune-normal-0-0](../outputs/materials_red-rose-silver-Oct29-1629-deferred-tune-normal-0-0/) — Validation-only deferred normal-weight sweep: materials_red-rose-silver-Oct29-1612-deferred-normal-sweep Closest prior: materials_red-rose-silver-Oct29-1557-rgb-normal; geometry_loss.normal_depth_weight: 0.01 → 0.0, surfel.mode: rgb → deferred. [interrupted; val]
+- [red-rose-silver-capture-verified-Oct29-1652-deferred-tune-propagation-0-1p5](../outputs/red-rose-silver-capture-verified-Oct29-1652-deferred-tune-propagation-0-1p5/) — Validation-only deferred propagation_scale sweep: red-rose-silver-capture-verified-Oct29-1652-deferred-propagation-sweep [completed; val]
+- [red-rose-silver-capture-verified-Oct29-1652-deferred-tune-propagation-1-1](../outputs/red-rose-silver-capture-verified-Oct29-1652-deferred-tune-propagation-1-1/) — Validation-only deferred propagation_scale sweep: red-rose-silver-capture-verified-Oct29-1652-deferred-propagation-sweep Closest prior: red-rose-silver-capture-verified-Oct29-1652-deferred-tune-propagation-0-1p5; surfel.normal_propagation.scale_factor: 1.5 → 1.0. [completed; val]
+- [materials_red-rose-silver-Oct29-1656-deferred-tune-propagation-0-1p5](../outputs/materials_red-rose-silver-Oct29-1656-deferred-tune-propagation-0-1p5/) — Validation-only deferred propagation_scale sweep: materials_red-rose-silver-Oct29-1656-deferred-propagation-sweep Closest prior: materials_red-rose-silver-Oct29-1557-rgb-normal; densification.opacity_reset_interval: 0 → 3000, geometry_loss.normal_depth_weight: 0.01 → 0.0, surfel.environment_lr: 0.01 → 0.05, surfel.initial_reflection: 0.1 → 0.001, +15 other settings (see config). [completed; val]
+- [materials_red-rose-silver-Oct29-1703-explore](../outputs/materials_red-rose-silver-Oct29-1703-explore/) — surfel/deferred/SH0; 10000 steps; 1000000 capacity. Closest prior: materials_red-rose-silver-Oct29-1656-deferred-tune-propagation-0-1p5; convergence.enabled: False → True, geometry_loss.normal_ramp_iterations: 2000 → 500, geometry_loss.normal_start_iteration: 2000 → 200, learning_rates.position_max_steps: 60000 → 20000, +5 other settings (see config). [completed; val]
+- [materials_red-rose-silver-Oct29-1712-explore](../outputs/materials_red-rose-silver-Oct29-1712-explore/) — surfel/deferred/SH0; 10000 steps; 1000000 capacity. Closest prior: materials_red-rose-silver-Oct29-1703-explore; model.height: 256 → 800, model.width: 256 → 800. [completed; val]
+- [materials_red-rose-silver-Oct29-1717-deferred-tune-propagation-1-1](../outputs/materials_red-rose-silver-Oct29-1717-deferred-tune-propagation-1-1/) — Validation-only deferred propagation_scale sweep: materials_red-rose-silver-Oct29-1656-deferred-propagation-sweep Closest prior: materials_red-rose-silver-Oct29-1656-deferred-tune-propagation-0-1p5; surfel.normal_propagation.scale_factor: 1.5 → 1.0. [completed; val]
+- [materials_red-rose-silver-Oct29-1734-deferred-tune-propagation-2-1p25](../outputs/materials_red-rose-silver-Oct29-1734-deferred-tune-propagation-2-1p25/) — Validation-only deferred propagation_scale sweep: materials_red-rose-silver-Oct29-1656-deferred-propagation-sweep Closest prior: materials_red-rose-silver-Oct29-1717-deferred-tune-propagation-1-1; surfel.normal_propagation.scale_factor: 1.0 → 1.25. [running; val]
+- [materials_red-rose-silver-Oct29-1748-mini-10k](../outputs/materials_red-rose-silver-Oct29-1748-mini-10k/) — surfel/deferred/SH0; 10000 steps; 200000 capacity. Closest prior: materials_red-rose-silver-Oct29-1712-explore; adaptive.dssim_psnr_threshold: 21.0 → 25.0, convergence.enabled: True → False, densification.opacity_reset_interval: 3000 → 1500, geometry_loss.normal_ramp_iterations: 500 → 2000, +9 other settings (see config). [running; val]
 
 ## Tuning
 
 - [materials-Oct28-2246-sh3-lr-sweep](../outputs/materials-Oct28-2246-sh3-lr-sweep/) — SH coefficient LR: 0.000125 / 6.25e-05 / 0.00025; validation only. Selected 0.00025 by validation PSNR. [completed]
+- [materials_red-rose-silver-Oct29-1612-deferred-normal-sweep](../outputs/materials_red-rose-silver-Oct29-1612-deferred-normal-sweep/) — Deferred normal-loss weight: 0 / 0.005 / 0.01 / 0.02; validation only. [interrupted]
+- [materials_red-rose-silver-Oct29-1656-deferred-propagation-sweep](../outputs/materials_red-rose-silver-Oct29-1656-deferred-propagation-sweep/) — Deferred normal-propagation scale: 1.5 / 1 / 1.25; validation only. [running]
+- [red-rose-silver-capture-verified-Oct29-1611-deferred-normal-sweep](../outputs/red-rose-silver-capture-verified-Oct29-1611-deferred-normal-sweep/) — Deferred normal-loss weight: 0 / 0.01; validation only. Selected 0 by validation PSNR. [completed]
+- [red-rose-silver-capture-verified-Oct29-1652-deferred-propagation-sweep](../outputs/red-rose-silver-capture-verified-Oct29-1652-deferred-propagation-sweep/) — Deferred normal-propagation scale: 1.5 / 1; validation only. Selected 1.5 by validation PSNR. [completed]
 
 ## Supporting folders
 
 - [consultation-2026-10-29](../outputs/consultation-2026-10-29/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
+- [deferred-normal-sweep-smoke-4d327692](../outputs/deferred-normal-sweep-smoke-4d327692/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [dssim-smoke-input-64a59d5c](../outputs/dssim-smoke-input-64a59d5c/) — tiny D-SSIM check config.
 - [eval](../outputs/eval/) — legacy evaluation images/CSV; source checkpoint unrecorded here.
+- [paper-normal-smoke-64265072](../outputs/paper-normal-smoke-64265072/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
+- [paper-workflow-i56mzrx7](../outputs/paper-workflow-i56mzrx7/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
+- [pdf-reader](../outputs/pdf-reader/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [project-smoke-input-9a94e30b](../outputs/project-smoke-input-9a94e30b/) — tiny project-pass configs and launcher logs.
 - [project-smoke-input-geometry-4001cc4d](../outputs/project-smoke-input-geometry-4001cc4d/) — tiny project-pass configs and launcher logs.
-- [red-rose-silver-capture-check](../outputs/red-rose-silver-capture-check/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [red-rose-silver-capture-verified](../outputs/red-rose-silver-capture-verified/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [runner-validation-inputs-f2cfb4b9](../outputs/runner-validation-inputs-f2cfb4b9/) — small manifests/config for runner checks.
 - [sh-smoke-input-2f60e9eb](../outputs/sh-smoke-input-2f60e9eb/) — tiny SH check config/launcher log.
 - [warp-training_snapshots](../outputs/warp-training_snapshots/) — legacy direct-trainer snapshots; source run unrecorded here.
-- `blender-optix-cache`, `dssim-test-warp-cache`, `geometry-loss-warp-cache`, `runner-validation-warp-cache`, `sh-test-warp-cache`, `surfel-test-warp-cache` — compiled Warp kernels reused by checks; not experiments.
+- `blender-optix-cache`, `dssim-test-warp-cache`, `geometry-loss-warp-cache`, `runner-validation-warp-cache`, `sh-test-warp-cache`, `surfel-test-warp-cache`, `warp-cache` — compiled Warp kernels reused by checks; not experiments.
 
 Scores: [findings](findings.md). Commands: [project passes](project-passes.md).

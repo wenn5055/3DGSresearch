@@ -1,0 +1,44 @@
+# Faster 10k trial; shorter normal-optimization schedule.
+paths:
+  data: ../data/materials_red-rose-silver
+  output: ../outputs/materials-red-rose-silver-deferred-mini-10k/model.png
+runtime:
+  arch: gpu
+  seed: 7
+model:
+  width: 400
+  height: 400
+  capacity: 200000
+  initial_splats: 1000
+  background: white
+training:
+  iterations: 10000
+learning_rates:
+  position_max_steps: 10000
+loss:
+  dssim_weight: 0.2
+densification:
+  interval: 100
+  fraction: 0.2
+  opacity_reset_interval: 1500
+convergence:
+  enabled: false
+reporting:
+  snapshot_every: 1000
+surfel:
+  mode: deferred
+  photometric_loss: l1_dssim
+  specular_start_iteration: 1000
+  initial_reflection: 0.001
+  reflection_lr: 0.006
+  environment_lr: 0.05
+  normal_propagation:
+    enabled: true
+    interval: 500
+    until_iteration: 8000
+    scale_factor: 1.5
+    opacity_freeze_iterations: 100
+    densification_interval: 250
+geometry_loss:
+  mask_weight: 0.1
+  normal_depth_weight: 0.0

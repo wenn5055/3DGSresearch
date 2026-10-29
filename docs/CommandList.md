@@ -6,6 +6,22 @@ Latest edited-scene workflow: [red/rose/silver capture and training](materials-r
 That guide includes venv activation, Blender capture, resume instructions, and both
 normal-loss training commands. Earlier full-Materials commands remain below.
 
+## Automated deferred normal optimization
+
+```bash
+python scripts/tune_deferred_normal_loss.py config/materials_red-rose-silver_deferred_geometry.yaml
+```
+
+The current deferred preset compares propagation factors 1.5 / 1.0 / 1.25 with matched fresh 30k-step runs,
+waits for existing recorded GPU jobs, and selects by full-validation PSNR (SSIM
+breaks ties). Saves `best-config.yaml`, the winning run path and comparison records.
+Add `--prepare-only` to inspect first; continue with
+`python scripts/tune_deferred_normal_loss.py --resume outputs/YOUR_SWEEP_DIRECTORY`.
+Only propagation scale is tuned; mask/warm-up/learning-rate settings stay fixed.
+The replacement objective is L1 + D-SSIM + alpha-mask BCE; normals are optimized
+through reflections and paper-style propagation. The old depth-normal sweep was
+interrupted and should not be resumed against the new source.
+
 ## Project passes (28 October 2026)
 
 These are independent runs; the project runner evaluates validation by default.

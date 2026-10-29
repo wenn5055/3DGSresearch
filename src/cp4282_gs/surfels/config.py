@@ -30,6 +30,20 @@ class SurfelTrainingConfig(TrainingConfig):
         "environment_width": 128,
         "environment_height": 64,
         "save_debug": True,
+        "photometric_loss": "inherit",
+        "normal_propagation": {
+            "enabled": False,
+            "interval": 1000,
+            "until_iteration": 24000,
+            "scale_factor": 1.5,
+            "scale_reflection_threshold": 0.02,
+            "color_reflection_threshold": 0.1,
+            "color_noise": 0.1,
+            "opacity_floor": 0.9,
+            "reflection_floor": 0.001,
+            "opacity_freeze_iterations": 200,
+            "densification_interval": 500,
+        },
     }
 
     def validate(self):
@@ -63,6 +77,38 @@ class SurfelTrainingConfig(TrainingConfig):
         if not isinstance(settings["save_debug"], bool):
             raise ValueError("surfel.save_debug must be true or false.")
         geometry_loss = self.values['geometry_loss']
+        if settings['photometric_loss'] not in ('inherit', 'l1_dssim'):
+            raise ValueError('surfel.photometric_loss must be inherit or l1_dssim.')
+        propagation = settings['normal_propagation']
+        if not isinstance(propagation['enabled'], bool):
+            raise ValueError('normal_propagation.enabled must be boolean.')
+        for key in ('interval', 'until_iteration', 'densification_interval', 'opacity_freeze_iterations'):
+            value = propagation[key]
+            if isinstance(value, bool) or not isinstance(value, int) or value < (0 if key == 'opacity_freeze_iterations' else 1):
+                raise ValueError(f'Invalid normal_propagation.{key}.')
+        for key in ('scale_factor', 'scale_reflection_threshold', 'color_reflection_threshold',
+                    'color_noise', 'opacity_floor', 'reflection_floor'):
+            value = propagation[key]
+            if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
+                raise ValueError(f'Invalid normal_propagation.{key}.')
+        if (not 1 <= propagation['scale_factor'] <= 2
+                or not 0 <= propagation['color_noise'] <= 0.5
+                or not 0 < propagation['opacity_floor'] < 1
+                or not 0 < propagation['reflection_floor'] < 1
+                or not 0 <= propagation['scale_reflection_threshold'] < 1
+                or not 0 <= propagation['color_reflection_threshold'] < 1):
+            raise ValueError('Normal propagation scale, noise, floor or threshold is out of range.')
+        if propagation['enabled']:
+            if geometry != 'surfel' or settings['mode'] != 'deferred':
+                raise ValueError('Paper normal propagation requires deferred surfels.')
+            if geometry_loss['normal_depth_weight'] != 0:
+                raise ValueError('Paper normal propagation replaces the depth-normal penalty; set normal_depth_weight: 0.')
+            if propagation['until_iteration'] <= settings['specular_start_iteration']:
+                raise ValueError('Normal propagation must extend beyond reflection activation.')
+            if propagation['until_iteration'] >= self.values['training']['iterations']:
+                raise ValueError('Leave refinement iterations after normal propagation ends.')
+        if geometry == 'gaussian' and settings['photometric_loss'] != 'inherit':
+            raise ValueError('The Gaussian control uses its inherited image loss.')
         for key in ('mask_weight', 'normal_depth_weight'):
             value = geometry_loss[key]
             if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value < 0:

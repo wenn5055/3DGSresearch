@@ -1,4 +1,8 @@
-"""Training-only alpha supervision and differentiable normal/depth consistency."""
+"""Image and mask losses, plus the optional historical depth-normal penalty.
+
+The paper-aligned deferred preset uses L1 + D-SSIM and mask BCE. Its normal
+gradients come from reflection shading; it does not enable normal_depth_loss.
+"""
 
 import json
 
@@ -8,6 +12,25 @@ import warp as wp
 
 from .geometry import base
 from .kernels import GBuffer
+
+
+@wp.kernel(enable_backward=False)
+def l1_image_loss(image: wp.array(dtype=wp.vec3), targets: wp.array(dtype=wp.vec3),
+                  view: int, pixels: int, compute_gradient: int,
+                  loss: wp.array(dtype=wp.float32), gradient: wp.array(dtype=wp.vec3)):
+    pixel = wp.tid()
+    delta = image[pixel] - targets[view * pixels + pixel]
+    normalization = 1.0 / float(3 * pixels)
+    wp.atomic_add(loss, 0, (wp.abs(delta[0]) + wp.abs(delta[1]) + wp.abs(delta[2])) * normalization)
+    if compute_gradient != 0:
+        # Warp's sign(0) is +1; L1 uses the zero subgradient at an exact match.
+        value = wp.vec3(0.0)
+        for axis in range(3):
+            if delta[axis] > 0.0:
+                value[axis] = normalization
+            elif delta[axis] < 0.0:
+                value[axis] = -normalization
+        gradient[pixel] = value
 
 
 def load_training_alpha(data, width, height):

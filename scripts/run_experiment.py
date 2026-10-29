@@ -148,6 +148,8 @@ def write_record(run_dir: Path, record: dict) -> None:
     pending.write_text(json.dumps(record, indent=2, allow_nan=False), encoding="utf-8")
     pending.replace(run_dir / "run.json")
     config = record["config"]
+    paper_loss = config.get('surfel', {}).get('photometric_loss') == 'l1_dssim'
+    image_loss = 'l1_dssim (from step 1)' if paper_loss else config['loss']['mode']
     lines = [f"# Experiment: {record['run_id']}", "",
              f"- Status: {record['status']}", f"- Started (UTC): {record['started_utc']}",
              f"- Finished (UTC): {record.get('finished_utc', 'pending')}",
@@ -157,7 +159,7 @@ def write_record(run_dir: Path, record: dict) -> None:
              f"- Final evaluation manifest: {record['evaluation']['manifest']}",
              f"- Seed: {config['runtime']['seed']}",
              f"- Configured iterations: {config['training']['iterations']}",
-             f"- Loss: {config['loss']['mode']}; D-SSIM weight: {config['loss']['dssim_weight']}; "
+             f"- Loss: {image_loss}; D-SSIM weight: {config['loss']['dssim_weight']}; "
              f"transition PSNR: {config['adaptive']['dssim_psnr_threshold']} dB",
              f"- Configured maximum SH degree: {config['model']['sh_degree']}",
              f"- Early stopping enabled: {config['convergence']['enabled']}",
@@ -173,6 +175,10 @@ def write_record(run_dir: Path, record: dict) -> None:
         lines += ['', f"- Geometry loss weights: mask={geometry['mask_weight']}, normal-depth={geometry['normal_depth_weight']}",
                   f"- Normal-depth schedule: start={geometry['normal_start_iteration']}, ramp={geometry['normal_ramp_iterations']} steps",
                   '- Training loss includes enabled geometry terms; validation gates/metrics use image loss only.']
+    if config.get('surfel', {}).get('photometric_loss') == 'l1_dssim':
+        lines += ['', '- Actual image objective: L1 + D-SSIM from step 1 (overrides the inherited loss curriculum).',
+                  '- Normal optimization: reflection gradients plus scheduled propagation when enabled; mask BCE retained.',
+                  f"- Normal propagation settings: {config['surfel']['normal_propagation']}"]
     if "training_result" in record:
         lines.extend(["", f"- Training result: {record['training_result']}"])
     for metric, value in record.get("mean_metrics", {}).items():
@@ -243,7 +249,7 @@ def collect_results(run_dir: Path, record: dict) -> None:
     else:
         record["training_result"] = {"completed_iterations": None,
                                      "stop_reason": "not found; inspect train.log"}
-    stage = re.search(r"^Final loss stage: (mse|dssim)$", text, re.MULTILINE)
+    stage = re.search(r"^Final loss stage: (mse|dssim|l1_dssim)$", text, re.MULTILINE)
     if stage:
         record["training_result"]["loss_stage"] = stage[1]
     sh_stage = re.search(r"^Final SH degree: (\d+) \(configured maximum: (\d+)\)$", text, re.MULTILINE)

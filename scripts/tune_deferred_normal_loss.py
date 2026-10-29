@@ -1,4 +1,8 @@
-"""Tune deferred normal-depth weights with full-budget, validation-only runs."""
+"""Tune deferred normal optimization with matched, validation-only runs.
+
+Paper propagation presets tune tangent-scale expansion; legacy presets tune the
+optional depth-normal weight. Mask weight and all other settings stay fixed.
+"""
 
 from __future__ import annotations
 
@@ -32,11 +36,19 @@ def training_sources(root):
             for path in sorted(paths)}
 
 
-def comparable(config):
+def comparable(config, parameter='normal_weight'):
     config = deepcopy(config)
     config['paths'].pop('output', None)
-    config['geometry_loss'].pop('normal_depth_weight', None)
+    if parameter == 'propagation_scale':
+        config['surfel']['normal_propagation'].pop('scale_factor', None)
+    else:
+        config['geometry_loss'].pop('normal_depth_weight', None)
     return config
+
+
+def parameter_value(config, parameter):
+    return (config['surfel']['normal_propagation']['scale_factor'] if parameter == 'propagation_scale'
+            else config['geometry_loss']['normal_depth_weight'])
 
 
 def read_record(directory):
@@ -50,40 +62,44 @@ def active_gpu_runs(root):
 
 
 def write_progress(directory, plan):
+    propagation = plan.get('parameter') == 'propagation_scale'
+    label = 'Propagation scale' if propagation else 'Normal weight'
+    key = 'surfel.normal_propagation.scale_factor' if propagation else 'geometry_loss.normal_depth_weight'
     plan['updated_utc'] = runner.utc_now()
     temporary = directory / 'sweep.json.tmp'
     temporary.write_text(json.dumps(plan, indent=2, allow_nan=False) + '\n', encoding='utf-8')
     temporary.replace(directory / 'sweep.json')
-    columns = ['weight', 'status', 'iterations', 'surfel_stage', 'max_normal_pixels',
+    columns = ['value', 'status', 'iterations', 'surfel_stage', 'max_normal_pixels', 'propagation_events',
                'psnr_db', 'ssim', 'eligible', 'reason', 'run_dir', 'metrics_csv']
     with (directory / 'validation-results.csv').open('w', newline='', encoding='utf-8') as handle:
         writer = csv.DictWriter(handle, fieldnames=columns, extrasaction='ignore')
         writer.writeheader()
-        writer.writerows(plan['candidates'])
-    lines = ['# Deferred normal-loss validation sweep', '',
-             f"Status: **{plan['status']}**. Only `geometry_loss.normal_depth_weight` varies.", '',
+        writer.writerows(dict(row, value=row['weight']) for row in plan['candidates'])
+    lines = ['# Deferred normal-optimization validation sweep', '',
+             f"Status: **{plan['status']}**. Only `{key}` varies.", '',
              'Select the highest mean validation PSNR; validation SSIM breaks exact ties. '
              'Test images/scores are not used. Every candidate starts from scratch.', '',
              f"Seed: {plan['base_config']['runtime']['seed']}; "
              f"steps per candidate: {plan['base_config']['training']['iterations']}; "
              f"mask weight: {plan['base_config']['geometry_loss']['mask_weight']}.", '',
-             '| Normal weight | Status | Steps | Stage | Valid normal pixels (max logged) | Validation PSNR | Validation SSIM | Eligible |',
+             f'| {label} | Status | Steps | Stage | Valid normal pixels / propagation events | Validation PSNR | Validation SSIM | Eligible |',
              '| ---: | --- | ---: | --- | ---: | ---: | ---: | --- |']
     for row in plan['candidates']:
         lines.append(f"| {row['weight']:g} | {row['status']} | {row.get('iterations', '-')} | "
-                     f"{row.get('surfel_stage', '-')} | {row.get('max_normal_pixels', '-')} | "
+                     f"{row.get('surfel_stage', '-')} | {row.get('propagation_events' if propagation else 'max_normal_pixels', '-')} | "
                      f"{row.get('psnr_db', '-')} | {row.get('ssim', '-')} | {row.get('eligible', '-')} |")
+    for row in plan['candidates']:
         if row.get('reason'):
-            lines += ['', f"Weight {row['weight']:g}: {row['reason']}"]
-    if 'best_weight' in plan:
-        lines += ['', f"Selected normal weight: **{plan['best_weight']:g}**.", '',
-                  'Frozen settings: [best-config.yaml](best-config.yaml). '
-                  'A zero winner means disabling the normal term under this validation protocol.']
+            lines += ['', f"{label} {row['weight']:g}: {row['reason']}"]
+    best_key = 'best_scale' if propagation else 'best_weight'
+    if best_key in plan:
+        lines += ['', f"Selected {label.lower()}: **{plan[best_key]:g}**.", '',
+                  'Frozen settings: [best-config.yaml](best-config.yaml).']
     if plan.get('error'):
         lines += ['', f"Error: {plan['error']}"]
-    lines += ['', 'Eligibility requires the full budget and deferred shading. Positive-weight '
-              'runs must finish the normal ramp and log at least one valid normal pixel '
-              'while its weight is active. Image-quality selection does not establish normal '
+    eligibility = ('Propagation runs must log an intervention; factors above 1 must enlarge reflective primitives.'
+                   if propagation else 'Positive-weight runs must log valid normal pixels while their weight is active.')
+    lines += ['', 'Eligibility requires the full budget and deferred shading. ' + eligibility + ' Image-quality selection does not establish normal '
               'accuracy; inspect the saved normal/depth/coverage maps.', '',
               'Completed candidates are retained on resume; failed/interrupted candidates '
               'restart from scratch in new run folders. One-seed selection is provisional.', '',
@@ -94,11 +110,15 @@ def write_progress(directory, plan):
 
 def prepare(args, root=runner.ROOT):
     config = SurfelTrainingConfig.load(args.config).printable()
-    weights = args.weights
+    propagation = config['surfel']['normal_propagation']['enabled']
+    parameter = 'propagation_scale' if propagation else 'normal_weight'
+    weights = args.scales if propagation else args.weights
     if (len(weights) < 2 or len(set(weights)) != len(weights)
             or any(not math.isfinite(value) or value < 0 for value in weights)
             or not any(value > 0 for value in weights)):
         raise ValueError('Supply at least two unique, finite, nonnegative weights, including a positive weight.')
+    if propagation and any(not 1 <= value <= 2 for value in weights):
+        raise ValueError('Propagation scale factors must be in [1,2].')
     if config['model']['geometry'] != 'surfel' or config['surfel']['mode'] != 'deferred':
         raise ValueError('This sweep requires deferred surfels.')
     if config['paths']['init_ply'] is not None or config['convergence']['enabled']:
@@ -107,13 +127,13 @@ def prepare(args, root=runner.ROOT):
         raise ValueError('Training gates must use transforms_val.json.')
     normal = config['geometry_loss']
     budget = config['training']['iterations']
-    if (budget <= normal['normal_start_iteration'] + normal['normal_ramp_iterations']
+    if ((not propagation and budget <= normal['normal_start_iteration'] + normal['normal_ramp_iterations'])
             or budget <= config['surfel']['specular_start_iteration']):
         raise ValueError('The budget must extend beyond the normal ramp and deferred activation.')
     now = datetime.now(runner.SINGAPORE_TIMEZONE)
     stamp = f"{runner.MONTHS[now.month - 1]}{now.day:02d}-{now:%H%M}"
     scene = re.sub(r'[^A-Za-z0-9_-]', '_', Path(config['paths']['data']).name)
-    name = f'{scene}-{stamp}-deferred-normal-sweep'
+    name = f"{scene}-{stamp}-deferred-{'propagation' if propagation else 'normal'}-sweep"
     outputs = (root / 'outputs').resolve()
     outputs.mkdir(parents=True, exist_ok=True)
     directory, suffix = outputs / name, 2
@@ -130,18 +150,24 @@ def prepare(args, root=runner.ROOT):
     waiting = [str(path.resolve()) for path in args.wait_for]
     if config['runtime']['arch'] == 'gpu':
         waiting += active_gpu_runs(root)
-    plan = {'version': 1, 'kind': 'deferred_normal_weight', 'status': 'prepared',
+    plan = {'version': 1, 'kind': 'deferred_normal_propagation' if propagation else 'deferred_normal_weight',
+            'parameter': parameter, 'status': 'prepared',
             'created_utc': runner.utc_now(), 'base_config': config,
             'training_sources': training_sources(root),
             'input_files': json.loads((directory / 'input-files.json').read_text(encoding='utf-8')),
             'wait_for': list(dict.fromkeys(waiting)), 'candidates': []}
-    for index, weight in enumerate(sorted(weights)):
-        label = f'normal-{index}-{weight:g}'.replace('.', 'p').replace('+', '')
+    ordered = (sorted(weights, key=lambda value: (value != config['surfel']['normal_propagation']['scale_factor'], value))
+               if propagation else sorted(weights))
+    for index, weight in enumerate(ordered):
+        label = f"{'propagation' if propagation else 'normal'}-{index}-{weight:g}".replace('.', 'p').replace('+', '')
         candidate_config = deepcopy(config)
-        candidate_config['geometry_loss']['normal_depth_weight'] = weight
+        if propagation:
+            candidate_config['surfel']['normal_propagation']['scale_factor'] = weight
+        else:
+            candidate_config['geometry_loss']['normal_depth_weight'] = weight
         path = directory / 'configs' / f'{label}.yaml'
         path.write_text(yaml.safe_dump(candidate_config, sort_keys=False), encoding='utf-8')
-        plan['candidates'].append({'weight': weight, 'label': label, 'config': str(path),
+        plan['candidates'].append({'weight': weight, 'parameter': parameter, 'label': label, 'config': str(path),
                                    'status': 'pending',
                                    # Existing running jobs imported an older index writer
                                    # that reads this field unconditionally for every sweep.
@@ -181,12 +207,13 @@ def wait_for_runs(directory, plan, root, timeout=21600):
 
 
 def finish_candidate(candidate, run_dir, config):
+    parameter = candidate.get('parameter', 'normal_weight')
     record = read_record(run_dir)
     if (record['status'] != 'completed' or record.get('pipeline') != 'surfel'
             or record['evaluation']['manifest'] != 'transforms_val.json'):
         raise ValueError('A completed surfel run evaluated on validation is required.')
-    if (comparable(record['config']) != comparable(config)
-            or record['config']['geometry_loss']['normal_depth_weight'] != candidate['weight']):
+    if (comparable(record['config'], parameter) != comparable(config, parameter)
+            or parameter_value(record['config'], parameter) != candidate['weight']):
         raise ValueError('Candidate settings differ from the frozen sweep.')
     metrics = run_dir / 'test-metrics.csv'  # Historical filename; manifest verified above.
     candidate.update(read_metrics(metrics, config))
@@ -195,15 +222,23 @@ def finish_candidate(candidate, run_dir, config):
     signal = [int(pixels) for weight, pixels in re.findall(
         r'normal_weight=([\d.eE+-]+), normal_pixels=(\d+)', log) if float(weight) > 0]
     maximum = max(signal, default=0)
+    events = re.findall(r'normal propagation: expanded=(\d+), colours_reset=(\d+)', log)
     candidate.update(status='completed', iterations=result.get('completed_iterations'),
-                     surfel_stage=result.get('surfel_stage'), max_normal_pixels=maximum,
+                     surfel_stage=result.get('surfel_stage'), max_normal_pixels=maximum, propagation_events=len(events),
                      run_dir=str(run_dir), metrics_csv=str(metrics))
     reasons = []
     if candidate['iterations'] != config['training']['iterations']:
         reasons.append('Full iteration budget was not completed.')
     if candidate['surfel_stage'] != 'deferred':
         reasons.append('Deferred shading was not activated.')
-    if candidate['weight'] > 0 and maximum == 0:
+    if parameter == 'propagation_scale':
+        if config['surfel']['photometric_loss'] == 'l1_dssim' and result.get('loss_stage') != 'l1_dssim':
+            reasons.append('The configured paper image objective was not used.')
+        if not events:
+            reasons.append('No normal propagation interventions were logged.')
+        if candidate['weight'] > 1 and not any(int(expanded) > 0 for expanded, _ in events):
+            reasons.append('No reflective primitives were enlarged.')
+    elif candidate['weight'] > 0 and maximum == 0:
         reasons.append('No valid normal pixels were logged while the normal weight was active.')
     candidate['eligible'] = not reasons
     candidate['reason'] = ' '.join(reasons)
@@ -214,7 +249,7 @@ def execute(directory, root=runner.ROOT):
     if not directory.is_relative_to((root / 'outputs').resolve()):
         raise ValueError('Sweep directory must be inside outputs/.')
     plan = json.loads((directory / 'sweep.json').read_text(encoding='utf-8'))
-    if plan.get('kind') != 'deferred_normal_weight' or plan['version'] != 1:
+    if plan.get('kind') not in ('deferred_normal_weight', 'deferred_normal_propagation') or plan['version'] != 1:
         raise ValueError('Unsupported deferred normal-loss sweep.')
     if plan['status'] == 'completed':
         print(f"Sweep already completed: {directory / 'summary.md'}", flush=True)
@@ -223,10 +258,11 @@ def execute(directory, root=runner.ROOT):
     try:
         plan.pop('error', None)
         verify_frozen(plan, root)
+        parameter = plan.get('parameter', 'normal_weight')
         for candidate in plan['candidates']:
             config = SurfelTrainingConfig.load(Path(candidate['config'])).printable()
-            if (comparable(config) != comparable(plan['base_config'])
-                    or config['geometry_loss']['normal_depth_weight'] != candidate['weight']):
+            if (comparable(config, parameter) != comparable(plan['base_config'], parameter)
+                    or parameter_value(config, parameter) != candidate['weight']):
                 raise ValueError('Candidate configuration changed; prepare a new sweep.')
             if candidate['status'] == 'completed':
                 finish_candidate(candidate, Path(candidate['run_dir']), config)
@@ -240,29 +276,29 @@ def execute(directory, root=runner.ROOT):
             log_path = directory / f"{candidate['label']}-attempt{attempt}.log"
             candidate['attempt_logs'].append(str(log_path))
             write_progress(directory, plan)
-            print(f"Starting normal weight {candidate['weight']:g}; log: {log_path}", flush=True)
+            print(f"Starting {parameter} {candidate['weight']:g}; log: {log_path}", flush=True)
             args = runner.build_parser().parse_args([
                 candidate['config'], '--pipeline', 'surfel', '--eval-manifest', 'transforms_val.json',
                 '--metrics', 'psnr', 'ssim', '--name', f"deferred-tune-{candidate['label']}",
-                '--note', f'Validation-only deferred normal-weight sweep: {directory.name}'])
+                '--note', f'Validation-only deferred {parameter} sweep: {directory.name}'])
             with log_path.open('w', encoding='utf-8') as handle, \
                     contextlib.redirect_stdout(handle), contextlib.redirect_stderr(handle):
                 run_dir = runner.run_experiment(args, root)
             verify_frozen(plan, root)
             finish_candidate(candidate, run_dir, config)
             write_progress(directory, plan)
-            print(f"Weight {candidate['weight']:g}: PSNR={candidate['psnr_db']}, "
+            print(f"{parameter} {candidate['weight']:g}: PSNR={candidate['psnr_db']}, "
                   f"SSIM={candidate['ssim']}, eligible={candidate['eligible']}", flush=True)
         eligible = [row for row in plan['candidates'] if row.get('eligible')]
         if not eligible:
             raise ValueError('No eligible candidates. Inspect summary.md and training logs; no winner saved.')
         best = max(eligible, key=lambda row: (float(row['psnr_db']), float(row['ssim'])))
-        plan['best_weight'] = best['weight']
+        plan['best_scale' if parameter == 'propagation_scale' else 'best_weight'] = best['weight']
         plan['best_run'] = best['run_dir']
         (directory / 'best-config.yaml').write_bytes(Path(best['config']).read_bytes())
         plan['status'] = 'completed'
         write_progress(directory, plan)
-        print(f"Selected normal weight {best['weight']:g}: {directory / 'best-config.yaml'}", flush=True)
+        print(f"Selected {parameter} {best['weight']:g}: {directory / 'best-config.yaml'}", flush=True)
     except BaseException as error:
         plan['status'] = 'interrupted' if isinstance(error, KeyboardInterrupt) else 'failed'
         plan['error'] = str(error) or type(error).__name__
@@ -277,6 +313,7 @@ def build_parser():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('config', type=Path, nargs='?')
     parser.add_argument('--weights', type=float, nargs='+', default=[0.0, 0.005, 0.01, 0.02])
+    parser.add_argument('--scales', type=float, nargs='+', default=[1.0, 1.25, 1.5])
     parser.add_argument('--wait-for', type=Path, nargs='+', default=[])
     parser.add_argument('--prepare-only', action='store_true')
     parser.add_argument('--resume', type=Path)

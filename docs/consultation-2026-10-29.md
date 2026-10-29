@@ -1,5 +1,12 @@
 # 3DGS consultation notes — 29 October 2026
 
+**Latest revision:** the completed RGB result had visibly uneven normals. The user
+requested the deferred-reflection paper's normal method while keeping the mask.
+The active deferred preset now uses L1 + D-SSIM + mask BCE and reflection-driven
+normal propagation; the old depth-normal sweep was interrupted. See the current
+[method and commands](materials-red-rose-silver.md). Earlier notes below describe
+the preceding depth-normal implementation.
+
 ## Requested next experiment
 
 - Train normals with an explicit normal loss.

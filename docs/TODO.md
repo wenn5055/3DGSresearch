@@ -12,7 +12,12 @@ Details and verified sources: [consultation notes](consultation-2026-10-29.md).
 - [x] User saves edited `materials_red-rose-silver.blend` (three balls remain).
 - [x] Obtain a Materials Blender scene copy and view-capture source; scene opens in Blender 5.0.1.
 - [x] Prepare pose-replay capture script and RGB/deferred training presets; [commands](materials-red-rose-silver.md).
-- [ ] Render the edited red/rose/silver dataset with NeRF camera metadata and disjoint splits.
+- [x] Render the edited red/rose/silver dataset with NeRF camera metadata and disjoint splits.
+- [x] Automate validation-only deferred normal-weight tuning with resumption and saved winner.
+- [x] Stop the old normal-weight sweep and replace the active deferred preset with
+  paper-style reflection normal gradients/propagation, retaining alpha-mask BCE.
+- [ ] Complete the [replacement propagation-factor sweep](../outputs/materials_red-rose-silver-Oct29-1656-deferred-propagation-sweep/summary.md)
+  (running, paper factor 1.5 first) and inspect image/geometry outcomes.
 - [ ] Compare normal-loss training on the subset; inspect normal/depth maps and validation scores.
 
 ## First: decisions and experiment records
