@@ -362,6 +362,13 @@ and perceptual scores are pending; this alone does not select the winner.
 
 ## Commit policy
 
+Evaluation now also records mesh-normal/depth error and valid-coverage fraction
+for each visible target material, with means in `geometry-summary.csv`. This
+prevents a whole-scene geometry score dominated by pedestals from being mistaken
+for accuracy on reflective balls. A mixed Gaussian/surfel, 100-view CPU smoke
+verified material/empty-coverage handling; its tiny untrained models are not
+quality evidence. The upcoming frozen-model reports use these added columns.
+
 One bounded initializer follow-up is queued in `initialization_queue.py`, waiting
 for the entire proposal study and its timing reports to finish. It retrains the
 random-initialized consistency + SH3 control with the corrected sampling code,

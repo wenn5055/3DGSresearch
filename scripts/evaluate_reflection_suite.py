@@ -241,6 +241,16 @@ def evaluate(args):
                     diagnostic['normal_valid_fraction'] = float(valid.sum() / max((ray_foreground & alpha_foreground).sum(), 1))
                     diagnostic['mesh_normal_mae_deg'] = float(np.degrees(np.arccos(np.clip(np.sum(normals[valid] * truth_normal[valid], axis=1), -1, 1))).mean()) if valid.any() else None
                     diagnostic['mesh_depth_mae'] = float(np.abs(depth[valid] - truth_depth[valid]).mean()) if valid.any() else None
+                    for material, object_values in material_ids.items():
+                        material_mask = np.isin(ids, object_values) & alpha_foreground
+                        material_valid = valid & material_mask
+                        diagnostic[f'{material}_normal_valid_fraction'] = (
+                            float(material_valid.sum() / material_mask.sum()) if material_mask.any() else None)
+                        diagnostic[f'{material}_normal_mae_deg'] = (float(np.degrees(np.arccos(np.clip(
+                            np.sum(normals[material_valid] * truth_normal[material_valid], axis=1), -1, 1))).mean())
+                            if material_valid.any() else None)
+                        diagnostic[f'{material}_depth_mae'] = (float(np.abs(
+                            depth[material_valid] - truth_depth[material_valid]).mean()) if material_valid.any() else None)
                 geometry_rows.append(diagnostic)
             if view in selected:
                 path = args.output / f'model-{model_index}-{view}.png'
@@ -296,6 +306,18 @@ def evaluate(args):
         write_csv(args.output / 'crop-metrics.csv', crop_rows)
         write_csv(args.output / 'summary.csv', summaries)
         write_csv(args.output / 'geometry-metrics.csv', geometry_rows)
+        geometry_summaries = []
+        for model_label in labels:
+            model_geometry = [row for row in geometry_rows if row['model'] == model_label]
+            if not model_geometry:
+                continue
+            geometry_summary = {'model': model_label}
+            for field in dict.fromkeys(key for row in model_geometry for key in row
+                    if key.endswith(('_mae_deg', '_depth_mae', '_valid_fraction'))):
+                values = [row[field] for row in model_geometry if row.get(field) is not None]
+                geometry_summary[field] = float(np.mean(values)) if values else None
+            geometry_summaries.append(geometry_summary)
+        write_csv(args.output / 'geometry-summary.csv', geometry_summaries)
         (args.output / 'performance.json').write_text(json.dumps(timings, indent=2), encoding='utf-8')
         del trainer, scene
         gc.collect()

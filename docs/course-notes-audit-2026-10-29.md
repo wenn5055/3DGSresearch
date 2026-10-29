@@ -36,6 +36,12 @@ empty-space evidence. Do not treat a 200k population as proof of useful geometry
   contradiction: those foreground pixels may come from occluding objects.
 
 Raw diagnostic: `outputs/first-principles-2026-10-29/foreground-pruning-dry-run.json`.
+The [training-mask visual audit](../outputs/first-principles-2026-10-29/foreground-evidence/training-mask-evidence.png)
+shows RGB, the original alpha, and projected candidate centres for four diverse
+training views. Red centres can overlap foreground in another view because of
+occlusion. The support-box rule uses all 16 evidence views; this frozen audit
+does not claim to reconstruct historical persistence or perform deletion.
+Reproduce with the session-local `foreground_evidence.py` script.
 
 ### Implemented training-mask pruning
 
