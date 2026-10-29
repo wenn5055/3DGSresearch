@@ -1,5 +1,6 @@
 numpy>=1.26
 pillow>=10.0
+scipy>=1.11
 plyfile>=1.0
 pyyaml>=6.0
 warp-lang>=1.16

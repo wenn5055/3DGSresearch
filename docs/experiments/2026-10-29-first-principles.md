@@ -271,6 +271,71 @@ supports the mechanism, not an expectation that upsampling alone reproduces
 its results. HDR lighting, full roughness/Fresnel and indirect reflection remain
 different changes and must not be bundled into that test.
 
+## Pruning correction: first full result
+
+Run `materials_red-rose-silver-Oct29-2139-pruned-deferred-sh3` completed 30k
+steps at 400px. This tests the revised complete pruning policy (training-alpha
+contradictions plus continuing late ADC/opacity cleanup), not each route in
+isolation. The archived pre-correction run remains the comparison.
+
+| Quantity | Earlier late SH3 | Pruning correction |
+| --- | ---: | ---: |
+| Active surfels | 200,000 | **133,700** |
+| Validation PSNR | 37.1227 dB | 37.0101 dB |
+| Validation SSIM | 0.991101 | 0.990965 |
+| Required checkpoint bytes | 48,307,710 | **32,342,148** |
+
+The count fell 33.15%, for a 0.1126 dB PSNR difference. Do not select a model on
+count alone; geometry, reflection crops and LPIPS are still to be compared.
+The corrected run reported 841.44 training seconds. Session workloads differ,
+so that is not a controlled training-speed ratio.
+
+The log now exposes turnover: at step 4,800, 12,866 surfels were pruned and
+12,866 created, leaving 200k active. At step 20,500, 8,891 were pruned and zero
+created, reducing 200k to 191,109. Cleanup continued throughout refinement.
+The revised sequential controller is `pruning_queue.py`; the older two
+controllers remain held. The original 06:38 Singapore hard stop is unchanged.
+
+## Unit 12 diagnostic: geometry from training silhouettes
+
+Implemented a visual-hull initializer using only the 100 posed training PNG
+alpha channels. It intersects silhouette cones in a 512-cubed grid, extracts
+a smoothed signed-distance surface, and creates 100k oriented surfels. Bounds
+come from training camera distances. It reads no validation/test files, Blender
+scene, depth or reference normals. Four tests cover analytic-sphere geometry,
+unknown off-frame regions, quaternion orientation and forbidden-file sentinels.
+
+Independent evaluation on all 100 validation cameras, **before any training**:
+
+- Mean mesh-normal error: **14.3395 degrees** (earlier trained consistency model:
+  22.7586 degrees; earlier unregularized late-SH model: 45.6769 degrees).
+- Mean absolute mesh-depth error: 0.022986 scene units.
+- Normal-valid reference foreground fraction: 1.0000.
+- Silhouette IoU: 0.925866. The inferred surface/support leaks beyond silhouettes
+  and fills unseen concavities; it still needs photometric/mask refinement.
+- Preprocessing: 20.71 seconds on CPU. This is a coarse initializer, not recovered
+  ground-truth geometry or a finished novel-view synthesis result.
+
+This passes the stated geometry-only go/no-go check for a bounded follow-up.
+Prepared `materials_red-rose-silver_deferred_hull_sh3.yaml`: same consistency,
+late-SH and pruning settings, with the derived initial PLY. Actual initial count
+is 100k rather than 1k random points, so it tests the initialization method as a
+whole, not placement or orientation alone. Do not present any future advantage
+as an isolated normal-loss or deferred-shader effect.
+
+Reproduce the initializer:
+
+```powershell
+.venv/Scripts/python.exe scripts/initialize_from_training_masks.py `
+  data/materials_red-rose-silver `
+  --output outputs/first-principles-2026-10-29/edited-mask-initializer `
+  --grid-resolution 512 --max-points 100000
+```
+
+Source/provenance: `edited-mask-initializer/initialization.json`; independent
+metrics: `edited-mask-initializer-evaluation/summary.json`, both under the session
+output directory. The initializer itself never consumes these evaluation files.
+
 ## Commit policy
 
 Commit the reviewed protocol, then verified implementation, then measured
