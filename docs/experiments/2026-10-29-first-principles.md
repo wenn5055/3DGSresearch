@@ -184,6 +184,57 @@ Evidence: [comparison gallery](../../outputs/first-principles-2026-10-29/edited-
 [performance](../../outputs/first-principles-2026-10-29/edited-appearance-val/performance.json),
 and [protocol/source differences](../../outputs/first-principles-2026-10-29/edited-appearance-val/protocol.json).
 
+## Independent reassessment: consistency did improve geometry
+
+Re-rendered the three frozen geometry checkpoints on all 100 validation views
+with the same independent Blender mesh references. This uses no new training or
+reference supervision. Render timings were explicitly skipped because another
+GPU training job was running.
+
+| Historical variant | PSNR | Mean mesh-normal error | Mean mesh-depth absolute error |
+| --- | ---: | ---: | ---: |
+| No consistency | 34.5821 dB | 45.9639 degrees | 0.037371 |
+| Centre-depth consistency, weight 0.01 | 34.0690 dB | **22.7586 degrees** | **0.025738** |
+| Ray-plane-depth consistency, weight 0.01 | 33.1900 dB | 23.3974 degrees | 0.033560 |
+
+Means are computed per view then averaged. Normal-valid foreground fractions
+are 0.99961, 0.99914 and 0.99827. Mesh normals exclude material bump, and depth
+uses scene units. The large consistency benefit is not explained by dropping
+most reference pixels. Ray-plane depth did not improve mean geometry accuracy
+over the simpler consistency model in this evaluation.
+
+This corrects the earlier qualitative-only conclusion: normal consistency was
+useful geometry work, despite imperfect previews and slightly worse RGB scores.
+It does not establish perfect surfaces. The most justified next test is
+**centre-depth consistency plus late SH**, changing only the consistency weight
+relative to the completed late-SH model. A new normal-weight sweep, distortion
+loss, or roughness implementation is not needed to test that combination.
+
+Preset: `config/materials_red-rose-silver_deferred_consistency_sh3.yaml`.
+Evidence: [geometry reassessment](../../outputs/first-principles-2026-10-29/geometry-reassessment/index.html)
+and [per-view geometry metrics](../../outputs/first-principles-2026-10-29/geometry-reassessment/geometry-metrics.csv).
+
+## Original scene and proposal-scale follow-up
+
+The 400px/200k/30k deferred-SH3 scout completed with 21.2251 dB / 0.877096 SSIM
+and visible floaters. It first reached the D-SSIM gate late in training. This is
+not a good reflection result and should not be used as a substitute for the
+proposal-scale benchmark. The remaining matched scout controls will be retained.
+
+Prepared full-resolution Gaussian-SH3 / surfel-SH3 / deferred-SH3 presets by
+copying the **already measured original Materials baseline policy**: 800px, 1M
+capacity, 30k steps, position decay over 60k, reflection from 10k, initial strength
+0.1 and environment/reflection learning rates 0.01. SH bands unlock at
+20,001/22,001/24,001. They do not inherit the edited-scene settings used by the
+cheap scout. These settings are a separate, explicitly recorded protocol; do not
+attribute cross-protocol changes to any one parameter.
+
+Ship was downloaded with pinned revision and per-file hashes, with 100/100/200
+disjoint train/validation/test image paths and valid camera matrices. Its raw
+259,074,427-byte dataset is excluded from commits. The same full-resolution
+Gaussian-SH3 / deferred-SH3 pair is prepared for the proposal's secondary scene.
+See [Ship data provenance](../ship-data-source.md).
+
 ## Commit policy
 
 Commit the reviewed protocol, then verified implementation, then measured

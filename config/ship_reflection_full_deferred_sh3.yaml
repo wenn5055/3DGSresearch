@@ -1,0 +1,47 @@
+# Full-resolution proposal study; shared original Materials baseline policy.
+adaptive:
+  dssim_psnr_threshold: 21.0
+convergence:
+  enabled: false
+densification:
+  fraction: 0.2
+  interval: 100
+learning_rates:
+  position_max_steps: 60000
+loss:
+  dssim_weight: 0.2
+  dssim_window: 11
+  mode: mse_dssim
+model:
+  background: white
+  capacity: 1000000
+  geometry: surfel
+  height: 800
+  initial_splats: 1000
+  sh_degree: 3
+  width: 800
+paths:
+  data: ../data/ship
+  init_ply: null
+  output: ../outputs/ship-reflection-full-deferred-sh3/model.png
+reporting:
+  snapshot_every: 5000
+runtime:
+  arch: gpu
+  seed: 7
+sparse:
+  enabled: false
+  samples_per_tile: 256
+surfel:
+  environment_height: 64
+  environment_lr: 0.01
+  environment_width: 128
+  initial_reflection: 0.1
+  mode: deferred
+  reflection_lr: 0.01
+  save_debug: true
+  sh_band_interval: 2000
+  sh_start_iteration: 20001
+  specular_start_iteration: 10000
+training:
+  iterations: 30000

@@ -257,18 +257,20 @@ def evaluate(args):
             print(f'{label} [{view + 1}/{len(frames)}] PSNR={row["psnr_db"]:.4f}', flush=True)
         # Time only forward device rendering/tiling/MSE, without image download,
         # file I/O, LPIPS or parameter allocation. Host tile preparation is included.
-        for view in selected:
-            trainer._render_view(int(view))
-        wp.synchronize_device(device)
         measurements = []
-        for repeat in range(args.timing_repeats):
-            started = perf_counter()
+        if not args.skip_timing:
             for view in selected:
                 trainer._render_view(int(view))
             wp.synchronize_device(device)
-            measurements.append((perf_counter() - started) / len(selected))
-        timing = {'model': label, 'median_ms_per_view': 1000 * float(np.median(measurements)),
-                  'fps': 1 / float(np.median(measurements)), 'timing_repeats': args.timing_repeats,
+            for repeat in range(args.timing_repeats):
+                started = perf_counter()
+                for view in selected:
+                    trainer._render_view(int(view))
+                wp.synchronize_device(device)
+                measurements.append((perf_counter() - started) / len(selected))
+        timing = {'model': label, 'median_ms_per_view': 1000 * float(np.median(measurements)) if measurements else None,
+                  'fps': 1 / float(np.median(measurements)) if measurements else None,
+                  'timing_repeats': len(measurements), 'timing_skipped': args.skip_timing,
                   'scope': 'forward rendering + host tile preparation + MSE; no image download/file I/O/metrics',
                   'active_primitives': len(scene.means),
                   'checkpoint_bytes': sum(path.stat().st_size for path in checkpoint_paths(run)),
@@ -341,6 +343,7 @@ def main():
     parser.add_argument('--arch', choices=('auto', 'cpu', 'gpu'), default='gpu')
     parser.add_argument('--cpu-threads', type=int, default=2)
     parser.add_argument('--timing-repeats', type=int, default=10)
+    parser.add_argument('--skip-timing', action='store_true', help='Skip speed measurement, e.g. while other GPU work runs.')
     parser.add_argument('--material-inspection', type=Path)
     parser.add_argument('--geometry-reference', type=Path)
     parser.add_argument('--materials', nargs='+', default=['Chrome'])
