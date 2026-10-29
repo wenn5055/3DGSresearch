@@ -2,6 +2,14 @@
 
 Starter code and data for the CP4282 Gaussian Splatting **training** assignment.
 
+Research extensions now include staged D-SSIM, SH degrees 0–3, and independent
+Gaussian-control / RGB-surfel / deferred-surfel passes. Start with
+[project passes](docs/project-passes.md) for the new experiments and
+[findings](docs/findings.md) for measured baseline results. The surfel passes are
+tested implementations; their full Materials quality comparisons remain to be run.
+For a one-line explanation of each output folder, see the auto-updated
+[output index](docs/output-index.md).
+
 This repository intentionally contains incomplete teaching implementations. The missing sections
 are the work: read the corresponding unit in the course notes, implement the marked functions,
 and use the supplied checks before moving on.

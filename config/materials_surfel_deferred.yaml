@@ -1,0 +1,47 @@
+# Project pass: exact-zero local z variance, training-only initialization.
+# Run with scripts/run_experiment.py --pipeline surfel.
+
+paths:
+  data: ../data/materials
+  output: ../outputs/materials-surfel-deferred/model.png
+  init_ply: null
+runtime:
+  arch: gpu
+  seed: 7
+model:
+  width: 800
+  height: 800
+  capacity: 1000000
+  initial_splats: 1000
+  background: white
+  sh_degree: 0
+  geometry: surfel
+training:
+  iterations: 30000
+learning_rates:
+  position_max_steps: 60000
+loss:
+  mode: mse_dssim
+  dssim_weight: 0.2
+  dssim_window: 11
+adaptive:
+  dssim_psnr_threshold: 21.0
+densification:
+  interval: 100
+  fraction: 0.2
+sparse:
+  enabled: false
+  samples_per_tile: 256
+convergence:
+  enabled: false
+reporting:
+  snapshot_every: 1000
+surfel:
+  mode: deferred
+  specular_start_iteration: 10000
+  initial_reflection: 0.1
+  reflection_lr: 0.01
+  environment_lr: 0.01
+  environment_width: 128
+  environment_height: 64
+  save_debug: true

@@ -1,12 +1,21 @@
 # Research design record: Deferred Specular Shading with Gaussian Surfels
 
-**Last updated:** 27 October 2026 (Asia/Singapore).
+**Last updated:** 29 October 2026 (Asia/Singapore).
 
 **Purpose:** Document the reasoning, literature checks, implementation choices,
 and unresolved questions developed so far, as preparation for the final report.
 
 **Living document:** These notes will be updated as implementation, experiments,
 and literature review progress, recording new evidence and changes to decisions.
+
+**28–29 October implementation update:** Fixed RGB, staged D-SSIM and SH degrees 0–3
+are implemented; [findings](findings.md) consolidates measured RGB/SH results and the
+validation-only tuning sweep. The independent project iterations now implement
+training-only Gaussian initialization, rank-two RGB surfels, and deferred learned
+environment reflection. See [project passes](project-passes.md) for runnable configs,
+the exact shading equation, checkpoint conventions and current limitations.
+The sections below preserve the original design reasoning; proposed GGX, normal-depth
+regularization, NeRO evaluation and performance procedures are still future work.
 
 ## 1. Research objective and the claim we can actually test
 

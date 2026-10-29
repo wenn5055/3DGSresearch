@@ -1,20 +1,22 @@
 # Project todo list
 
 Unchecked items are planned, not completed. Follow [researchStages.md](researchStages.md)
-for rationale and stage completion criteria. Immediate milestone: a checked
-implementation design and a reproducible RGB baseline on materials.
+for rationale and stage completion criteria. Immediate milestone: a measured Materials
+comparison of the three project passes. Current implementation details and commands:
+[project-passes.md](project-passes.md); measured results: [findings.md](findings.md).
 
 ## First: decisions and experiment records
 
 - [ ] Add any course rubric, relevant lecture notes, and professor feedback to
   `local-context/`; extract requirements into the tracked plan where appropriate.
-- [ ] Reconcile the RGB baseline with the proposal's SH comparison language.
+- [x] Reconcile the RGB baseline with the proposal's SH comparison language;
+  degree-2 and degree-3 SH baselines are implemented and measured.
 - [ ] Confirm primary materials + real NeRO scope and whether ship remains required.
 - [ ] Read the surfel parameterization/normal loss and deferred-reflection sections
   of the two primary papers alongside their official implementations.
-- [ ] Write down the geometry parameterization, lighting representation, material
-  parameters, and losses. Start from the recommendations in researchStages.md.
-- [ ] Adopt unique run IDs and [run-record-template.md](run-record-template.md).
+- [x] Document the current geometry, lighting, material parameters and losses in
+  [project-passes.md](project-passes.md); full BRDF/geometry priors remain future work.
+- [x] Adopt unique dated run IDs, isolated outputs and saved config/source provenance.
 - [x] Implement a single-command RGB experiment runner for isolated outputs,
   configuration/source/input snapshots, logs, training/evaluation, and failure records.
   Usage: [CommandList.md](CommandList.md).
@@ -23,28 +25,35 @@ implementation design and a reproducible RGB baseline on materials.
 
 ## Baseline and data
 
-- [ ] Record GPU/driver, Python, dependencies, Git revision, and local changes.
-- [ ] Run setup and baseline gradient checks; save logs and exit codes.
-- [ ] Run and evaluate a recorded Lego baseline using a dedicated config/output.
+- [x] Record GPU/driver, Python, dependencies, Git revision, and local changes per run.
+- [x] Run baseline and project gradient checks; save logs and exit codes.
+- [x] Run and evaluate recorded Lego baselines with dedicated configs/outputs.
 - [x] Set the data policy: keep Lego and materials in Git; generated results stay in outputs/.
 - [x] Obtain materials train/validation/test images and manifests; all referenced RGB images are present.
 - [ ] Verify data loading, cameras, resizing, background, scale, and initialization.
-- [ ] Create a materials config with a suitable initialization policy, output path,
+- [x] Create a materials config with a suitable initialization policy, output path,
   seed, training budget, learning-rate schedule, and stopping policy.
 - [ ] Fix validation views and the test protocol, including any reflection crops.
-- [ ] Run the unchanged RGB baseline on materials; save logs, config, trained
+- [x] Run the RGB baseline on materials; save logs, config, trained
   splats, rendered test images, per-view CSV, and an experiment summary.
+- [x] Add staged MSE/D-SSIM, SH 0–3, checkpoint sidecars and matched test evaluation.
+- [x] Start validation-only SH learning-rate tuning with matched-baseline reuse.
+- [x] Finish the sweep and inspect eligible candidates; 0.00025 selected by validation PSNR.
+- [ ] Repeat promising settings with additional matched seeds.
+- [x] Identify validation-colour initialization in the historical baseline and add
+  a training-only Gaussian control for the new project comparison.
 
 ## Implementation
 
-- [ ] Add RGB surfels with explicit normals and adapt all affected training paths.
-- [ ] Check surfel projection and geometry gradients; save the RGB-surfel comparison.
-- [ ] Add normal/depth/base-color/coverage and necessary material G-buffers.
-- [ ] Inspect controlled overlap and edge cases; check G-buffer gradients.
-- [ ] Implement a deferred reflection prototype under controlled lighting.
-- [ ] Check gradients through lighting, shading, normal normalization, and compositing.
-- [ ] Decide whether to extend the prototype to GGX environment shading or
-  explicitly narrow the proposal's physically based shading claim.
+- [x] Add rank-two RGB surfels with explicit normals and adapt projection, density control and checkpoints.
+- [x] Check surfel projection and geometry gradients on CPU/CUDA.
+- [ ] Record the full Gaussian-control versus RGB-surfel quality comparison.
+- [x] Add normal/depth/base-color/coverage/reflection-strength G-buffers.
+- [x] Inspect controlled overlap, uncovered pixels, normal flips and G-buffer gradients.
+- [x] Implement a deferred learned-environment reflection prototype.
+- [x] Check gradients through lighting, shading, normal normalization, and compositing.
+- [x] Scope this iteration as environment-reflection blending; no full GGX/roughness claim.
+- [ ] Evaluate whether normal-depth regularization and a richer roughness model are needed.
 - [ ] Run recorded deferred-surfel training/evaluation on materials.
 
 ## Evaluation and reporting

@@ -58,6 +58,7 @@ def write_progress(directory, plan):
     pending = directory / "sweep.json.tmp"
     pending.write_text(json.dumps(plan, indent=2, allow_nan=False), encoding="utf-8")
     pending.replace(directory / "sweep.json")
+    runner.refresh_output_index(directory.parent.parent)
     columns = ["rate", "status", "iterations", "sh_degree", "psnr_db", "ssim", "eligible", "run_dir", "metrics_csv"]
     with (directory / "validation-results.csv").open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=columns, extrasaction="ignore")

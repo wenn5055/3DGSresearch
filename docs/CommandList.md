@@ -2,6 +2,25 @@
 
 Use **Git Bash on Windows**, from the repository root.
 
+## Project passes (28 October 2026)
+
+These are independent runs; the project runner evaluates validation by default.
+Keep the shared settings matched when comparing them. Details, warm starts and
+diagnostics: [project-passes.md](project-passes.md).
+
+```bash
+python scripts/run_project.py config/materials_gaussian_control.yaml --name gaussian-control --metrics psnr ssim
+python scripts/run_project.py config/materials_surfel_rgb.yaml --name surfel-rgb --metrics psnr ssim
+python scripts/run_project.py config/materials_surfel_deferred.yaml --name surfel-deferred --metrics psnr ssim
+```
+
+Run them one at a time for interpretable timing. The deferred pass fits RGB geometry
+for 10k steps before enabling learned environment reflection. All three presets use
+30k steps and disable early stopping. Use `--prepare-only` to inspect a run's resolved
+settings, or `--check-gradients` to record checks before training.
+
+The commands below remain the original Gaussian/RGB baseline workflow.
+
 ## 1. Activate Python
 
 ```bash

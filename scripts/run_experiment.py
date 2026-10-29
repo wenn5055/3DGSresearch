@@ -1,4 +1,4 @@
-"""Record, train, and evaluate an RGB Warp experiment in a new outputs/ directory."""
+"""Record, train, and evaluate Gaussian or surfel experiments in isolated output folders."""
 
 from __future__ import annotations
 
@@ -20,6 +20,8 @@ import time
 import zipfile
 
 import yaml
+
+from update_output_index import refresh_output_index
 
 ROOT = Path(__file__).resolve().parents[1]
 SINGAPORE_TIMEZONE = timezone(timedelta(hours=8), "SGT")
@@ -126,12 +128,18 @@ def inspect_inputs(config: dict, eval_manifest: str, run_dir: Path) -> dict:
         records[name] = {**fingerprint(path), "frames": len(frames),
                          "frame_paths": [frame["file_path"] for frame in frames]}
     init_ply = config["paths"]["init_ply"]
+    init_materials = None
     if init_ply is not None:
         files.add(Path(init_ply))
+        if config.get('surfel') and config['model'].get('geometry') == 'surfel':
+            sidecar = Path(init_ply).with_suffix('.surfel.npz')
+            if sidecar.is_file():
+                files.add(sidecar)
+                init_materials = fingerprint(sidecar)
     fingerprints = [fingerprint(path) for path in sorted(files)]
     (run_dir / "input-files.json").write_text(
         json.dumps(fingerprints, indent=2), encoding="utf-8")
-    return {"directory": str(data), "manifests": records,
+    return {"directory": str(data), "manifests": records, "initial_materials": init_materials,
             "initialization": "random" if init_ply is None else fingerprint(Path(init_ply))}
 
 
@@ -145,6 +153,7 @@ def write_record(run_dir: Path, record: dict) -> None:
              f"- Finished (UTC): {record.get('finished_utc', 'pending')}",
              f"- Purpose: {record['note'] or 'Add your research question here.'}",
              f"- Dataset: {config['paths']['data']}",
+             f"- Pipeline: {record.get('pipeline', 'gaussian')}",
              f"- Final evaluation manifest: {record['evaluation']['manifest']}",
              f"- Seed: {config['runtime']['seed']}",
              f"- Configured iterations: {config['training']['iterations']}",
@@ -171,6 +180,7 @@ def write_record(run_dir: Path, record: dict) -> None:
                   "Process wall times include startup and logging. FPS, peak VRAM, and crop",
                   "metrics are not measured by this runner. GPU metadata is a hardware snapshot."])
     (run_dir / "summary.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    refresh_output_index(run_dir.parent.parent)
 
 
 def run_stage(name: str, command: list[str], root: Path, run_dir: Path, record: dict) -> None:
@@ -234,6 +244,9 @@ def collect_results(run_dir: Path, record: dict) -> None:
     sh_stage = re.search(r"^Final SH degree: (\d+) \(configured maximum: (\d+)\)$", text, re.MULTILINE)
     if sh_stage:
         record["training_result"]["sh_degree"] = int(sh_stage[1])
+    surfel_stage = re.search(r"^Final surfel stage: (gaussian_rgb|rgb|deferred)$", text, re.MULTILINE)
+    if surfel_stage:
+        record["training_result"]["surfel_stage"] = surfel_stage[1]
     model = run_dir / "model.ply"
     record["model_artifacts"] = [fingerprint(path) for path in sorted(run_dir.glob("model.*"))
                                  if path.is_file()]
@@ -241,6 +254,9 @@ def collect_results(run_dir: Path, record: dict) -> None:
         raise FileNotFoundError(f"Trainer did not save {model}")
     if record["config"]["model"]["sh_degree"] and not model.with_suffix(".sh.npz").is_file():
         raise FileNotFoundError(f"SH training did not save {model.with_suffix('.sh.npz')}")
+    if (record.get("pipeline") == "surfel" and record['config']['model']['geometry'] == 'surfel'
+            and not model.with_suffix(".surfel.npz").is_file()):
+        raise FileNotFoundError(f"Surfel training did not save {model.with_suffix('.surfel.npz')}")
 
 
 def collect_metrics(run_dir: Path, record: dict) -> None:
@@ -263,6 +279,7 @@ def collect_metrics(run_dir: Path, record: dict) -> None:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("config", type=Path, help="Training YAML; its relative paths retain their original meaning.")
+    parser.add_argument("--pipeline", choices=("gaussian", "surfel"), default="gaussian", help="Choose the baseline or independent surfel research passes.")
     parser.add_argument("--name", help="Optional suffix, e.g. cap1k gives scene-Oct28-1305-cap1k (Singapore time). Repeated names get -2, -3, etc.")
     parser.add_argument("--note", default="", help="Research question/purpose to save in the summary.")
     parser.add_argument("--metrics", nargs="+", choices=("psnr", "ssim", "lpips"), default=["psnr", "ssim", "lpips"])
@@ -275,7 +292,12 @@ def build_parser() -> argparse.ArgumentParser:
 
 def run_experiment(args: argparse.Namespace, root: Path = ROOT) -> Path:
     source = args.config.expanduser().resolve()
-    config = TrainingConfig.load(source).printable()
+    config_class = TrainingConfig
+    if args.pipeline == "surfel":
+        sys.path.insert(0, str(root / "src"))
+        from cp4282_gs.surfels.config import SurfelTrainingConfig
+        config_class = SurfelTrainingConfig
+    config = config_class.load(source).printable()
     if not config["reporting"]["save_ply"]:
         raise ValueError("reporting.save_ply must be true for post-training evaluation")
     now = datetime.now(SINGAPORE_TIMEZONE)
@@ -302,7 +324,7 @@ def run_experiment(args: argparse.Namespace, root: Path = ROOT) -> Path:
             suffix += 1
     original_output = config["paths"]["output"]
     config["paths"]["output"] = str(run_dir / "model.png")
-    record = {"run_id": name, "status": "preparing", "started_utc": utc_now(),
+    record = {"run_id": name, "status": "preparing", "started_utc": utc_now(), "pipeline": args.pipeline,
               "note": args.note, "source_config": str(source), "original_output": original_output,
               "runner_command": sys.argv, "config": config, "stages": [],
               "evaluation": {"manifest": args.eval_manifest,
@@ -318,8 +340,11 @@ def run_experiment(args: argparse.Namespace, root: Path = ROOT) -> Path:
         record["inputs"] = inspect_inputs(config, args.eval_manifest, run_dir)
         record["environment"] = snapshot_provenance(root, run_dir)
         python = sys.executable
-        train = [python, "-u", str(root / "3dgs_trainer.py"), str(config_path)]
-        evaluation = [python, "-u", str(root / "3dgs_evaluator.py"), str(run_dir / "model.ply"),
+        train_script = root / ("scripts/train_surfels.py" if args.pipeline == "surfel" else "3dgs_trainer.py")
+        is_surfel_geometry = args.pipeline == "surfel" and config['model']['geometry'] == 'surfel'
+        eval_script = root / ("scripts/evaluate_surfels.py" if is_surfel_geometry else "3dgs_evaluator.py")
+        train = [python, "-u", str(train_script), str(config_path)]
+        evaluation = [python, "-u", str(eval_script), str(run_dir / "model.ply"),
                       config["paths"]["data"], "--manifest", args.eval_manifest,
                       "--arch", config["runtime"]["arch"],
                       "--width", str(config["model"]["width"]),
@@ -335,7 +360,8 @@ def run_experiment(args: argparse.Namespace, root: Path = ROOT) -> Path:
         planned = []
         if args.check_gradients:
             device = "cpu" if config["runtime"]["arch"] == "cpu" else "cuda:0"
-            planned.append(("gradients", [python, "-u", str(root / "3dgs_gradient_check_gpu.py"), "--device", device]))
+            checker = root / ("scripts/check_surfel_gradients.py" if is_surfel_geometry else "3dgs_gradient_check_gpu.py")
+            planned.append(("gradients", [python, "-u", str(checker), "--device", device]))
         planned.extend([("train", train), ("eval", evaluation)])
         record["planned_commands"] = dict(planned)
         print(f"Run directory: {run_dir}", flush=True)
@@ -361,8 +387,10 @@ def run_experiment(args: argparse.Namespace, root: Path = ROOT) -> Path:
     return run_dir
 
 
-def main() -> int:
-    args = build_parser().parse_args()
+def main(default_pipeline="gaussian", default_eval_manifest="transforms_test.json") -> int:
+    parser = build_parser()
+    parser.set_defaults(pipeline=default_pipeline, eval_manifest=default_eval_manifest)
+    args = parser.parse_args()
     try:
         run_experiment(args)
     except KeyboardInterrupt:

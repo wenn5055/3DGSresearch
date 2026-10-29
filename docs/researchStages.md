@@ -1,8 +1,21 @@
 # Research stages
 
-This is a proposed sequence, not a record of completed experiments. See
+Updated **29 October 2026 (Singapore)**. See
 [project-plan.md](project-plan.md) for scope, [TODO.md](TODO.md) for actions, and
 [run-record-template.md](run-record-template.md) for recording each run.
+
+| Stage | Current state |
+| --- | --- |
+| RGB/D-SSIM/SH baselines | Implemented; matched Materials test results recorded in [findings](findings.md). |
+| Validation tuning | Sweep completed; 0.00025 selected by PSNR, 0.0000625 highest SSIM. Single seed. |
+| Gaussian project control | Implemented with training-only initialization. |
+| Flattened RGB surfels | Implemented; zero-thickness, gradients, density control and checkpoints checked. Full quality run pending. |
+| Normal/depth/material G-buffers | Implemented with PNG and float-array diagnostics. |
+| Deferred surfel reflection | Learned environment-reflection prototype implemented and gradient-checked. Full quality run pending. |
+| Final comparison/NeRO | Pending; no surfel superiority or controlled speed claim yet. |
+
+Run each iteration independently using [project-passes.md](project-passes.md).
+The detailed stage criteria below remain the experiment/review checklist.
 
 ## Stage 0: Define the experiment and preserve the RGB baseline
 
@@ -41,7 +54,7 @@ metrics and images have known provenance.
 
 Goal: isolate the geometry change before introducing a new appearance model.
 
-- Recommended starting parameterization: existing rotation plus two positive
+- Implemented parameterization: existing rotation plus two positive
   in-plane scales, with the third local scale explicitly fixed to zero.
 - Define the normal from the rotated local z-axis. Adapt projection, gradients,
   initialization, densification, pruning, and export where required.
@@ -92,6 +105,10 @@ changed backward paths pass meaningful gradient checks.
 ## Stage 4: Add deferred reflection and its backward pass
 
 Goal: test whether per-pixel reflections improve held-out appearance.
+
+The first implemented pass uses a learned environment-map reflection blend,
+scheduled after a geometry warm-up. It has no learned roughness/GGX yet. The options
+below describe progressively richer models; they are not all implemented features.
 
 Choose and record both a material response and a lighting representation:
 
