@@ -128,7 +128,10 @@ def evaluate(args):
     manifest_path = data / args.manifest
     manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
     targets, cameras, focal, distance, frames = base.load_views(data, width, height, background, manifest_name=args.manifest)
-    selected = base.select_diverse_frame_ids([frame['transform_matrix'] for frame in manifest['frames']], 4)
+    selected = args.views if args.views is not None else base.select_diverse_frame_ids(
+        [frame['transform_matrix'] for frame in manifest['frames']], 4)
+    if not selected or len(set(selected)) != len(selected) or any(view < 0 or view >= len(frames) for view in selected):
+        raise ValueError('Illustration view IDs must be unique indices in the manifest.')
     masks, silhouettes, inputs, boxes = [], [], [fingerprint(manifest_path)], {}
     args.output.mkdir(parents=True, exist_ok=True)
     for view, frame in enumerate(manifest['frames']):
@@ -339,6 +342,7 @@ def main():
     parser.add_argument('--labels', nargs='+')
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--manifest', choices=('transforms_val.json', 'transforms_test.json'), default='transforms_val.json')
+    parser.add_argument('--views', type=int, nargs='+', help='Preselected illustration cameras; default uses pose diversity.')
     parser.add_argument('--metrics', nargs='+', choices=('psnr', 'ssim', 'lpips'), default=['psnr', 'ssim', 'lpips'])
     parser.add_argument('--arch', choices=('auto', 'cpu', 'gpu'), default='gpu')
     parser.add_argument('--cpu-threads', type=int, default=2)

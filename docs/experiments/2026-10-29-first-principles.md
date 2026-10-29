@@ -235,6 +235,35 @@ disjoint train/validation/test image paths and valid camera matrices. Its raw
 Gaussian-SH3 / deferred-SH3 pair is prepared for the proposal's secondary scene.
 See [Ship data provenance](../ship-data-source.md).
 
+## Execution and stopping rules
+
+Two session-local sequential controllers keep independent runs off the GPU while
+render timing is measured. `research_queue.py` runs the cheap controls;
+`proposal_queue.py` waits for it, then runs the consistency+SH combination,
+matched reports, full-resolution Materials and Ship models, and frozen-model
+test reports. Their machine-readable state/logs live in
+`outputs/first-principles-2026-10-29/`. Both enforce the original absolute
+06:38 Singapore hard stop, including terminating only their own active child
+process trees if necessary. No queued full-resolution settings depend on test
+results. Ship test illustrations 20 and 120 are predetermined by Unit 11.
+
+Further architecture changes are held until the consistency+SH result and
+proposal-scale controls are measured. There is already a concrete appearance
+improvement and independently verified geometry improvement to combine. This
+prevents every imperfect preview from triggering a different loss or renderer.
+
+If reflection fitting still fails with reasonable geometry, a grounded subsequent
+test is progressive environment resolution: a coarse map gives a wider angular
+gradient neighborhood than the current 128x64 bilinear lookup. This is a
+continuation hypothesis, not a proven fix or an original algorithm claim.
+[SpecGloss-GS, WACV 2026](https://github.com/gkouros/SpecGloss-GS) uses progressive
+environment-map upsampling alongside a richer BRDF and normal/diffuse priors.
+Its [training loop](https://github.com/gkouros/SpecGloss-GS/blob/main/train.py)
+replaces the environment optimizer parameter when resolution doubles. That
+supports the mechanism, not an expectation that upsampling alone reproduces
+its results. HDR lighting, full roughness/Fresnel and indirect reflection remain
+different changes and must not be bundled into that test.
+
 ## Commit policy
 
 Commit the reviewed protocol, then verified implementation, then measured
