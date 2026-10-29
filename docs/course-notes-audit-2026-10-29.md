@@ -74,6 +74,14 @@ pruning during growth-free refinement. A full GPU runner smoke removed 22 then
 6 background surfels, and later removed 43 during refinement with zero growth.
 These counts verify operation, not final reconstruction quality.
 
+An additional scene-calibration check reconstructed 174,007 actual surface points
+from independent Blender depth in validation views 0/13/73/88 and projected them
+into the 16 training evidence cameras. With tiny footprints plus the configured
+margin, **zero points received even one background vote**, hence zero pruning
+candidates. This tests camera/alpha agreement on the real scene; reference points
+were used only for this check and never supplied to initialization/training.
+Counts and source/reference fingerprints: session `foreground-reference-sanity.json`.
+
 ### Unit 14 contribution measurement: now measured directly
 
 Added `scripts/measure_surfel_contributions.py`, a read-only raster pass that
