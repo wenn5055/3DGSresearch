@@ -9,9 +9,10 @@ Updated **29 October 2026 (Singapore)**. See
 | RGB/D-SSIM/SH baselines | Implemented; matched Materials test results recorded in [findings](findings.md). |
 | Validation tuning | Sweep completed; 0.00025 selected by PSNR, 0.0000625 highest SSIM. Single seed. |
 | Gaussian project control | Implemented with training-only initialization. |
-| Flattened RGB surfels | Implemented; zero-thickness, gradients, density control and checkpoints checked. Full quality run pending. |
+| Flattened RGB surfels | Full 30k-step run measured; slightly below the Gaussian RGB control on validation image scores. |
 | Normal/depth/material G-buffers | Implemented with PNG and float-array diagnostics. |
-| Deferred surfel reflection | Learned environment-reflection prototype implemented and gradient-checked. Full quality run pending. |
+| Deferred surfel reflection | Full 30k-step run: +1.1374 validation dB over RGB surfels; normals remain noisy. |
+| Geometry regularization | Training-alpha mask and normal-depth losses implemented and checked; full-budget comparison pending. |
 | Final comparison/NeRO | Pending; no surfel superiority or controlled speed claim yet. |
 
 Run each iteration independently using [project-passes.md](project-passes.md).

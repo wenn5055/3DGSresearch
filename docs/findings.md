@@ -183,3 +183,155 @@ Next measurements: run the three 30k-step presets separately, compare Gaussian
 control versus surfel RGB on validation, then surfel RGB versus deferred reflection.
 Inspect coverage, depth, normals and matched highlight crops before selecting
 settings; reserve final test evaluation for frozen configurations.
+
+### RGB surfel inspection at 24k steps
+
+- Run: `materials-Oct29-1234-surfel-rgb`; still training when inspected. RGB pass,
+  no deferred reflection. Preserve this first run as the unregularized reference.
+- The colour snapshot reconstructs recognizable objects/highlights, but normals
+  are mottled and depth/normal images expose many background floaters. A good RGB
+  fit alone does not establish a coherent surface suitable for specular shading.
+- Diagnostic caveat: normal/depth previews show coverage above 1e-6, so weak
+  floaters appear more prominent than in the colour render. They are not all weak:
+  in the top 100 rows, 38.4% of pixels have coverage >0.01 and the maximum is 0.982,
+  while the saved RGB pixels are entirely white. Background-coloured primitives
+  can therefore be concealed in the RGB fit. This is one snapshot, not a scene-wide
+  geometry-error measurement.
+- Validation MSE EMA decreases from 0.006252 at 10k to 0.002802 at 24k. This is the
+  training-time held-out subset/EMA, not mean full-validation per-view PSNR.
+- The completed Gaussian control (`materials-Oct29-1144-control`) scored 25.7263 dB /
+  0.920230 SSIM on full validation. Wait for the surfel run's full validation before
+  comparing image quality. Surface regularization remains a separate next experiment.
+
+Evidence: [24k snapshot files](../outputs/materials-Oct29-1234-surfel-rgb/model_snapshots/),
+[training log](../outputs/materials-Oct29-1234-surfel-rgb/train.log), and
+[Gaussian control summary](../outputs/materials-Oct29-1144-control/summary.md).
+
+## 2026-10-29 — Interim report: three project runs before geometry losses
+
+**Finding:** Deferred surfel reflection improves validation image reconstruction
+over both RGB variants in this first matched-seed comparison. Flattening alone
+slightly reduces image scores. Geometry remains noisy, so improved rendering does
+not yet establish accurate surface normals.
+
+### Setup and what changed
+
+- Materials: 100 training views; final evaluation on the same **100 validation
+  views**, at 800×800 with white background. These three runs did not evaluate test.
+- Each completed **30,000 steps**, seed 7, 1,000 random initial primitives,
+  training-only colour initialization, 1M capacity and 1M final active primitives.
+  Adam, density fraction 0.2, position decay over 60k steps; early stopping off.
+- All use **SH0** and an MSE warm-up followed by **0.8 MSE + 0.2 D-SSIM** after
+  the 21 dB held-out-MSE gate. The gate monitors the same eight validation cameras;
+  reported final scores below use all 100, not the training-time EMA.
+- **Control → RGB surfels:** replace volumetric Gaussian covariance with exact
+  zero-thickness local-z covariance and tangent-plane splitting; retain trainable,
+  view-independent RGB. Surfel diagnostics are enabled, unlike the control.
+- **RGB surfels → deferred surfels:** independently train from scratch with a
+  scheduled RGB warm-up, activating learned reflection strength and a 128×64
+  environment map at step 10,000. Base RGB remains trainable. This adds appearance
+  parameters; the total parameter counts are not matched.
+- Saved root/shared/surfel-module Python hashes match across all three runs.
+  **Neither foreground-mask loss nor normal–depth consistency loss was used.**
+
+### Full-validation results
+
+Scores are arithmetic means of per-view metrics; higher is better. Recomputed
+from the CSVs and checked against the complete validation manifest.
+
+| Variant / run evidence | Mean PSNR (dB) | Mean SSIM |
+| --- | ---: | ---: |
+| [Gaussian RGB control — 1144](../outputs/materials-Oct29-1144-control/summary.md) · [CSV](../outputs/materials-Oct29-1144-control/test-metrics.csv) | 25.7263 | 0.920230 |
+| [RGB surfels — 1234](../outputs/materials-Oct29-1234-surfel-rgb/summary.md) · [CSV](../outputs/materials-Oct29-1234-surfel-rgb/test-metrics.csv) | 25.5759 | 0.918148 |
+| [Deferred surfels — 1305](../outputs/materials-Oct29-1305-surfel-deferred/summary.md) · [CSV](../outputs/materials-Oct29-1305-surfel-deferred/test-metrics.csv) | **26.7132** | **0.927629** |
+
+- **RGB surfels vs control:** −0.1505 dB / −0.002082 SSIM; improved PSNR on 34/100
+  views and SSIM on 26/100. Flattening alone does not improve these image metrics.
+- **Deferred vs RGB surfels:** **+1.1374 dB / +0.009481 SSIM**; improved PSNR on
+  **99/100** views and SSIM on **86/100**.
+- **Deferred vs control:** **+0.9869 dB / +0.007399 SSIM**; improved PSNR on 93/100
+  views and SSIM on 77/100.
+- Actual D-SSIM activation: control step 8,300; RGB surfels 8,900; deferred surfels
+  8,800. All finished in D-SSIM; the deferred run finished with reflections active.
+  The threshold rule is shared, but the resulting optimization schedules differ.
+
+### Geometry observations
+
+- Final RGB-surfel normals remain mottled, with many background floaters. The
+  deferred normal preview shows fewer surrounding floaters, but object normals
+  remain noisy. A smooth, accurate surface is not established by these previews.
+- A reproducible **single-view background diagnostic** supports that visual change:
+  use final `model.buffers.npz` for the preserved snapshot camera, validation frame
+  `r_0`; background = ground-truth alpha exactly zero after 800×800 Lanczos resizing
+  (431,674 pixels). RGB surfels have mean background coverage **0.04561**, with
+  **47.61%** of background pixels above coverage 0.01. Deferred surfels reduce these
+  to **0.01888** and **16.63%**. This measures projected background contamination
+  in one view, not full-scene geometric accuracy. Alpha is used here for diagnosis
+  only, not training supervision.
+- Normal previews normalize the accumulated normal wherever coverage exceeds 1e-6,
+  making weak floaters conspicuous. White RGB primitives can also conceal substantial
+  opacity against white backgrounds, as recorded in the earlier 24k inspection.
+
+Visual evidence: final [RGB normals](../outputs/materials-Oct29-1234-surfel-rgb/model.normals.png),
+[deferred normals](../outputs/materials-Oct29-1305-surfel-deferred/model.normals.png),
+[deferred colour](../outputs/materials-Oct29-1305-surfel-deferred/model.png), and
+the [RGB](../outputs/materials-Oct29-1234-surfel-rgb/model.buffers.npz) /
+[deferred](../outputs/materials-Oct29-1305-surfel-deferred/model.buffers.npz) float buffers.
+
+### Interpretation and next iteration
+
+- The deferred extension is promising for held-out appearance; attributing the gain
+  specifically to correct normals requires further evidence. The model blends RGB
+  with learned environment reflection; it is not a full GGX/roughness/Fresnel model.
+- This is one scene and one seed. No ground-truth normal/depth error, repeated-seed
+  uncertainty, LPIPS or controlled FPS/VRAM comparison was measured. These validation
+  scores should not be ranked against the earlier SH **test** scores.
+- Preserve these three runs as the **pre-regularization reference**. Next compare
+  RGB surfels + foreground-mask loss, then + normal–depth consistency, followed by
+  the corresponding deferred variant. Keep seed, capacity, budget and evaluation
+  fixed; assess foreground coverage and geometry diagnostics alongside image scores.
+
+## 2026-10-29 — Geometry-loss implementation ready for the next comparison
+
+- Added separate **foreground-mask BCE** and **normal–depth consistency** terms.
+  The original three presets keep both weights at zero; the preceding interim
+  report remains the pre-regularization reference.
+- New presets: [mask-only RGB](../config/materials_surfel_rgb_mask.yaml),
+  [RGB with both losses](../config/materials_surfel_rgb_geometry.yaml), and
+  [deferred with both losses](../config/materials_surfel_deferred_geometry.yaml).
+  Each is a fresh 30k-step run with the previous seed/capacity/RGB objective.
+- Mask weight starts at **0.1**. Normal-depth weight ramps from zero at 2k to
+  **0.01 at 4k**. These are initial hypotheses; select weights on validation.
+- Alpha supervision reads original **training** PNG alpha only. Consistency uses
+  reliable foreground five-pixel neighbourhoods, excludes low coverage/depth jumps,
+  and differentiates through both normalized normals and back-projected depth.
+  Current composited centre-depth is an approximation, not ray/plane depth.
+- Training logs separate image/mask/normal terms and valid normal-pixel counts.
+  Held-out image-loss gates and final image metrics retain their previous meaning.
+  Equations, thresholds, schedule and commands: [project passes](project-passes.md).
+- Verification: **57 CPU tests** passed; **23 surfel tests also passed on CUDA**.
+  New checks include finite differences through G-buffers and splat parameters,
+  perspective-plane/camera-coordinate consistency, foreground/boundary/depth-jump
+  guards, zero-coverage stability and training-only mask loading. Behavioural tests
+  confirm removal pressure on RGB-invisible white floaters and orientation gradients
+  without colour error.
+- Three 8-step/64px GPU integration runs completed training and evaluation on all
+  100 validation views: [mask only](../outputs/materials-Oct29-1347-rgb-mask-smoke-2/summary.md),
+  [both RGB losses](../outputs/materials-Oct29-1348-rgb-geometry-smoke/summary.md), and
+  [both deferred losses](../outputs/materials-Oct29-1348-deferred-geometry-smoke/summary.md).
+  These are execution checks; the sparse random scene had no valid normal pixels
+  at the last logged step. Separate gradient tests exercise active normal losses.
+- A GPU probe of the trained RGB checkpoint on **training frame 0 at 128px** had
+  **4,089 valid normal pixels**, raw normal loss 0.22745 and finite gradients.
+  No optimizer update was performed; this verifies that the constraints can act on
+  the existing geometry, not that regularized training improves it.
+  [Probe evidence](../outputs/project-smoke-input-geometry-4001cc4d/real-checkpoint-probe.txt).
+- Full-budget geometry-loss results are pending. Compare normal/depth diagnostics,
+  background coverage and held-out RGB scores before claiming improvement.
+
+**Environment-map note:** the first deferred run's learned map varies with direction
+(RGB spatial standard deviations 0.0667/0.0726/0.0902), but median primitive reflection
+strength is only 0.1009. The map starts from mean training colour and is not supervised
+with a garden panorama. Base RGB, uncertain normals and reflection strengths can
+explain the images together; a recognizable recovered garden is not guaranteed.
+Lighting/material separation remains a later investigation.

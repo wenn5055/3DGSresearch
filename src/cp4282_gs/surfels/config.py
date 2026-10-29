@@ -5,11 +5,22 @@ import math
 
 from training_config import TrainingConfig
 
+GEOMETRY_DEFAULTS = {
+    'mask_weight': 0.0,
+    'normal_depth_weight': 0.0,
+    'normal_start_iteration': 2000,
+    'normal_ramp_iterations': 2000,
+    'min_coverage': 0.1,
+    'foreground_threshold': 0.95,
+    'max_relative_depth_jump': 0.05,
+}
+
 
 class SurfelTrainingConfig(TrainingConfig):
     DEFAULTS = deepcopy(TrainingConfig.DEFAULTS)
     DEFAULTS["model"]["geometry"] = "surfel"
     DEFAULTS["sparse"]["enabled"] = False
+    DEFAULTS['geometry_loss'] = deepcopy(GEOMETRY_DEFAULTS)
     DEFAULTS["surfel"] = {
         "mode": "rgb",
         "specular_start_iteration": 10000,
@@ -51,3 +62,18 @@ class SurfelTrainingConfig(TrainingConfig):
             raise ValueError("surfel.initial_reflection must be in (0, 1).")
         if not isinstance(settings["save_debug"], bool):
             raise ValueError("surfel.save_debug must be true or false.")
+        geometry_loss = self.values['geometry_loss']
+        for key in ('mask_weight', 'normal_depth_weight'):
+            value = geometry_loss[key]
+            if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value < 0:
+                raise ValueError(f'geometry_loss.{key} must be finite and non-negative.')
+        if geometry == 'gaussian' and (geometry_loss['mask_weight'] or geometry_loss['normal_depth_weight']):
+            raise ValueError('Geometry losses are implemented for model.geometry: surfel.')
+        for key in ('normal_start_iteration', 'normal_ramp_iterations'):
+            value = geometry_loss[key]
+            if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+                raise ValueError(f'geometry_loss.{key} must be a non-negative integer.')
+        for key in ('min_coverage', 'foreground_threshold', 'max_relative_depth_jump'):
+            value = geometry_loss[key]
+            if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or not 0 < value <= 1:
+                raise ValueError(f'geometry_loss.{key} must be in (0, 1].')

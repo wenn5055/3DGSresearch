@@ -16,7 +16,8 @@ from warp.optim import Adam
 from gaussian_set import GaussianSet
 from splat_math import quaternion_to_matrix
 
-from .config import SurfelTrainingConfig
+from .config import SurfelTrainingConfig, GEOMETRY_DEFAULTS
+from .geometry_losses import GeometryLoss
 from .geometry import SurfelTileWorkspace, base
 from . import kernels as k
 
@@ -47,7 +48,8 @@ class GaussianRGBControl(TrainingOnlyInitialization, base.WarpImageTrainer):
 
 
 class SurfelTrainer(TrainingOnlyInitialization, base.WarpImageTrainer):
-    def __init__(self, *args, surfel_options=None, training_view_count=None, **kwargs):
+    def __init__(self, *args, surfel_options=None, training_view_count=None,
+                 geometry_options=None, training_alpha=None, **kwargs):
         options = deepcopy(SurfelTrainingConfig.DEFAULTS["surfel"])
         if surfel_options:
             options.update(surfel_options)
@@ -77,6 +79,21 @@ class SurfelTrainer(TrainingOnlyInitialization, base.WarpImageTrainer):
         self.environment_optimizer = Adam([self.environment], lr=options["environment_lr"])
         self.specular_active = options["mode"] == "deferred" and options["specular_start_iteration"] == 0
         self._shader_tape = None
+        self.geometry_options = dict(GEOMETRY_DEFAULTS, **(geometry_options or {}))
+        self.geometry_loss = None
+        self.current_iteration = 0
+        self.last_geometry_terms = {'mask': 0.0, 'normal_depth': 0.0, 'normal_weight': 0.0,
+                                    'normal_pixels': 0, 'weighted': 0.0}
+        self.last_photometric_loss = None
+        if self.geometry_options['mask_weight'] or self.geometry_options['normal_depth_weight']:
+            if training_alpha is None:
+                raise ValueError('Enabled geometry losses require training alpha masks.')
+            alpha = np.asarray(training_alpha, np.float32)
+            count = self.training_view_count if self.training_view_count is not None else len(self.targets_host)
+            if (alpha.shape != (count, self.height, self.width) or not np.isfinite(alpha).all()
+                    or np.any(alpha < 0) or np.any(alpha > 1)):
+                raise ValueError('training_alpha must contain finite [0,1] masks for training views only.')
+            self.geometry_loss = GeometryLoss(self.width, self.height, self.device, self.geometry_options, alpha)
 
     @property
     def surfel_stage(self):
@@ -131,7 +148,14 @@ class SurfelTrainer(TrainingOnlyInitialization, base.WarpImageTrainer):
         started = perf_counter()
         mse = float(self.loss.numpy()[0]) if download_loss else None
         objective = self._auxiliary_loss(mse, view_ids, download_loss)
+        self.last_photometric_loss = objective
         self._shader_tape.backward(grads={self.image: self.pixel_gradient})
+        if self.geometry_loss is not None:
+            terms = self.geometry_loss.compute(self.buffers, self.cameras, view, self.focal,
+                                               self.current_iteration, download=download_loss)
+            if download_loss:
+                self.last_geometry_terms = terms
+                objective += terms['weighted']
         wp.launch(k.raster_backward, dim=self.width * self.height,
                   inputs=[self.means, self.log_scales, self.quaternions, self.opacity, self.color,
                           self.attributes, self.cameras, view, offsets, pairs, self.width, self.height,
@@ -147,6 +171,7 @@ class SurfelTrainer(TrainingOnlyInitialization, base.WarpImageTrainer):
         return objective
 
     def step(self, view_ids, download_gradients=False, download_loss=True, iteration=1):
+        self.current_iteration = iteration
         loss, gradient = super().step(view_ids, download_gradients, download_loss, iteration)
         if self.specular_active:
             started = perf_counter()

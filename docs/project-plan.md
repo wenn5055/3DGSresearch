@@ -18,8 +18,10 @@ SH learning-rate sweep selected 0.00025 by validation PSNR (single seed). Consol
 The project now has three independent passes, with commands and model details in
 [project-passes.md](project-passes.md): a training-only Gaussian RGB control,
 flattened surfels with fixed RGB, and surfels with deferred environment reflection.
-The new passes have gradient/integration tests; full Materials quality comparisons
-remain to be run. Project code lives under `src/cp4282_gs/surfels/`, leaving the
+The first full Materials comparison is recorded: deferred surfels improve validation
+PSNR by 1.1374 dB over RGB surfels for seed 7, but normals remain noisy. Separate
+training-alpha mask and normal-depth loss presets now target geometry; their full
+quality comparison remains to be run. Project code lives under `src/cp4282_gs/surfels/`, leaving the
 baseline trainer and the completed sweep's training dependencies unchanged.
 
 ## Research question and baseline

@@ -21,6 +21,18 @@ settings, or `--check-gradients` to record checks before training.
 
 The commands below remain the original Gaussian/RGB baseline workflow.
 
+## Geometry-loss iterations (29 October 2026)
+
+```bash
+python scripts/run_project.py config/materials_surfel_rgb_mask.yaml --name surfel-mask --metrics psnr ssim
+python scripts/run_project.py config/materials_surfel_rgb_geometry.yaml --name surfel-geometry --metrics psnr ssim
+python scripts/run_project.py config/materials_surfel_deferred_geometry.yaml --name deferred-geometry --metrics psnr ssim
+```
+
+These add mask supervision, then normal–depth consistency, then deferred reflection.
+Each is a fresh 30k-step validation run. Weights and diagnostics:
+[project-passes.md](project-passes.md).
+
 ## 1. Activate Python
 
 ```bash

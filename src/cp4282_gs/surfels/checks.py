@@ -12,7 +12,7 @@ from .trainer import SurfelTrainer
 reference = importlib.import_module('3dgs_gradient_check_gpu')
 
 
-def make_trainer(device='cpu', mode='rgb', blended=False, overlapping=False, capacity=None):
+def make_trainer(device='cpu', mode='rgb', blended=False, overlapping=False, capacity=None, geometry=False):
     initial = reference.one_splat_scene()
     if overlapping:
         initial = GaussianSet(
@@ -22,11 +22,17 @@ def make_trainer(device='cpu', mode='rgb', blended=False, overlapping=False, cap
             np.array([0.4, 0.55], np.float32), np.array([[0.4, 0.5, 0.6], [0.7, 0.3, 0.2]], np.float32))
     count = len(initial.means)
     targets = np.broadcast_to(np.array([0.2, 0.3, 0.4], np.float32), (1, 4, 4, 3)).copy()
+    geometry_kwargs = {}
+    if geometry:
+        geometry_kwargs = {'training_view_count': 1, 'training_alpha': np.full((1, 4, 4), 0.9, np.float32),
+                           'geometry_options': {'mask_weight': 0.1, 'normal_depth_weight': 0.03,
+                                                'normal_start_iteration': 0, 'normal_ramp_iterations': 0,
+                                                'foreground_threshold': 0.8, 'max_relative_depth_jump': 0.5}}
     trainer = SurfelTrainer(targets, np.eye(4, dtype=np.float32)[None], 4., 1., capacity or count, count,
         device, 7, init_scene=initial, training_options={'compact_box': {'enabled': False},
             'loss': {'mode': 'mse_dssim' if blended else 'mse', 'dssim_window': 3}},
         surfel_options={'mode': mode, 'environment_width': 8, 'environment_height': 4,
-                        'specular_start_iteration': 0, 'initial_reflection': 0.3, 'save_debug': False})
+                        'specular_start_iteration': 0, 'initial_reflection': 0.3, 'save_debug': False}, **geometry_kwargs)
     if mode == 'deferred':
         u, v = np.meshgrid(np.arange(8) * 2 * np.pi / 8, np.linspace(-1, 1, 4))
         environment = np.stack([1.2 * np.sin(u) + 0.4 * v, -0.6 * np.cos(u) + 0.3 * v,
@@ -37,9 +43,11 @@ def make_trainer(device='cpu', mode='rgb', blended=False, overlapping=False, cap
     return trainer
 
 
-def check_gradients(device='cpu', mode='rgb', blended=False, overlapping=False, verbose=True):
-    trainer = make_trainer(device, mode, blended, overlapping)
+def check_gradients(device='cpu', mode='rgb', blended=False, overlapping=False, verbose=True, geometry=False):
+    trainer = make_trainer(device, mode, blended, overlapping, geometry=geometry)
     trainer.loss_and_gradients([0])
+    if geometry and trainer.last_geometry_terms['normal_pixels'] == 0:
+        raise AssertionError('Geometry gradient checks must exercise valid normal-depth pixels.')
     qaxis = int(np.argmax(np.abs(trainer.optimizers.quaternion_grad_flat.numpy()[:4])))
     cases = [
         ('mean x', trainer.means, wp.vec3, (0, 0), float(trainer.optimizers.mean_grad.numpy()[0, 0]), 0.002),
@@ -77,4 +85,6 @@ def run(device='cpu'):
     check_gradients(device, 'rgb')
     check_gradients(device, 'deferred', overlapping=True)
     check_gradients(device, 'deferred', blended=True)
+    check_gradients(device, 'rgb', overlapping=True, geometry=True)
+    check_gradients(device, 'deferred', blended=True, overlapping=True, geometry=True)
     print(f'All surfel geometry/material/environment gradient checks passed on {device}.', flush=True)

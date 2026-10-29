@@ -66,7 +66,8 @@ the shader and normalized normal into the weighted G-buffers, surfel rotations, 
 positions/scales/opacity, material strengths and environment pixels.
 
 This is a learned environment-reflection blend. It has no GGX roughness, Fresnel,
-visibility-aware secondary rays, or normal-depth consistency regularizer yet. It can
+or visibility-aware secondary rays. The three original presets disable geometry
+regularization; the additional presets below enable it. This design can
 test the project's deferred-normal/shading idea without claiming a complete BRDF model.
 Accurate normals and improved full-scene quality remain empirical questions.
 
@@ -82,7 +83,68 @@ Compare Pass 0 versus Pass 1 for geometry, then Pass 1 versus Pass 2 for the com
 deferred extension. The latter includes additional lighting/material parameters as
 well as deferred computation; it does not isolate deferred versus forward shading.
 Use validation to select settings and matched test evaluation after freezing them.
-No full-resolution quality improvement is established by the short smoke checks.
+The first full-budget comparison is recorded in [findings](findings.md): deferred
+surfels improve mean validation PSNR over RGB surfels by 1.1374 dB for seed 7.
+Geometry remains noisy; short smoke checks are not quality comparisons.
+
+## Geometry iterations — foreground masks and normal–depth consistency
+
+Keep the completed three runs as the unregularized reference. These new presets
+start independently from scratch with the same 30k budget, capacity, seed and RGB
+loss settings. Run one at a time:
+
+```powershell
+python scripts/run_project.py config/materials_surfel_rgb_mask.yaml --name surfel-mask --metrics psnr ssim --note "RGB surfels + alpha mask loss"
+python scripts/run_project.py config/materials_surfel_rgb_geometry.yaml --name surfel-geometry --metrics psnr ssim --note "RGB surfels + mask and normal-depth losses"
+python scripts/run_project.py config/materials_surfel_deferred_geometry.yaml --name deferred-geometry --metrics psnr ssim --note "Deferred surfels + mask and normal-depth losses"
+```
+
+- **Mask only:** compare rendered coverage against original training-image alpha,
+  using mean binary cross-entropy. This penalizes background opacity even if the
+  primitive colour matches white. The loader requires real alpha channels and never
+  infers masks from white RGB. Validation/test masks do not supply training gradients.
+- **Both losses:** also compare the normalized composited surfel normal with the
+  normal from neighbouring rendered depth points, using mean `1 - dot(n, n_depth)`.
+  Camera-z depth is back-projected with the camera intrinsics; normal vectors are
+  compared in camera coordinates and oriented towards the camera. Gradients flow
+  through both the depth and surfel-normal paths, then through alpha compositing
+  into positions, rotations, scales and opacity.
+- **Reliable neighbourhoods:** the centre and all four neighbours must have target
+  alpha ≥0.95 and rendered coverage ≥0.1. Exclude image borders, invalid/degenerate
+  depths, and relative neighbour depth jumps >5%. Valid-pixel selection/counting is
+  not differentiated. Normal loss averages over valid pixels; no valid pixels gives
+  zero normal loss. Mask loss still uses the whole image, including boundaries.
+- **Initial settings:** mask weight **0.1** from step 1; normal-depth weight ramps
+  from zero at step **2,000** to **0.01** at step **4,000**. These are starting
+  hypotheses, not tuned values. The deferred preset still activates reflection at
+  step 10,000. Adjust values in the `geometry_loss` config section; both weights
+  default to zero so the original presets retain their previous objective.
+- **Logs:** `train_photo` is image loss; `mask` and `normal_depth` are unweighted
+  terms; `normal_weight` is the effective scheduled weight; `normal_pixels` counts
+  valid normals. Training `ema` includes weighted geometry terms. Held-out gates,
+  convergence checks and final PSNR/SSIM stay photometric. Normal-loss warm-up must
+  finish before early stopping is allowed; these presets disable early stopping.
+
+Current depth is the opacity-normalized blend of surfel-centre camera-z depths,
+not exact ray/plane intersection depth. Consistency constrains this approximation;
+it does not establish correct geometry or guarantee smooth normals. Preserve this
+renderer when comparing loss ablations. Check foreground coverage, depth/normal
+maps and validation image scores before selecting loss weights.
+
+The geometry terms follow the mask and consistency ideas in
+[Gaussian Surfels §3.3](https://arxiv.org/html/2404.17774v2#S3.SS3), with the explicit
+normalization, stencil guards and ramp described above. This is not a full
+reproduction of that paper's renderer or loss suite.
+
+### Why the environment map can look plain
+
+The map starts at a constant training-image mean colour, is learned from image loss,
+and uses a bounded 128×64 RGB texture. No garden panorama supervises it. Base RGB,
+reflection strengths and imperfect normals can explain the observations in multiple
+ways, so a recognizable recovered garden is not guaranteed. In the first deferred
+run the map does vary with direction (per-channel spatial standard deviations
+0.0667 / 0.0726 / 0.0902), while median primitive reflection strength is 0.1009.
+It is being learned; inspect lighting/material separation after geometry improves.
 
 ## Checkpoints and diagnostics
 

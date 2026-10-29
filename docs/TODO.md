@@ -47,14 +47,17 @@ comparison of the three project passes. Current implementation details and comma
 
 - [x] Add rank-two RGB surfels with explicit normals and adapt projection, density control and checkpoints.
 - [x] Check surfel projection and geometry gradients on CPU/CUDA.
-- [ ] Record the full Gaussian-control versus RGB-surfel quality comparison.
+- [x] Record the full Gaussian-control versus RGB-surfel quality comparison.
 - [x] Add normal/depth/base-color/coverage/reflection-strength G-buffers.
 - [x] Inspect controlled overlap, uncovered pixels, normal flips and G-buffer gradients.
 - [x] Implement a deferred learned-environment reflection prototype.
 - [x] Check gradients through lighting, shading, normal normalization, and compositing.
 - [x] Scope this iteration as environment-reflection blending; no full GGX/roughness claim.
-- [ ] Evaluate whether normal-depth regularization and a richer roughness model are needed.
-- [ ] Run recorded deferred-surfel training/evaluation on materials.
+- [x] Run recorded deferred-surfel training/evaluation on materials; interim findings saved.
+- [x] Add training-alpha mask loss and normal-depth consistency with CPU/CUDA gradient checks.
+- [x] Provide separate mask-only, RGB geometry-loss, and deferred geometry-loss presets.
+- [ ] Measure the new losses' effect on geometry and image reconstruction at full budget.
+- [ ] Evaluate richer roughness/material models after the geometry comparison.
 
 ## Evaluation and reporting
 

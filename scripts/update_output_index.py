@@ -35,6 +35,13 @@ GOALS = {
     'materials-Oct28-2353-surfel_rgb-smoke': 'vs Gaussian smoke: flatten local z; check normals/gradients/densification/checkpoints.',
     'materials-Oct28-2353-surfel_deferred-smoke': 'vs surfel RGB smoke: add deferred environment reflection; check shading gradients/checkpoints.',
     'materials-Oct29-0003-surfel-rgb-prepare': 'Check full surfel-RGB preset/default validation split; no training.',
+    'materials-Oct29-1144-control': 'Full project control: Gaussian RGB, training-only initialization, staged D-SSIM; 30k steps, early stopping off.',
+    'materials-Oct29-1234-surfel-rgb': 'vs 1144-control: flatten local z into surfels; same RGB/loss/budget. Inspect normals/depth/coverage as well as colour.',
+    'materials-Oct29-1305-surfel-deferred': 'vs 1234-surfel-rgb: add environment reflection after 10k RGB warm-up; independent 30k run, no geometry losses.',
+    'materials-Oct29-1347-rgb-mask-smoke': 'Mask-loss smoke stopped before training: default Warp cache permission failure; retried with workspace cache.',
+    'materials-Oct29-1347-rgb-mask-smoke-2': '8-step/64px check: load training alpha, train mask BCE, densify, save/evaluate. Not quality evidence.',
+    'materials-Oct29-1348-rgb-geometry-smoke': 'vs mask smoke: add normal-depth schedule and loss; tiny random scene, no valid normal pixels at final step.',
+    'materials-Oct29-1348-deferred-geometry-smoke': 'vs RGB geometry smoke: activate deferred reflection too; 8-step/64px integration check.',
 }
 
 

@@ -168,6 +168,11 @@ def write_record(run_dir: Path, record: dict) -> None:
         lines.append(f"- {stage['name']}: {stage['status']}; exit={stage.get('exit_code')}; "
                      f"elapsed={stage.get('wall_seconds', 0):.2f}s; "
                      f"[log]({stage['name']}.log)")
+    if config.get('geometry_loss'):
+        geometry = config['geometry_loss']
+        lines += ['', f"- Geometry loss weights: mask={geometry['mask_weight']}, normal-depth={geometry['normal_depth_weight']}",
+                  f"- Normal-depth schedule: start={geometry['normal_start_iteration']}, ramp={geometry['normal_ramp_iterations']} steps",
+                  '- Training loss includes enabled geometry terms; validation gates/metrics use image loss only.']
     if "training_result" in record:
         lines.extend(["", f"- Training result: {record['training_result']}"])
     for metric, value in record.get("mean_metrics", {}).items():

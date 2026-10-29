@@ -14,8 +14,10 @@ validation-only tuning sweep. The independent project iterations now implement
 training-only Gaussian initialization, rank-two RGB surfels, and deferred learned
 environment reflection. See [project passes](project-passes.md) for runnable configs,
 the exact shading equation, checkpoint conventions and current limitations.
-The sections below preserve the original design reasoning; proposed GGX, normal-depth
-regularization, NeRO evaluation and performance procedures are still future work.
+Training-alpha mask and normal-depth consistency losses are now implemented in
+separate presets; their full-budget quality comparison remains pending. The sections
+below preserve the original design reasoning; proposed GGX, NeRO evaluation and
+performance procedures are still future work.
 
 ## 1. Research objective and the claim we can actually test
 

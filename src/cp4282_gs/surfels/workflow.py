@@ -13,6 +13,7 @@ from gaussian_set import GaussianSet
 from .config import SurfelTrainingConfig
 from .geometry import base
 from .trainer import GaussianRGBControl, SurfelTrainer
+from .geometry_losses import load_training_alpha
 
 
 def train(config_path):
@@ -31,12 +32,18 @@ def train(config_path):
     if initial is not None and len(initial.means) > model['capacity']:
         raise ValueError('Initial PLY exceeds model.capacity.')
     trainer_class = GaussianRGBControl if model['geometry'] == 'gaussian' else SurfelTrainer
+    geometry = config['geometry_loss']
+    extra = {}
+    if model['geometry'] == 'surfel':
+        extra['geometry_options'] = geometry
+        if geometry['mask_weight'] or geometry['normal_depth_weight']:
+            extra['training_alpha'] = load_training_alpha(paths['data'], model['width'], model['height'])
     trainer = trainer_class(all_targets, all_cameras, focal, model['scene_radius'] or distance * 0.35,
         model['capacity'], model['initial_splats'], device, config['runtime']['seed'],
         init_scene=initial, background=background, learning_rates=config['learning_rates'],
         tile_pair_capacity=model['tile_pair_capacity'], surfel_options=config['surfel'],
         training_view_count=len(targets),
-        training_options={key: config[key] for key in ('loss', 'sparse', 'compact_box', 'multiview_adc')})
+        training_options={key: config[key] for key in ('loss', 'sparse', 'compact_box', 'multiview_adc')}, **extra)
     if paths['init_ply']:
         sidecar = paths['init_ply'].with_suffix('.surfel.npz')
         if sidecar.exists() and isinstance(trainer, SurfelTrainer):
@@ -58,6 +65,11 @@ def run_training(trainer, config, training_views, eval_ids, frame_ids=None):
     print(base.describe_evaluation_views(eval_ids, frame_ids, reporting['eval_manifest']), flush=True)
     want_deferred = settings['mode'] == 'deferred'
     print(f"Surfel pass: {settings['mode']}; deferred start iteration: {settings['specular_start_iteration']}", flush=True)
+    geometry = config['geometry_loss']
+    if geometry['mask_weight'] or geometry['normal_depth_weight']:
+        print(f"Geometry losses (training alpha only): mask={geometry['mask_weight']}, "
+              f"normal_depth={geometry['normal_depth_weight']}, start={geometry['normal_start_iteration']}, "
+              f"ramp={geometry['normal_ramp_iterations']}; validation gates remain photometric.", flush=True)
     loss_curriculum = config['loss']['mode'] == 'mse_dssim'
     loss_ema = base.ExponentialMovingAverage(reporting['loss_ema_decay'])
     eval_ema = base.ExponentialMovingAverage(reporting['loss_ema_decay'])
@@ -81,8 +93,18 @@ def run_training(trainer, config, training_views, eval_ids, frame_ids=None):
     snapshot(snapshots / 'out_000000.png')
     started = perf_counter()
     completed = 0
+    geometry_ready_before = not bool(geometry['normal_depth_weight'])
     for iteration in range(1, config['training']['iterations'] + 1):
         completed = iteration
+        geometry_ready = (not geometry['normal_depth_weight'] or iteration >=
+                          geometry['normal_start_iteration'] + geometry['normal_ramp_iterations'])
+        if geometry_ready and not geometry_ready_before:
+            tracker = None
+            stage_start = iteration
+            print(f'{iteration:6d}: normal-depth regularization ramp complete.', flush=True)
+        if not geometry_ready:
+            tracker = None
+        geometry_ready_before = geometry_ready
         if want_deferred and not trainer.specular_active and iteration >= settings['specular_start_iteration']:
             trainer.activate_specular()
             stage_start = iteration
@@ -138,14 +160,20 @@ def run_training(trainer, config, training_views, eval_ids, frame_ids=None):
                     else:
                         tracker.update(eval_ema.value, iteration - stage_start)
         if log:
+            geometry_log = ''
+            if getattr(trainer, 'geometry_loss', None) is not None:
+                terms = trainer.last_geometry_terms
+                geometry_log = (f", train_photo={trainer.last_photometric_loss:.6f}, mask={terms['mask']:.6f}, "
+                                f"normal_depth={terms['normal_depth']:.6f}, normal_weight={terms['normal_weight']:.5f}, "
+                                f"normal_pixels={terms['normal_pixels']}")
             print(f'{iteration:6d}: ema={loss_ema.value:.6f}, loss_phase={trainer.last_loss_phase}, '
                   f'stage={trainer.loss_stage}, surfel_stage={trainer.surfel_stage}, '
                   f'fixed_eval_ema={eval_ema.value:.6f}, fixed_eval_mse_ema={mse_ema.value:.6f}, '
                   f'active={trainer.active.sum()}, pairs={trainer.last_pair_count}, '
-                  f'lr_xyz={trainer.last_position_learning_rate:.8f}', flush=True)
+                  f'lr_xyz={trainer.last_position_learning_rate:.8f}{geometry_log}', flush=True)
         if save:
             snapshot(snapshots / f'out_{iteration:06d}.png')
-        if tracker is not None and tracker.should_stop(iteration - stage_start):
+        if geometry_ready and tracker is not None and tracker.should_stop(iteration - stage_start):
             print(f'Stopping at iteration {iteration}: fixed validation objective plateaued.', flush=True)
             break
     trainer.evaluate(eval_ids)
