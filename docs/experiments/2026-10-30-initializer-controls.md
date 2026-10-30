@@ -57,6 +57,24 @@ Auxiliary presets `materials_chrome_hull_surfel_sh3.yaml` and
 results cannot replace or be pooled with original Materials scores. Additional
 shading changes require evidence from these controls, rather than a blind sweep.
 
+### Untrained chrome initializer audit, 14:44 Singapore
+
+All 100 validation views at 800px, no optimization: **9.2869 degrees** mean
+camera-facing mesh normal error, **0.0343243** camera-z depth MAE, **0.977980**
+silhouette IoU, **1.0** valid reference-foreground normal coverage. These are
+per-view means over both meshes, excluding shader bump; they are geometry
+diagnostics, not image-quality scores. Initializer SHA256:
+`2108278f4e8ed7e508a15cbbed83f5cf308949c8b438e2aadb51577f0532854e`.
+CPU-only evaluation leaves the training GPU free. Metrics, debug buffers and
+source/reference fingerprints: `Oct30-1444-initial-geometry/` under the audit.
+
+The sequential follow-up queue waits for the random controls, measures those on
+an idle GPU, then trains the original Materials hull deferred/SH-only pair and
+the separate chrome hull deferred/SH-only pair. All quality reports include
+PSNR, SSIM, LPIPS and independent Chrome geometry. It checks the shared stop
+switch and original deadline; each child job has its own bounded controller.
+State: `outputs/first-principles-2026-10-30/initializer-controls-state.json`.
+
 ## First-principles interpretation
 
 The current implementation already shades reflections **per pixel** from the

@@ -235,3 +235,22 @@ parameter changes and longer training while away. Keep original Materials as
 the primary benchmark. Prepared training-only initializer controls and an
 enlarged-mirror diagnostic, with provenance checks and separate reporting:
 [decision record](2026-10-30-initializer-controls.md). The hard stop is unchanged.
+
+### Matched SH-only surfel control, 14:47 Singapore
+
+`materials-Oct30-1416-fresh-surfel-sh3` completes 30k steps with active SH3 and
+1M surfels. Common all-100-view float-render scores: **27.8901 dB**, **0.944841
+SSIM**, **0.042719 LPIPS**, foreground **22.0874 dB**, visible Chrome **16.1483 dB**.
+The fresh Gaussian SH3 reference is 27.7246 / 0.944346 / 0.040411, Chrome 16.2963.
+Thus surfels alone gain a little overall PSNR but do not improve chrome or LPIPS.
+
+Independent surfel geometry exposes the key issue: **42.20 degrees** mean mesh
+normal error overall, **53.87 degrees on Chrome**. Normal coverage is 0.99948
+overall and 0.99972 on Chrome, so this is not merely a few uncovered pixels.
+Camera-z depth MAE: 0.029247 overall, 0.037360 on Chrome. Low image loss does not
+establish reflection-ready surface alignment. These normals exclude shader bump.
+
+[Interim common report](../../outputs/Oct30-1446-materials-backbone-val/index.html),
+with timing skipped during concurrent deferred training. The deferred control
+started in `Oct30-1444-materials-fresh-deferred-sh3`, confirming the new naming
+rule. Idle-GPU reports and the predeclared initializer pairs are queued next.

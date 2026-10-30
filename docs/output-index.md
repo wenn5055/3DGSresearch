@@ -74,7 +74,8 @@ Updated 30 Oct 2026 (Singapore).
 - [materials-Oct30-1332-fresh-policy-gaussian-smoke](../outputs/materials-Oct30-1332-fresh-policy-gaussian-smoke/) — gaussian/rgb/SH0; 8 steps; 128 capacity. Closest prior: materials-Oct30-1312-backbone-legacy-fg; adaptive.dssim_psnr_threshold: 25.0 → 21.0, densification.child_optimizer_state: (unset) → fresh_children, densification.interval: 100 → 2, model.capacity: 1000000 → 128, +13 other settings (see config). [completed; val]
 - [materials-Oct30-1332-fresh-policy-surfel-smoke](../outputs/materials-Oct30-1332-fresh-policy-surfel-smoke/) — surfel/deferred/SH3; 8 steps; 128 capacity. Closest prior: materials-Oct29-2223-pruned-proposal-materials-gaussian_sh3; densification.child_optimizer_state: (unset) → fresh_children, densification.interval: 100 → 2, loss.mode: mse_dssim → mse, model.capacity: 1000000 → 128, +17 other settings (see config). [completed; val]
 - [materials-Oct30-1337-fresh-gaussian-sh3](../outputs/materials-Oct30-1337-fresh-gaussian-sh3/) — Full original Materials validation of fresh child optimizer state; otherwise retains the failed inherited-state 30k preset. Common late SH3, masks and source fingerprints. Closest prior: materials-Oct29-2223-pruned-proposal-materials-gaussian_sh3; densification.child_optimizer_state: (unset) → fresh_children. [completed; val]
-- [materials-Oct30-1416-fresh-surfel-sh3](../outputs/materials-Oct30-1416-fresh-surfel-sh3/) — Matched original Materials control after fresh-child optimizer correction; 800px, 1M capacity, 30k steps, common late SH3/mask policy. Closest prior: materials-Oct30-1337-fresh-gaussian-sh3; model.geometry: gaussian → surfel. [running; val]
+- [materials-Oct30-1416-fresh-surfel-sh3](../outputs/materials-Oct30-1416-fresh-surfel-sh3/) — Matched original Materials control after fresh-child optimizer correction; 800px, 1M capacity, 30k steps, common late SH3/mask policy. Closest prior: materials-Oct30-1337-fresh-gaussian-sh3; model.geometry: gaussian → surfel. [completed; val]
+- [Oct30-1444-materials-fresh-deferred-sh3](../outputs/Oct30-1444-materials-fresh-deferred-sh3/) — Matched original Materials control after fresh-child optimizer correction; 800px, 1M capacity, 30k steps, common late SH3/mask policy. Closest prior: materials-Oct30-1416-fresh-surfel-sh3; surfel.mode: rgb → deferred. [running; val]
 
 ## Tuning
 
@@ -95,6 +96,7 @@ Updated 30 Oct 2026 (Singapore).
 - [first-principles-2026-10-30](../outputs/first-principles-2026-10-30/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [implementation-smoke-configs](../outputs/implementation-smoke-configs/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [materials-red-rose-silver-final-comparison-2026-10-29](../outputs/materials-red-rose-silver-final-comparison-2026-10-29/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
+- [Oct30-1435-materials-chrome-audit](../outputs/Oct30-1435-materials-chrome-audit/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [paper-normal-smoke-64265072](../outputs/paper-normal-smoke-64265072/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [paper-workflow-i56mzrx7](../outputs/paper-workflow-i56mzrx7/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [pdf-reader](../outputs/pdf-reader/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
