@@ -172,6 +172,8 @@ def evaluate(args):
         'resolution': [width, height], 'selected_views': [int(view) for view in selected],
         'crop_boxes_xyxy_half_open': [{'view': view, 'region': region, 'bounds': bounds} for (view, region), bounds in boxes.items()],
         'material_box_definition': 'Projected mesh bounding boxes include background, pedestals and possible occlusion; not a visible-material segmentation.',
+        'reflection_blend_definition': 'Mean per-pixel blended scalar reflection strength on reference foreground; zero when deferred shading is inactive. Not physical reflectance.',
+        'normal_coherence_definition': 'Length of weighted normal sum divided by coverage, on valid normal pixels; one means aligned contributors.',
         'config_differences': differences, 'inputs': inputs,
         'evaluation_sources': [fingerprint(ROOT / path) for path in
             ('scripts/evaluate_reflection_suite.py', 'scripts/evaluate_surfels.py', 'scripts/compare_surfel_runs.py', '3dgs_trainer.py',
@@ -241,12 +243,19 @@ def evaluate(args):
                     normals = buffers[:, :, 3:6] / np.maximum(length[:, :, None], 1e-8)
                     valid = ray_foreground & alpha_foreground & (buffers[:, :, 7] >= .5) & (length > 1e-6)
                     depth = buffers[:, :, 6] / np.maximum(buffers[:, :, 7], 1e-8)
+                    coherence = np.clip(length / np.maximum(buffers[:, :, 7], 1e-8), 0, 1)
+                    blend = (np.clip(buffers[:, :, 8] / np.maximum(buffers[:, :, 7], 1e-8), 0, 1)
+                             if trainer.specular_active else np.zeros_like(length))
+                    diagnostic['normal_coherence'] = float(coherence[valid].mean()) if valid.any() else None
+                    diagnostic['mean_reflection_blend'] = float(blend[ray_foreground & alpha_foreground].mean())
                     diagnostic['normal_valid_fraction'] = float(valid.sum() / max((ray_foreground & alpha_foreground).sum(), 1))
                     diagnostic['mesh_normal_mae_deg'] = float(np.degrees(np.arccos(np.clip(np.sum(normals[valid] * truth_normal[valid], axis=1), -1, 1))).mean()) if valid.any() else None
                     diagnostic['mesh_depth_mae'] = float(np.abs(depth[valid] - truth_depth[valid]).mean()) if valid.any() else None
                     for material, object_values in material_ids.items():
                         material_mask = np.isin(ids, object_values) & alpha_foreground
                         material_valid = valid & material_mask
+                        diagnostic[f'{material}_reflection_blend'] = float(blend[material_mask].mean()) if material_mask.any() else None
+                        diagnostic[f'{material}_normal_coherence'] = float(coherence[material_valid].mean()) if material_valid.any() else None
                         diagnostic[f'{material}_normal_valid_fraction'] = (
                             float(material_valid.sum() / material_mask.sum()) if material_mask.any() else None)
                         diagnostic[f'{material}_normal_mae_deg'] = (float(np.degrees(np.arccos(np.clip(
@@ -319,7 +328,7 @@ def evaluate(args):
                 continue
             geometry_summary = {'model': model_label}
             for field in dict.fromkeys(key for row in model_geometry for key in row
-                    if key.endswith(('_mae_deg', '_depth_mae', '_valid_fraction'))):
+                    if key.endswith(('_mae_deg', '_depth_mae', '_valid_fraction', '_normal_coherence', '_reflection_blend')) or key == 'normal_coherence'):
                 values = [row[field] for row in model_geometry if row.get(field) is not None]
                 geometry_summary[field] = float(np.mean(values)) if values else None
             geometry_summaries.append(geometry_summary)

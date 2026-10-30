@@ -145,3 +145,33 @@ reflection, ray-plane consistency and all three SH bands, saves/reloads the
 with finite scores; its untrained quality is not a comparison result. The first
 smoke was rejected before training because snapshot interval zero is invalid;
 the corrected interval is 1000. Both controller logs and the invalid YAML remain.
+
+### Reflection-branch diagnostic and final chrome prior, 15:49 Singapore
+
+All-100-view diagnostic reports now measure the effective reflection blend and
+normal coherence (length of the blended normal sum divided by coverage), including
+the true visible Chrome region. These are renderer diagnostics, not physical
+reflectance estimates. Random deferred Chrome has mean blend **0.09393** and
+coherence **0.74409**; hull-deferred Chrome has **0.11510** and **0.75979**. The
+environment itself varies, but its contribution to Chrome remains weak and
+overlapping normals disagree. Both reports reproduce the existing image metrics.
+
+Before any chrome quality training, set its pair's initial reflection strength
+to **0.5**, a neutral blend prior for the predominantly mirror scene. All point
+strengths remain learnable; no mesh/material labels enter training. The SH-only
+mode ignores reflection strength. Keep the original mixed-material protected
+pair at **0.1**. This is part of the combined auxiliary method, not evidence that
+the initialization value alone improves quality. The 0.5 presets pass validation;
+the earlier eight-step integration smoke used 0.1.
+
+The unregularized original hull-deferred model is complete: **27.7503 dB**,
+**0.942333 SSIM**, **0.038428 LPIPS**, Chrome **16.0601 dB**. Mean normal error
+improves to **32.88 degrees** overall and **42.05 on Chrome**, but sharp reflections
+remain unresolved. Its paired SH-only control is required before attributing the
+LPIPS gain to deferred shading.
+
+[Hull report](../../outputs/Oct30-1546-materials-hull-deferred-val/index.html) ·
+[Random-deferred branch audit](../../outputs/Oct30-1544-deferred-branch-audit/index.html) ·
+[Standalone normal-error plot](../../outputs/Oct30-1519-materials-geometry-trajectories/normal-error-trajectory.png).
+Matplotlib 3.11.2 was added for the scientific PNG/SVG figure; seven core numeric,
+rendering and metric package versions were pinned and verified unchanged.

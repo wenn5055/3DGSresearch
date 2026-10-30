@@ -80,6 +80,9 @@ Shared and support files:
 
 ## Evaluating your output
 
+[Current reflection research status](docs/research-status.md) summarizes results,
+active comparisons and the latest decision without the full experiment history.
+
 To train and evaluate in a new run folder:
 
 ```bash

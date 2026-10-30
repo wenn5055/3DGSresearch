@@ -40,7 +40,7 @@ surfel:
   environment_height: 256
   environment_lr: 0.01
   environment_width: 512
-  initial_reflection: 0.1
+  initial_reflection: 0.5
   mode: deferred
   depth_mode: ray_plane
   reflection_lr: 0.01

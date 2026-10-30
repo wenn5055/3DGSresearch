@@ -296,3 +296,15 @@ some diagnostic jobs overlapped during training. Required files: 238.9 / 238.9 /
 Training-only hull initialization is running next. Snapshot diagnostics already
 show its normal alignment deteriorating during the RGB-only warm-up, motivating
 the protected schedule documented in the [initializer decision record](2026-10-30-initializer-controls.md).
+
+The first unregularized hull-deferred model finishes at **27.7503 / 0.942333 /
+0.038428** (PSNR/SSIM/LPIPS). Chrome remains **16.0601 dB**, with **42.05-degree**
+normal error; the matched hull-SH-only model is running. Effective Chrome reflection
+blend is only about 9.4% with random initialization and 11.5% with the hull, and
+normal coherence is 0.744/0.760. New all-view reports record both diagnostics.
+The auxiliary mirror pair now starts from a neutral 0.5 reflection prior; the
+original mixed-material protected pair stays at 0.1. All changes precede their
+quality training. The frozen 40%-pruned SH-only export is being evaluated on all
+200 test views with its fraction already chosen from validation.
+
+For a short current overview, use [research status](../research-status.md).
