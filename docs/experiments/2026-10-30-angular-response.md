@@ -104,3 +104,14 @@ Machine-readable plan and dry-run-checked controller:
 `outputs/first-principles-2026-10-30/final-evaluation-plan.json` and
 `final_evaluation_queue.py`. They wait for the training queues to end and share
 the same absolute deadline.
+
+## Objective check, 17:10 Singapore
+
+The completed Chrome LDR log explicitly says D-SSIM never activated: validation
+PSNR remained below the preset's 21 dB gate throughout 30k. Its matched surfel
+control is still running. This is an additional limitation of transferring a
+global-PSNR curriculum from the original, mostly background scene to the enlarged
+mirror. Keep the current pair and the shader-only HDR comparison unchanged;
+otherwise the shading contrast would also change its objective. If the shading
+correction does not cross the gate, a separately matched objective experiment
+is warranted, rather than silently calling the run an MSE+D-SSIM fit.

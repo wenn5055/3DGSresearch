@@ -10,6 +10,15 @@ renderer is a simpler rank-two EWA surfel adaptation. The HDR/angular option is
 still a mirror-oriented appearance model, not the proposal's complete roughness
 BRDF. Adding iterations cannot supply missing shading or surface constraints.
 
+| Proposal item | Current implementation and evidence |
+| --- | --- |
+| Explicit surface normals | Rank-two covariance surfels; normals can still drift and overlap incoherently. |
+| Per-pixel deferred shading | Implemented, with verified geometry/material adjoints. |
+| Roughness BRDF | Not implemented: the learned scalar is reflection blend, not roughness. HDR/angular shading remains a mirror-focused variant. |
+| Replace SH appearance | Current quality controls retain SH3 as a residual; they test a hybrid rather than the proposed four-scalar appearance budget. |
+| Materials and Ship | Original Materials is primary; enlarged Chrome is auxiliary. Fresh Ship controls remain unrun. |
+| Metrics and cost | PSNR/SSIM/LPIPS, file size and rendering timing; reported training memory is the Warp allocation peak, not total device VRAM. |
+
 ## A concrete loss difference
 
 Let A be accumulated alpha, S the weighted sum of unit surfel normals, and n_d

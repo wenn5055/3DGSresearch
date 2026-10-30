@@ -12,7 +12,7 @@ from .trainer import SurfelTrainer
 reference = importlib.import_module('3dgs_gradient_check_gpu')
 
 
-def make_trainer(device='cpu', mode='rgb', blended=False, overlapping=False, capacity=None, geometry=False, shading_model='ldr'):
+def make_trainer(device='cpu', mode='rgb', blended=False, overlapping=False, capacity=None, geometry=False, shading_model='ldr', freeze_geometry=False, sh_degree=0):
     initial = reference.one_splat_scene()
     if overlapping:
         initial = GaussianSet(
@@ -29,10 +29,11 @@ def make_trainer(device='cpu', mode='rgb', blended=False, overlapping=False, cap
                                                 'normal_start_iteration': 0, 'normal_ramp_iterations': 0,
                                                 'foreground_threshold': 0.8, 'max_relative_depth_jump': 0.5}}
     trainer = SurfelTrainer(targets, np.eye(4, dtype=np.float32)[None], 4., 1., capacity or count, count,
-        device, 7, init_scene=initial, training_options={'compact_box': {'enabled': False},
+        device, 7, init_scene=initial, sh_degree=sh_degree, training_options={'compact_box': {'enabled': False},
             'loss': {'mode': 'mse_dssim' if blended else 'mse', 'dssim_window': 3}},
         surfel_options={'mode': mode, 'environment_width': 8, 'environment_height': 4,
                         'shading_model': shading_model,
+                        'freeze_geometry': freeze_geometry,
                         'specular_start_iteration': 0, 'initial_reflection': 0.3, 'save_debug': False}, **geometry_kwargs)
     if mode == 'deferred':
         u, v = np.meshgrid(np.arange(8) * 2 * np.pi / 8, np.linspace(-1, 1, 4))

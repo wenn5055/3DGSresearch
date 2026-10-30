@@ -134,6 +134,9 @@ class SurfelTrainer(TrainingOnlyInitialization, base.WarpImageTrainer):
         self.configure_foreground_pruning(training_alpha)
         self.l1_loss = wp.zeros(1, dtype=wp.float32, device=self.device)
         self._opacity_frozen_until = 0
+        self._frozen_geometry = ([wp.clone(field) for field in
+                                 (self.means, self.log_scales, self.quaternions, self.opacity)]
+                                 if options['freeze_geometry'] else None)
         self._propagation_seed = (int(self.rng.integers(1 << 30))
                                   if options['normal_propagation']['enabled'] else 0)
         if self.geometry_options['mask_weight'] or self.geometry_options['normal_depth_weight']:
@@ -308,6 +311,13 @@ class SurfelTrainer(TrainingOnlyInitialization, base.WarpImageTrainer):
                   inputs=[self.means, self.quaternions, self.cameras, view, self.normal_gradient],
                   outputs=[self.optimizers.mean_grad_flat, self.optimizers.quaternion_grad_flat], device=self.device)
         self._appearance_backward(view)
+        if self._frozen_geometry is not None:
+            # Keep all geometric/visibility Adam histories at zero. Restore the
+            # immutable arrays after the ordinary clamp as well, so even unit
+            # quaternion normalization cannot drift the fixed diagnostic basis.
+            for gradient in (self.optimizers.mean_grad_flat, self.optimizers.scale_grad_flat,
+                             self.optimizers.quaternion_grad_flat, self.optimizers.opacity_grad):
+                gradient.zero_()
         self.optimizers.pack_gradients(self.capacity)
         self.last_timings["device"] += perf_counter() - started
         return objective
@@ -317,6 +327,10 @@ class SurfelTrainer(TrainingOnlyInitialization, base.WarpImageTrainer):
         self.optimizers.opacity_optimizer.lr = (0.0 if iteration <= self._opacity_frozen_until
                                                 else self.learning_rates['opacity'])
         loss, gradient = super().step(view_ids, download_gradients, download_loss, iteration)
+        if self._frozen_geometry is not None:
+            for field, frozen in zip((self.means, self.log_scales, self.quaternions, self.opacity),
+                                     self._frozen_geometry):
+                wp.copy(field, frozen)
         if self.specular_active:
             started = perf_counter()
             self.reflection_optimizer.step([self.reflection_gradient])

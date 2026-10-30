@@ -16,6 +16,7 @@ from cp4282_gs.surfels.checks import make_trainer, check_gradients
 from cp4282_gs.surfels.hdr_shader import deferred_hdr_shader, effective_blend
 from cp4282_gs.surfels.kernels import GBuffer
 from cp4282_gs.surfels.trainer import read_surfel_sidecar
+from cp4282_gs.surfels.config import SurfelTrainingConfig
 from gaussian_set import GaussianSet
 from evaluate_surfels import build_trainer
 
@@ -104,6 +105,35 @@ class HDRTests(unittest.TestCase):
         np.testing.assert_array_equal(trainer.angular_gain.numpy(), gain)
         for actual, expected in zip((*trainer.angular_optimizer.m, *trainer.angular_optimizer.v), before):
             np.testing.assert_array_equal(actual.numpy(), expected)
+
+    def test_frozen_geometry_and_visibility_are_exact_while_appearance_learns(self):
+        trainer = make_trainer(DEVICE, 'deferred', shading_model='hdr_angular', freeze_geometry=True)
+        fields = (trainer.means, trainer.log_scales, trainer.quaternions, trainer.opacity)
+        initial = [field.numpy().copy() for field in fields]
+        trainer.render_single_view_image(0)
+        buffers = trainer.buffers.numpy().copy()
+        environment = trainer.environment.numpy().copy()
+        for iteration in range(1, 5):
+            trainer.step([0], iteration=iteration)
+        for field, value in zip(fields, initial):
+            np.testing.assert_array_equal(field.numpy(), value)
+        trainer.render_single_view_image(0)
+        np.testing.assert_array_equal(trainer.buffers.numpy()[:, 3:8], buffers[:, 3:8])
+        self.assertTrue(np.any(trainer.environment.numpy() != environment))
+
+    def test_frozen_geometry_rejects_structural_schedules(self):
+        values = SurfelTrainingConfig._merge(SurfelTrainingConfig.DEFAULTS, {'surfel': {'freeze_geometry': True}})
+        with self.assertRaisesRegex(ValueError, 'Frozen-geometry'):
+            SurfelTrainingConfig(values).validate()
+
+    def test_frozen_geometry_still_trains_sh_coefficients(self):
+        trainer = make_trainer(DEVICE, 'rgb', freeze_geometry=True, sh_degree=3)
+        trainer.sh.degree = 3
+        before = trainer.sh.coefficients.numpy().copy()
+        geometry = trainer.quaternions.numpy().copy()
+        trainer.step([0])
+        np.testing.assert_array_equal(trainer.quaternions.numpy(), geometry)
+        self.assertTrue(np.any(trainer.sh.coefficients.numpy() != before))
 
 
 if __name__ == '__main__':

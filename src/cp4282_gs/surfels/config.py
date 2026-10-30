@@ -25,6 +25,7 @@ class SurfelTrainingConfig(TrainingConfig):
         "mode": "rgb",
         "shading_model": "ldr",
         "angular_lr": 0.001,
+        "freeze_geometry": False,
         "depth_mode": "centre",
         "specular_start_iteration": 10000,
         "initial_reflection": 0.1,
@@ -95,6 +96,14 @@ class SurfelTrainingConfig(TrainingConfig):
             raise ValueError('surfel.shading_model must be ldr or hdr_angular.')
         if settings['shading_model'] == 'hdr_angular' and (geometry != 'surfel' or settings['mode'] != 'deferred'):
             raise ValueError('hdr_angular shading requires deferred surfels.')
+        if not isinstance(settings['freeze_geometry'], bool):
+            raise ValueError('surfel.freeze_geometry must be boolean.')
+        if settings['freeze_geometry']:
+            if (geometry != 'surfel' or self.values['densification']['interval'] != 0
+                    or self.values['densification']['opacity_reset_interval'] != 0
+                    or self.values['multiview_adc']['enabled'] or settings['foreground_pruning']['enabled']
+                    or settings['normal_propagation']['enabled']):
+                raise ValueError('Frozen-geometry diagnostics require surfels and all structural/opacity-reset schedules disabled.')
         if settings['depth_mode'] not in ('centre', 'ray_plane'):
             raise ValueError('surfel.depth_mode must be centre or ray_plane.')
         if geometry == 'gaussian' and settings['depth_mode'] != 'centre':
