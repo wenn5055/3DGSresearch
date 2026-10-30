@@ -294,7 +294,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("config", type=Path, help="Training YAML; its relative paths retain their original meaning.")
     parser.add_argument("--pipeline", choices=("gaussian", "surfel"), default="gaussian", help="Choose the baseline or independent surfel research passes.")
-    parser.add_argument("--name", help="Optional suffix, e.g. cap1k gives scene-Oct28-1305-cap1k (Singapore time). Repeated names get -2, -3, etc.")
+    parser.add_argument("--name", help="Optional suffix, e.g. cap1k gives Oct28-1305-scene-cap1k (Singapore time). Repeated names get -2, -3, etc.")
     parser.add_argument("--note", default="", help="Research question/purpose to save in the summary.")
     parser.add_argument("--metrics", nargs="+", choices=("psnr", "ssim", "lpips"), default=["psnr", "ssim", "lpips"])
     parser.add_argument("--eval-manifest", default="transforms_test.json")
@@ -319,7 +319,7 @@ def run_experiment(args: argparse.Namespace, root: Path = ROOT) -> Path:
     scene = re.sub(r"[^A-Za-z0-9_-]", "_", Path(config["paths"]["data"]).name)
     if args.name is not None and not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]*", args.name):
         raise ValueError("Name suffix must contain letters/digits/dots/dashes/underscores, starting with a letter or digit")
-    name = f"{scene}-{stamp}" + (f"-{args.name}" if args.name else "")
+    name = f"{stamp}-{scene}" + (f"-{args.name}" if args.name else "")
     if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,119}", name):
         raise ValueError("Run name must be 1-120 letters/digits/dots/dashes/underscores, starting with a letter or digit")
     base_name = name

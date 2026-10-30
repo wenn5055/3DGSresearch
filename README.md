@@ -86,9 +86,12 @@ To train and evaluate in a new run folder:
 python scripts/run_experiment.py config/materials_rgb.yaml --metrics psnr ssim
 ```
 
-Folders use the dataset name and Singapore time, e.g. `outputs/materials-Oct28-1305/`.
-Add `--name cap1k` to get `materials-Oct28-1305-cap1k`. Repeated names receive `-2`,
+New run and sweep folders begin with the month, day and 24-hour Singapore time,
+e.g. `outputs/Oct28-1305-materials/`.
+Add `--name cap1k` to get `Oct28-1305-materials-cap1k`. Repeated names receive `-2`,
 `-3`, etc. Exact dates and UTC timestamps are saved in the run metadata.
+Use the same timestamp prefix for new manually created report/study folders.
+Existing folders retain their names so saved references continue to work.
 
 The Materials config enables the Unit 10 loss curriculum: MSE warm-up, then dense
 `0.8 * MSE + 0.2 * D-SSIM` with reflected 11x11 windows. It switches when the smoothed

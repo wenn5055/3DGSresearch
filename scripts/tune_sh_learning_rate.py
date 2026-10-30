@@ -116,7 +116,7 @@ def prepare(args, root=runner.ROOT):
     now = datetime.now(runner.SINGAPORE_TIMEZONE)
     stamp = f"{runner.MONTHS[now.month - 1]}{now.day:02d}-{now:%H%M}"
     scene = re.sub(r"[^A-Za-z0-9_-]", "_", Path(config["paths"]["data"]).name)
-    name = f"{scene}-{stamp}-sh{config['model']['sh_degree']}-lr-sweep"
+    name = f"{stamp}-{scene}-sh{config['model']['sh_degree']}-lr-sweep"
     outputs = (root / "outputs").resolve()
     outputs.mkdir(parents=True, exist_ok=True)
     directory = outputs / name

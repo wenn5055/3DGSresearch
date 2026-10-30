@@ -73,7 +73,7 @@ class ExperimentRunnerTests(unittest.TestCase):
         # Ordinary mkdir inherits workspace permissions on restricted Windows hosts.
         self.root = scratch / f"runner-test-{uuid.uuid4().hex}"
         self.root.mkdir()
-        self.run_name = "scene-Oct28-1305-recorded-run"
+        self.run_name = "Oct28-1305-scene-recorded-run"
         self.addCleanup(self.cleanup_fixture)
         (self.root / "config").mkdir()
         data = self.root / "data" / "scene"
