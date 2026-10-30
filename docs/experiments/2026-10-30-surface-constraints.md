@@ -74,3 +74,8 @@ Source URLs and relevant line ranges were inspected directly from the official
 repository on this date. No external renderer or copied implementation was
 installed into the training environment. The course notes were also rechecked
 against the previously retained HTML/text snapshots after today's web fetch failed.
+
+The proposal's Ship scene is also not a purely diffuse control: direct inspection
+of its reference images shows reflective water around the vessel. If evaluated,
+treat whole-scene scores as a mixed-appearance secondary benchmark rather than
+evidence restricted to diffuse geometry.

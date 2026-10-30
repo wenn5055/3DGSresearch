@@ -1,0 +1,2 @@
+model,normal_coherence,mean_reflection_blend,normal_valid_fraction,mesh_normal_mae_deg,mesh_depth_mae,Chrome_reflection_blend,Chrome_normal_coherence,Chrome_normal_valid_fraction,Chrome_normal_mae_deg,Chrome_depth_mae
+protected-deferred-SH3,0.9366583758592606,0.2919189660251141,0.9999938036486791,13.19066126346588,0.016980979433283208,0.5739970784634352,0.9072142044703165,0.9999947746030072,15.708029260238012,0.030522201132650178

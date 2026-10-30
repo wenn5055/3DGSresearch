@@ -1,0 +1,30 @@
+[
+  {
+    "model": "protected-deferred-SH3",
+    "median_ms_per_view": null,
+    "fps": null,
+    "timing_repeats": 10,
+    "timing_skipped": false,
+    "scope": "forward rendering + host tile preparation + MSE; no image download/file I/O/metrics",
+    "active_primitives": 1000000,
+    "checkpoint_bytes": 242951457,
+    "warp_pool_current_bytes": 2469948723,
+    "warp_pool_process_high_bytes": 2923406428,
+    "memory_scope": "evaluation process allocation pool; cumulative high watermark across models, not peak training VRAM",
+    "trainer_seconds": 2069.46,
+    "training_time_scope": "Observed training-process wall time; diagnostic jobs may overlap in this research session. Not a controlled training-speed comparison.",
+    "training_warp_pool_high_bytes": 2984846940,
+    "training_memory_scope": "Fresh training process Warp allocation peak; excludes driver/context and external allocations. Missing for older runs.",
+    "excluded_overlap_sample": {
+      "fps": 33.48696875296688,
+      "median_ms_per_view": 29.86236250217189
+    },
+    "timing_valid": false,
+    "timing_review": {
+      "reason": "A queued protected-SF control started during shutdown; the launcher was suspended but its Python worker continued. Discard timings overlapping this fit.",
+      "overlap_started_utc": "2026-10-30T09:53:06.256456+00:00",
+      "overlap_ended_utc": "2026-10-30T09:55:27.045750+00:00",
+      "repeat_artifact": "outputs/Oct30-1756-materials-pruning-wrapup-timing/performance.json"
+    }
+  }
+]

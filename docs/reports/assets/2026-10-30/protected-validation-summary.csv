@@ -1,0 +1,2 @@
+model,psnr_db,ssim,foreground_psnr_db,lpips_alex,Chrome_psnr_db
+protected-deferred-SH3,28.472115896510346,0.9463225829601288,22.91050626181388,0.038977865763008594,16.18834446271025

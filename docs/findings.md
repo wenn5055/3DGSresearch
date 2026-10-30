@@ -510,3 +510,26 @@ Keep those controls, then test ray-plane depth/normal consistency and reflection
 from step 1. An eight-step GPU smoke with a 512x256 environment and SH3 reload
 passes; full protected controls remain pending. The enlarged chrome pair was
 revised before quality training. [Protocol and snapshot evidence](experiments/2026-10-30-initializer-controls.md).
+
+## 2026-10-30 wrap-up: stronger global fit, reflection goal still incomplete
+
+The original protected deferred run completes 30k at 800px/1M/seed7 with
+**28.4721 PSNR / 0.946323 SSIM / 0.038978 LPIPS**, Chrome **16.1883 dB**.
+Chrome normals improve 42.05 -> 15.71 degrees relative to unregularized hull
+deferred, but Chrome PSNR remains below the Gaussian's 16.2963. The protected
+SH-only control was interrupted early during shutdown; no matched result exists.
+
+On the separate enlarged Chrome diagnostic, a shared 100k training-mask surface
+and 15k total steps give HDR with gentle post-lighting geometry refinement
+**21.3361 / 0.821520 / 0.140111**, versus fixed HDR
+20.3180 / 0.787574 / 0.169609 and fixed SH3
+19.0057 / 0.767141 / 0.176790. This is a positive controlled continuation result,
+with visible blur remaining. New-method 200-view tests were cancelled on request.
+
+The already test-validated 600k export retains quality and now has paired idle-GPU
+forward timing: **57.17 -> 103.96 FPS** for full versus compact, same four test
+poses/ten repeats. An overlapped shutdown timing sample was discarded and retained
+with an invalidation note. Training-cost reduction is not claimed.
+
+[Illustrated report and committed per-view evidence](reports/2026-10-30-research-wrap-up.md).
+All session jobs are stopped; full checkpoints/logs remain local.

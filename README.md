@@ -80,6 +80,7 @@ Shared and support files:
 
 ## Evaluating your output
 
+[Illustrated 30 October wrap-up](docs/reports/2026-10-30-research-wrap-up.md) ·
 [Current reflection research status](docs/research-status.md) summarizes results,
 active comparisons and the latest decision without the full experiment history.
 

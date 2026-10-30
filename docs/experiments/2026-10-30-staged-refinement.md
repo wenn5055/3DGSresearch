@@ -39,3 +39,16 @@ Preserve every arm and report all 100 validation views, the three quality metric
 Chrome normal/depth/coherence and images. If 10 minutes remain after all scheduled
 final/frozen test reports, evaluate all three unchanged arms on 200 Chrome test
 views and export a video. No test-based retuning or extra continuation after test.
+
+## Completed validation; test cancelled for wrap-up
+
+All three 15k-total arms completed. Fixed SH3: **19.0057 / 0.767141 / 0.176790**,
+Chrome 13.5653 dB. Fixed HDR: **20.3180 / 0.787574 / 0.169609**, Chrome 14.8089.
+Released HDR: **21.3361 / 0.821520 / 0.140111**, Chrome **15.7505 dB**.
+Chrome normal error changes 7.6335 -> 7.2173 degrees and depth MAE
+0.018205 -> 0.017007; normal coherence changes 0.996544 -> 0.994098.
+This improves all quality metrics but leaves cloudy reflections. It does not
+prove the warm-up schedule beats a fully matched joint-from-start schedule.
+The user requested wrap-up, so the planned 200-view auxiliary test/video is unrun.
+Native trainer time is stage-only; stage_history.json retains 15k cumulative cost.
+Full validation: `outputs/Oct30-1739-chrome-staged-refinement-val`.

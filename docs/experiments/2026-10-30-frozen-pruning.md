@@ -84,3 +84,14 @@ falls about **40.4%**. No FPS speedup or reduced training peak/time is claimed y
 the pruned artifact inherits the original 1M-point training cost. Measure rendering
 on an otherwise idle GPU. Research controller/log state remains in
 `outputs/first-principles-2026-10-30/`.
+
+## Wrap-up inference timing
+
+After all research GPU work stopped, the paired forward benchmark gives
+**57.17 FPS full / 103.96 FPS compact** (17.493 / 9.619 ms per view), same
+four test poses, ten repeats. Scope includes host tiling, rendering and MSE;
+excludes downloads, file I/O and quality metrics. Quality remains the previously
+validated all-200-view comparison. This is inference/storage compression, not
+saved parent training cost. An earlier overlapping shutdown sample is retained
+but invalidated; only the idle repeat is reported.
+Artifact: `outputs/Oct30-1756-materials-pruning-wrapup-timing/performance.json`.

@@ -155,3 +155,10 @@ finite-difference cases per device. Its full eight-step integration smoke,
 SH3, mask/normal losses, format-2 save/reload and all three validation metrics.
 Smoke scores are not quality evidence. The earlier no-mask source/presets remain
 available in Git history and the archived waiting-queue source/state.
+
+A read-only Blender display-transfer probe confirms the saved Chrome scene uses
+the sRGB display device. Eight synthetic linear samples, including radiance 2,
+match the shader's clipped Standard/sRGB transfer within one 8-bit quantization
+step (maximum absolute RGB error 0.001898). This checks the display mapping;
+it is not a lighting/geometry fit. Artifacts and metadata:
+`outputs/Oct30-1729-display-transfer-audit`.

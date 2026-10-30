@@ -202,3 +202,18 @@ preset was changed to this initializer. Artifacts:
 The separate [angular-response variant](2026-10-30-angular-response.md) addresses
 another verified model mismatch while holding each protected preset's geometry
 settings and initializer fixed. It remains untested at quality-training scale.
+
+## User-requested wrap-up: original protected deferred completed
+
+The 30k protected deferred run gives **28.4721 / 0.946323 / 0.038978**, Chrome
+**16.1883 dB**, normal errors **13.19 degrees overall / 15.71 Chrome**, Chrome
+coherence 0.9072 and effective blend 0.5740. Full 100-view validation is in
+`outputs/Oct30-1753-materials-protected-deferred-wrapup-val`.
+Its forward timing is invalidated because an accidentally started queued control
+overlapped it; image quality and geometry results are unaffected.
+
+The protected SH-only control briefly started during shutdown and was interrupted;
+it has no completed result. The full HDR/angular/mask runs were cancelled before
+starting. An independent original sigma3 CPU initializer audit finishes at
+18.307-degree Chrome normal error, so smoothing alone does not solve its geometry.
+See the [illustrated wrap-up](../reports/2026-10-30-research-wrap-up.md).

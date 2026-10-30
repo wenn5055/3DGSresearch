@@ -1,0 +1,253 @@
+{
+  "scope": "Figures use predefined validation view 0; quality scores use float predictions over all listed views, not these PNGs.",
+  "staged_protocol": {
+    "path": "outputs/Oct30-1739-chrome-staged-refinement-val/protocol.json",
+    "sha256": "d6016edb315164f301e0a44bc257d46984b87dbad4c2f8043e77fa93516deaba"
+  },
+  "source_files": [
+    {
+      "path": "outputs/Oct30-1712-chrome-normal-errors/normal-errors.png",
+      "sha256": "a5be304ddea3cd97468444dac0930dec774bbfca066cff69a95807617e6bb28e"
+    },
+    {
+      "path": "outputs/Oct30-1557-materials-reflection-scope/reflection-scope.png",
+      "sha256": "e44feded72e75c908f513bd8bbaa9a1984fe648af87db6da75fa1a264f294081"
+    },
+    {
+      "path": "outputs/Oct30-1739-chrome-staged-refinement-val/reference-0.png",
+      "sha256": "c06ab46571b8fdb1b553f6b7ab17b7731fdea777321627cf1e5627689e796108"
+    },
+    {
+      "path": "outputs/Oct30-1739-chrome-staged-refinement-val/model-0-0.png",
+      "sha256": "7b8259bf605b674aba8a47060315307d1a2b1462135f7eaa738eab8faab7b729"
+    },
+    {
+      "path": "outputs/Oct30-1739-chrome-staged-refinement-val/model-1-0.png",
+      "sha256": "444b553f42e267751a078dffc073edf1d681f5f450adf887d10990428e96483d"
+    },
+    {
+      "path": "outputs/Oct30-1739-chrome-staged-refinement-val/model-2-0.png",
+      "sha256": "983e7f0ca7cfc033c6fcc3b2fc4fbc638730ff7b9e1e80640606527fd6538adc"
+    },
+    {
+      "path": "outputs/Oct30-1739-chrome-staged-refinement-val/summary.csv",
+      "sha256": "950444abd67879266a295e61fb871b3c64f45bb7a7fedf737a264b7f3f9c352f"
+    },
+    {
+      "path": "outputs/Oct30-1739-chrome-staged-refinement-val/metrics.csv",
+      "sha256": "c6804ce59db54925a04f2ed62f81cc2ac9c005b31e9cd327276e36a242fe3976"
+    },
+    {
+      "path": "outputs/Oct30-1739-chrome-staged-refinement-val/geometry-summary.csv",
+      "sha256": "ecd7db78cb67e96637882c9aced894b78c681ea60cccfe636572b96e78cfd35c"
+    },
+    {
+      "path": "outputs/Oct30-1615-materials-initializer-controls-val/summary.csv",
+      "sha256": "faf15ddb92fc95c61c2f9ba81fd574835cfdfea6834e964263b3a72667edce3a"
+    },
+    {
+      "path": "outputs/Oct30-1615-materials-initializer-controls-val/metrics.csv",
+      "sha256": "c5ab8e902fa6244aee411009f07c451e76463f215b2ecd6ea213015833b91e2a"
+    },
+    {
+      "path": "outputs/Oct30-1549-materials-frozen-pruning-test/summary.csv",
+      "sha256": "664b75dfe851633c5b77171cec4b1e61f33a16847f29f3722234ae8fa5d5b4e8"
+    },
+    {
+      "path": "outputs/Oct30-1549-materials-frozen-pruning-test/metrics.csv",
+      "sha256": "11528038b2d155d00d9c3a2daa0a69deeb0cbcc2462475e12b6b93a03974c18a"
+    },
+    {
+      "path": "outputs/Oct30-1733-materials-smooth3-initial-geometry/summary.json",
+      "sha256": "8011b6acf89f5c2719bc1a0ef74aea3d7fd0a296479181ea07c19a8763eddbb0"
+    },
+    {
+      "path": "outputs/Oct30-1736-materials_chrome-staged-sh3-fixed-5k/stage_history.json",
+      "sha256": "90ec365547ada24021cbb6bfc6f16e1433fba8b1fe084c62e9720899be6b6ce8"
+    },
+    {
+      "path": "outputs/Oct30-1730-materials_chrome-staged-hdr-fixed-5k/stage_history.json",
+      "sha256": "eefbd42b2dd83492853e158c962784f52fd41a478eea29d18e35295ef1144148"
+    },
+    {
+      "path": "outputs/Oct30-1733-materials_chrome-staged-hdr-refine-5k/stage_history.json",
+      "sha256": "650e0a9041633e40e43324fea2c95197e72922b73c75db41a49abb964e8ae590"
+    },
+    {
+      "path": "outputs/Oct30-1753-materials-protected-deferred-wrapup-val/reference-0.png",
+      "sha256": "540ef0be4473c90deff3bc9fc821bc1e71ca85a27155046968d0f04905add0a4"
+    },
+    {
+      "path": "outputs/Oct30-1615-materials-initializer-controls-val/model-0-0.png",
+      "sha256": "2eccff2e6032b9e68ef181991ff45af08e8566dc29506086180bf8f3c1366e28"
+    },
+    {
+      "path": "outputs/Oct30-1615-materials-initializer-controls-val/model-3-0.png",
+      "sha256": "81eacfbff236ac6c33dc584780e73d8ee5aefa986425b978b1e22d34afb59dd2"
+    },
+    {
+      "path": "outputs/Oct30-1753-materials-protected-deferred-wrapup-val/model-0-0.png",
+      "sha256": "f1cfe3607c66a27875354b1a002e13749846be3b772efac4ac29a2c23b4a5088"
+    },
+    {
+      "path": "outputs/Oct30-1753-materials-protected-deferred-wrapup-val/summary.csv",
+      "sha256": "52904b4bd1dffda041750ab4c3944b70a3b6ed80b8befc7b68d0fc98106b0347"
+    },
+    {
+      "path": "outputs/Oct30-1753-materials-protected-deferred-wrapup-val/geometry-summary.csv",
+      "sha256": "d01c53b0bf357be7ad2aa5bf9d1a8317034e52a6b2c91b01e3cd5fb39a795409"
+    },
+    {
+      "path": "outputs/Oct30-1753-materials-protected-deferred-wrapup-val/metrics.csv",
+      "sha256": "8e2c35e2f71dd2a67506fc7cadae0c47d0b5893811c4afe524d9d03162a5effa"
+    },
+    {
+      "path": "outputs/Oct30-1753-materials-protected-deferred-wrapup-val/performance.json",
+      "sha256": "551835a92edb8a60b9f8322acf81790f6408ecbe9e9a60601176d76fb63828c9"
+    },
+    {
+      "path": "outputs/Oct30-1756-materials-pruning-wrapup-timing/performance.json",
+      "sha256": "08ba69700c16c21326942044b0f6eba7a9674fef72f25af5eee64d831cb142c3"
+    }
+  ],
+  "figure_builder_sha256": "e57511241f0a98ec8c43eabc3d9d611f885e92e9decd538bdc598d64caa99a42",
+  "stage_histories": [
+    {
+      "parent_run": "outputs/Oct30-1723-materials_chrome-frozen-sh3-10k",
+      "current_run": "outputs/Oct30-1736-materials_chrome-staged-sh3-fixed-5k",
+      "parent_run_sha256": "6f4f33f8a206ab9dc7dea587cf6eb2a77b9db2c7f1d55e3d7307060504ce6e63",
+      "parent_iterations": 10000,
+      "current_stage_iterations": 5000,
+      "cumulative_iterations": 15000,
+      "parent_observed_seconds": 240.8,
+      "current_observed_seconds": 141.79,
+      "cumulative_observed_seconds": 382.59000000000003,
+      "scope": "Observed parent plus continuation costs; possible concurrent diagnostic interference. Optimizers restart."
+    },
+    {
+      "parent_run": "outputs/Oct30-1718-materials_chrome-frozen-hdr-10k",
+      "current_run": "outputs/Oct30-1730-materials_chrome-staged-hdr-fixed-5k",
+      "parent_run_sha256": "154d25de1ea7c35c095b8129dc49dd711c2427bfcbe1bc38e96b80a82f9be996",
+      "parent_iterations": 10000,
+      "current_stage_iterations": 5000,
+      "cumulative_iterations": 15000,
+      "parent_observed_seconds": 255.02,
+      "current_observed_seconds": 152.26,
+      "cumulative_observed_seconds": 407.28,
+      "scope": "Observed parent plus continuation costs; possible concurrent diagnostic interference. Optimizers restart."
+    },
+    {
+      "parent_run": "outputs/Oct30-1718-materials_chrome-frozen-hdr-10k",
+      "current_run": "outputs/Oct30-1733-materials_chrome-staged-hdr-refine-5k",
+      "parent_run_sha256": "154d25de1ea7c35c095b8129dc49dd711c2427bfcbe1bc38e96b80a82f9be996",
+      "parent_iterations": 10000,
+      "current_stage_iterations": 5000,
+      "cumulative_iterations": 15000,
+      "parent_observed_seconds": 255.02,
+      "current_observed_seconds": 142.48,
+      "cumulative_observed_seconds": 397.5,
+      "scope": "Observed parent plus continuation costs; possible concurrent diagnostic interference. Optimizers restart."
+    }
+  ],
+  "protected_protocol": {
+    "path": "outputs/Oct30-1753-materials-protected-deferred-wrapup-val/protocol.json",
+    "sha256": "5fe19e63e8446bd4519177a5cf134edf45208ca9a9b4bbee0e54c36565254c95"
+  },
+  "pruning_timing": {
+    "status": "completed",
+    "created_utc": "2026-10-30T09:56:50.333295+00:00",
+    "manifest": "transforms_test.json",
+    "resolution": [
+      800,
+      800
+    ],
+    "views": [
+      0,
+      72,
+      123,
+      146
+    ],
+    "measurements": [
+      {
+        "model": "full-1M",
+        "run": "outputs\\materials-Oct30-1416-fresh-surfel-sh3",
+        "points": 1000000,
+        "median_ms_per_view": 17.49279999785358,
+        "fps": 57.16637703070423,
+        "seconds_per_view_samples": [
+          0.01751387499825796,
+          0.01754882500245003,
+          0.0174717249974492,
+          0.017655949995969422,
+          0.01737357499951031,
+          0.017105975006415974,
+          0.017622550003579818,
+          0.017137424998509232,
+          0.017563049994350877,
+          0.017223825001565274
+        ],
+        "checkpoint_bytes": 238881818,
+        "checkpoints": [
+          {
+            "path": "outputs\\materials-Oct30-1416-fresh-surfel-sh3\\model.ply",
+            "sha256": "56a80db132a30ff757ebbbeab1fae89671d2ce36553181b6bbf0349f8065fada"
+          },
+          {
+            "path": "outputs\\materials-Oct30-1416-fresh-surfel-sh3\\model.surfel.npz",
+            "sha256": "28a76f1c0072908a8c50dc07259e82bf966afb15c3db03bfb2b827cadf261aab"
+          },
+          {
+            "path": "outputs\\materials-Oct30-1416-fresh-surfel-sh3\\model.sh.npz",
+            "sha256": "7d833488696da32c8d525378b262243efc4e153b5b1965770fdcb90ba61f660f"
+          }
+        ]
+      },
+      {
+        "model": "compact-600k",
+        "run": "outputs\\Oct30-1508-materials-pruned-0.4",
+        "points": 600000,
+        "median_ms_per_view": 9.618787502404302,
+        "fps": 103.9632073949072,
+        "seconds_per_view_samples": [
+          0.00955107500340091,
+          0.009621725002944004,
+          0.009917449999193195,
+          0.009866425003565382,
+          0.01016462500410853,
+          0.00979337500029942,
+          0.009612524998374283,
+          0.009615850001864601,
+          0.00954739999724552,
+          0.009556824996252544
+        ],
+        "checkpoint_bytes": 142304293,
+        "checkpoints": [
+          {
+            "path": "outputs\\Oct30-1508-materials-pruned-0.4\\model.ply",
+            "sha256": "f256c0d393e0f416f372118685b4651589d3ee9bb4d2da56b17d64c1b4549e35"
+          },
+          {
+            "path": "outputs\\Oct30-1508-materials-pruned-0.4\\model.surfel.npz",
+            "sha256": "baf69c55e4a56ba8f7b926ada8efc5cd892c0a889f364dfa027781b2127aa6e4"
+          },
+          {
+            "path": "outputs\\Oct30-1508-materials-pruned-0.4\\model.sh.npz",
+            "sha256": "23dd819aa021907bc82c38e0913aa55bdd0a0911d4937d9168387b7d9a43d63a"
+          }
+        ]
+      }
+    ],
+    "scope": "forward rendering + host tile preparation + MSE; excludes image download, file I/O and metrics",
+    "quality_protocol_sha256": "4f2f302c309147cf6a0299ab690c6bf48819c7e2d113959ed33d043f3cf715f6",
+    "script_sha256": "a7122b504fc42da2ba6cec402ffae6376509714e2e62aa31baab659438a56d51",
+    "other_research_gpu_work_finished": true,
+    "training_cost_reduction_claimed": false,
+    "timing_valid": true,
+    "replaced_overlap_sample": "outputs/Oct30-1754-materials-pruning-wrapup-timing/performance.json",
+    "idle_process_census": "No session training or queue Python processes before/after measurement; global stop switch set.",
+    "runtime": {
+      "device_name": "NVIDIA RTX PRO 5000 Blackwell",
+      "warp_version": "1.18.0"
+    }
+  }
+}

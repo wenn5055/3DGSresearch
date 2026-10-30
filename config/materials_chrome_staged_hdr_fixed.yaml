@@ -29,7 +29,7 @@ model:
   width: 800
 paths:
   data: ../data/materials_chrome
-  init_ply: C:\Users\e1355010\3DGSresearch\outputs\Oct30-1718-materials_chrome-frozen-hdr-10k\model.ply
+  init_ply: ../outputs/Oct30-1718-materials_chrome-frozen-hdr-10k/model.ply
   output: ../outputs/materials_chrome_staged_hdr_fixed/model.png
 reporting:
   snapshot_every: 2500

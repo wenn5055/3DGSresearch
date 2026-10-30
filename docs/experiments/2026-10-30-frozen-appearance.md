@@ -51,3 +51,31 @@ validation views with PSNR/SSIM/LPIPS and geometry diagnostics. Then, if at leas
 both unchanged models on all 200 Chrome test views and export a comparison video.
 No post-test retuning. Otherwise preserve the validation-only diagnostic and
 mark the auxiliary test skipped at the deadline.
+
+## 17:30 Singapore: complete 100-view validation
+
+| Fixed 100k / 10k model | PSNR | SSIM | LPIPS | Chrome PSNR | Required files |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| SH3 | 18.9031 | 0.766470 | 0.178251 | 13.4380 | 23,514,756 bytes |
+| HDR angular, no SH | **20.3086** | **0.787162** | **0.170792** | **14.8053** | **8,546,509 bytes** |
+
+HDR gains 1.4055 dB globally and 1.3673 dB on Chrome, with 63.65% smaller
+required files. Rendered geometry diagnostics are identical across all views:
+8.8174-degree overall normal error, 7.6335 on Chrome, coherence 0.995815 overall
+/ 0.996544 Chrome. This is a positive appearance-capacity result on the auxiliary
+scene, not successful joint reconstruction or a claim that SH is unnecessary
+for rough/mixed materials. Direct image inspection still shows blurred trees.
+The 10k budget is fixed for both appearance models; neither represents a fully
+optimized 30k reference. Forward timing is intentionally skipped while primary
+training runs.
+
+[Complete report](../../outputs/Oct30-1728-chrome-frozen-appearance-val/index.html).
+The [prespecified continuation study](2026-10-30-staged-refinement.md) now checks
+whether a lighting warm-up permits gentler, useful geometry refinement.
+
+## Wrap-up status
+
+The short continuation study also completed validation; see its protocol and
+the [illustrated report](../reports/2026-10-30-research-wrap-up.md). The user asked
+to stop, so the planned frozen-model 200-view test/video was cancelled. No test
+quality or speed claim is made for these new appearance models.

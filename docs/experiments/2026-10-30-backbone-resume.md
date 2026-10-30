@@ -344,3 +344,45 @@ training and final evaluation. No quality improvement is claimed yet.
 The output naming/metric policy remains date-time first and PSNR/SSIM/LPIPS.
 Video exports retain float-based metric provenance; eight-bit clips are visual
 artifacts only. Tooling/material diagnosis was committed as **6c054f5**.
+
+## User-requested wrap-up, 17:55 Singapore
+
+The active original protected deferred fit completed all 30k steps, followed by
+100-view float validation: **28.4721 / 0.946323 / 0.038978**,
+Chrome **16.1883 dB**, Chrome normal error
+**15.71 degrees**. Its pending matched
+protected SH-only run was cancelled, so this treatment is not an isolated
+deferred-shading ablation. Report: `outputs/Oct30-1753-materials-protected-deferred-wrapup-val`.
+
+The auxiliary frozen appearance comparison confirms HDR/no-SH capacity on fixed
+geometry: 20.3086 / 0.787162 / 0.170792 versus SH3
+18.9031 / 0.766470 / 0.178251 at 100k/10k. At 15k cumulative steps, gentler
+geometry release improves HDR to **21.3361 / 0.821520 / 0.140111** versus its
+fixed continuation **20.3180 / 0.787574 / 0.169609** and fixed SH3
+**19.0057 / 0.767141 / 0.176790**. All 100 validation views are included;
+visible reflection blur remains. Parent/continuation costs are in stage_history.json.
+
+Paired pruning forward timing ran after other research GPU work ended:
+**57.17 -> 103.96 FPS**, same four test poses and ten
+repeats, host tiling/render/MSE scope. It does not reduce prior training cost.
+
+The waiting protected SF, early-SH reference, full HDR/mask, final model-selection
+test/video and auxiliary test/video jobs were cancelled on the user's request.
+No new-method test results are claimed. The original staged surface initializer
+CPU scout finished; sigma3 still gives 18.307-degree Chrome normal error.
+The working hypotheses and exact presets are retained for a later session.
+
+[Committed illustrated report](../reports/2026-10-30-research-wrap-up.md).
+
+### Shutdown timing correction
+
+The scheduler suspension affected the Windows launcher rather than its Python
+worker. The queued protected SF control started at 2026-10-30T09:53:06.256456+00:00 and
+was stopped at 2026-10-30T09:55:27.045750+00:00 by the shared stop switch. Its partial
+fit is interrupted and excluded from completed comparisons. No session training
+or queue processes remained in the subsequent process census.
+
+Both the protected validation's FPS and the first pruning timing overlapped
+this work and are invalidated, with original samples retained. Quality CSVs are
+unchanged. Pruning was remeasured after shutdown: **57.17 ->
+103.96 FPS**. The report/evidence use only this repeat.
