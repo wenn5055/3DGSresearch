@@ -1,0 +1,67 @@
+# Matched 5k continuation from a 10k parent; 15k total, optimizers restart in every arm.
+adaptive:
+  dssim_psnr_threshold: 21.0
+convergence:
+  enabled: false
+densification:
+  fraction: 0.2
+  interval: 0
+  child_optimizer_state: fresh_children
+  opacity_reset_interval: 0
+learning_rates:
+  position_max_steps: 5000
+  position_initial: 1.0e-05
+  position_final: 1.0e-06
+  scale: 0.0005
+  rotation: 0.0001
+  opacity: 0.005
+loss:
+  dssim_weight: 0.2
+  dssim_window: 11
+  mode: mse
+model:
+  background: white
+  capacity: 100000
+  geometry: surfel
+  height: 800
+  initial_splats: 100000
+  sh_degree: 0
+  width: 800
+paths:
+  data: ../data/materials_chrome
+  init_ply: C:\Users\e1355010\3DGSresearch\outputs\Oct30-1718-materials_chrome-frozen-hdr-10k\model.ply
+  output: ../outputs/materials_chrome_staged_hdr_refine/model.png
+reporting:
+  snapshot_every: 2500
+runtime:
+  arch: gpu
+  seed: 7
+sparse:
+  enabled: false
+  samples_per_tile: 256
+surfel:
+  foreground_pruning:
+    enabled: false
+  environment_height: 256
+  environment_lr: 0.01
+  environment_width: 512
+  initial_reflection: 0.5
+  mode: deferred
+  depth_mode: ray_plane
+  reflection_lr: 0.01
+  save_debug: true
+  sh_band_interval: 1000
+  sh_start_iteration: null
+  specular_start_iteration: 0
+  shading_model: hdr_angular
+  angular_lr: 0.001
+  freeze_geometry: false
+geometry_loss:
+  normal_depth_weight: 0.01
+  normal_start_iteration: 1
+  normal_ramp_iterations: 1000
+  mask_weight: 0.1
+training:
+  iterations: 5000
+multiview_adc:
+  enabled: false
