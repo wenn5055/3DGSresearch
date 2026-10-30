@@ -1,5 +1,5 @@
 # Training-alpha visual-hull initialization; no mesh/reference training inputs.
-# Matched 800px/1M/30k/late-SH3 policy; initialization is the full treatment.
+# Mirror diagnostic: matched ray-plane/normal-consistency policy, early reflection.
 adaptive:
   dssim_psnr_threshold: 21.0
 convergence:
@@ -37,15 +37,20 @@ sparse:
 surfel:
   foreground_pruning:
     enabled: true
-  environment_height: 64
+  environment_height: 256
   environment_lr: 0.01
-  environment_width: 128
+  environment_width: 512
   initial_reflection: 0.1
   mode: rgb
+  depth_mode: ray_plane
   reflection_lr: 0.01
   save_debug: true
   sh_band_interval: 2000
   sh_start_iteration: 20001
-  specular_start_iteration: 10000
+  specular_start_iteration: 1
+geometry_loss:
+  normal_depth_weight: 0.01
+  normal_start_iteration: 1
+  normal_ramp_iterations: 2000
 training:
   iterations: 30000

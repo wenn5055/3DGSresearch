@@ -6,14 +6,15 @@ the original ten-hour **total active-work** limit: stop by **20:23 Singapore**
 (12:23 UTC) today. New controllers enforce that deadline; yesterday's controllers
 and interrupted evidence remain unchanged.
 
-Status: **active — backbone audit complete; selective fresh state integrated.**
+Status: **active — backbone recovered; unconstrained deferred control is negative.**
 All five cases are complete. Fresh children score 26.0921 dB versus 18.6229
 with inherited histories and 25.7094 with global resets, with foreground rejection
 on. The implementation passes 117 CPU tests, 55 CUDA surfel tests and four new
 CUDA policy tests. Gaussian and deferred-SH3 GPU runner smokes completed reload
 and all-view evaluation. Full 30k Gaussian SH3 validation now reaches **27.7246 dB,
-SSIM 0.944346, LPIPS AlexNet 0.040411**. Matched surfel SH3 and deferred SH3
-controls are running sequentially. The original Materials benchmark remains
+SSIM 0.944346, LPIPS AlexNet 0.040411**. Matched surfel/deferred controls are
+complete; initialization and geometry-protected controls are running/queued.
+The original Materials benchmark remains
 the user's confirmed target.
 
 User metric preference: include **LPIPS AlexNet** alongside PSNR and SSIM in all
@@ -261,3 +262,35 @@ preserved validation/Chrome/LPIPS quality and **40.4% smaller required files**.
 The reusable exporter preserves matching geometry/SH/material rows and records
 parent provenance. This is inference compression, not an automatic new training
 pruner or a reflection-normal fix. [Evidence and reproduction](2026-10-30-frozen-pruning.md).
+
+### Completed random-initialized controls, 15:16 Singapore
+
+All 100 original Materials validation views at 800px, common float-image scores:
+
+| Model, 1M points / SH3 | PSNR | SSIM | LPIPS | Chrome PSNR | Chrome normal error |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Gaussian | 27.7246 | 0.944346 | **0.040411** | **16.2963** | Not defined |
+| Surfel, SH only | **27.8901** | **0.944841** | 0.042719 | 16.1483 | 53.87 degrees |
+| Surfel, deferred + SH | 27.7544 | 0.942944 | 0.046788 | 16.1334 | 52.46 degrees |
+
+The unconstrained deferred pass does not win image, perceptual or Chrome scores.
+Its overall normal error is 44.32 degrees versus 42.20 for SH-only. Normal
+coverage exceeds 0.999 in both cases, so the issue is surface alignment rather
+than missing pixels. The current random-initialized pipeline does not establish
+the proposal's desired reflection benefit. Do not report the old weak inherited
+baseline as evidence of success.
+
+Serialized same-process forward benchmarks, after training jobs finish: Gaussian
+**57.94 FPS**, surfel **59.81**, deferred **60.12**. Scope includes host tiling and
+forward rendering/MSE, excludes image download/metrics; four predefined cameras,
+10 timed repeats. These close figures do not establish a meaningful deferred
+speed advantage. Fresh training-process Warp allocation peaks: 2.516 GB Gaussian,
+2.985 GB for both surfel modes; this is not total GPU VRAM. Observed trainer times
+1,883.52 / 1,686.54 / 1,675.38 seconds are not a controlled speedup comparison:
+some diagnostic jobs overlapped during training. Required files: 238.9 / 238.9 /
+242.5 MB. No inference benchmark overlapped another research training job.
+
+[Complete report, crops, independent geometry and performance](../../outputs/Oct30-1513-materials-random-controls-val/index.html).
+Training-only hull initialization is running next. Snapshot diagnostics already
+show its normal alignment deteriorating during the RGB-only warm-up, motivating
+the protected schedule documented in the [initializer decision record](2026-10-30-initializer-controls.md).

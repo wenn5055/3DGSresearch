@@ -479,7 +479,10 @@ inherited histories. Inputs and non-policy settings match; all 100 views improve
 in all three metrics. The earlier tuned SH3 reference scores 27.3372 / 0.933825 /
 0.048299. Actual chrome quality improves only slightly against that strong
 reference (16.2963 versus 16.1635 dB on 96 visible views). Blurred reflections
-remain; matched surfel/deferred controls are running on original Materials.
+remain. Completed matched random-initialized controls give **27.8901 dB / 0.042719
+LPIPS** for surfel SH-only versus **27.7544 / 0.046788** for deferred + SH. Chrome
+scores are 16.1483 versus 16.1334 dB; normal errors remain 53.87 versus 52.46
+degrees. The current unconstrained deferred pipeline does not establish a win.
 
 [Protocol, complete contrasts and scope](experiments/2026-10-30-backbone-resume.md).
 Figures and machine-readable evidence: `outputs/first-principles-2026-10-30/`.
@@ -499,3 +502,11 @@ The reusable export preserves raw point/SH/material state, verifies provenance,
 and labels derived checkpoints separately. Three CPU regression tests and a
 separate all-100-view production-export validation pass. Parent files are intact.
 [Results, limits and reproduction](experiments/2026-10-30-frozen-pruning.md).
+
+The training-only hull's initially better normals also drift during RGB-only
+fitting: predefined validation view 0 changes from 15.40 to 38.25 degrees on
+Chrome by 5k steps, before deferred activation. Depth MAE improves meanwhile.
+Keep those controls, then test ray-plane depth/normal consistency and reflection
+from step 1. An eight-step GPU smoke with a 512x256 environment and SH3 reload
+passes; full protected controls remain pending. The enlarged chrome pair was
+revised before quality training. [Protocol and snapshot evidence](experiments/2026-10-30-initializer-controls.md).

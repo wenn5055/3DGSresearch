@@ -53,9 +53,10 @@ stdout was not inherited. The full reference explicitly captures stdout/stderr
 in `all-validation-geometry.log`; preserve the pilot rather than overwriting it.
 
 Auxiliary presets `materials_chrome_hull_surfel_sh3.yaml` and
-`materials_chrome_hull_deferred_sh3.yaml` hold the other settings fixed. Their
-results cannot replace or be pooled with original Materials scores. Additional
-shading changes require evidence from these controls, rather than a blind sweep.
+`materials_chrome_hull_deferred_sh3.yaml` hold the other settings fixed within
+their pair. Their results cannot replace or be pooled with original Materials
+scores. The before-training revision below adds geometry protection based on
+observed drift in original Materials, rather than an appearance-parameter sweep.
 
 ### Untrained chrome initializer audit, 14:44 Singapore
 
@@ -97,3 +98,50 @@ assume that tradeoff is unchanged after the optimizer correction.
 approach with roughness-aware environment lighting and a directional residual
 pass. This supports feasibility of the architectural direction, not the claim
 that our simpler renderer already implements it or achieves its results.
+
+## Geometry drift and pretraining protocol revision, 15:23 Singapore
+
+Saved floating-point snapshot buffers locate a concrete failure in the ongoing
+original Materials hull-deferred run, **before its reflection stage**. Training
+`evaluate_components` explicitly leaves the first fixed validation camera last;
+the saved buffers therefore correspond to validation frame 0, not an arbitrary
+training view. Its assignment is checked in the run log.
+
+| Fixed validation view 0 | Initial hull | After 5k RGB-only steps |
+| --- | ---: | ---: |
+| Mean mesh normal error | 15.92 degrees | 35.29 degrees |
+| Chrome normal error | 15.40 degrees | 38.25 degrees |
+| Camera-z depth MAE | 0.02633 | 0.02257 |
+| Valid reference-foreground fraction | 1.00000 | 0.99971 |
+
+Depth error improves while the normals degrade. Thus good initial geometry is
+not sufficient when RGB fitting can freely distort the tangent field. This is a
+single predefined camera diagnostic, not an all-view quality result or proof that
+every scene drifts identically. It supports protecting alignment rather than
+merely extending the existing unconstrained schedule. Read-only source, snapshot
+fingerprints and CSV: `outputs/Oct30-1519-materials-geometry-trajectories/`.
+
+Keep the current unregularized original Materials pair unchanged as controls.
+Add `materials_reflection_hull_regularized_{surfel,deferred}_sh3.yaml`: ray-plane
+depth, self-supervised depth-normal weight **0.01**, starting at **step 1** with a
+**2k ramp**, and deferred activation at step 1. Training alpha supplies only valid
+foreground/mask information; mesh normals/depth are never optimization targets.
+Both modes share the geometry policy and late SH3 schedule, 800px, 1M capacity,
+100k inferred initial points, seed 7 and 30k steps. The original 128x64 environment
+remains. This tests the combined protected training policy, not each component
+in isolation. Its pair is queued after the earlier initializer experiments.
+
+**Before any chrome quality training**, revise both auxiliary presets to the
+same protected geometry policy and immediate deferred activation. Their deferred
+environment becomes **512x256**: a 128-wide longitude grid samples every 2.8125
+degrees; 512 samples every 0.7031 degrees, appropriate to the enlarged mirror.
+The SH-only mode does not use that environment. The paired budget stays 800px,
+1M capacity, 100k initial points and 30k steps. These are planned improvements,
+not measured wins. The earlier auxiliary presets are retained in Git history.
+
+An eight-step GPU smoke (`Oct30-1523-materials_chrome-protected-smoke`) activates
+reflection, ray-plane consistency and all three SH bands, saves/reloads the
+512x256 environment and evaluates all 100 views with PSNR/SSIM/LPIPS. It completes
+with finite scores; its untrained quality is not a comparison result. The first
+smoke was rejected before training because snapshot interval zero is invalid;
+the corrected interval is 1000. Both controller logs and the invalid YAML remain.
