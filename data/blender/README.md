@@ -1,7 +1,7 @@
 # Materials Blender scene
 
-Open `materials.blend`, delete unwanted balls, then save a copy as
-`materials_two_balls.blend` in this folder.
+The edited scene is saved as `materials_red-rose-silver.blend` in this folder
+(three balls). Keep `materials.blend` as the original source.
 
 Each ball has two mesh parts: `SolidModel` and `CoreSolidMaterial`, with matching
 numeric suffixes. Delete both parts of each unwanted ball. Keep the camera and
@@ -15,4 +15,4 @@ lighting equivalence to the existing Materials images has not been checked.
 Original SHA-256:
 `cefb7887d1d54eaa62ff8ab3e11fe959e6ec4ef29fe9d2e708199502379da878`.
 
-View capture and normal-loss details: [consultation notes](../../docs/consultation-2026-10-29.md).
+Current capture and training commands: [edited-scene workflow](../../docs/materials-red-rose-silver.md).

@@ -1,3 +1,7 @@
+# ARCHIVE CANDIDATE (2026-10-29): One-splat synthetic teaching exercise.
+# Next teaching version: 3dgs_k_syn_trainer.py; current full trainer: 3dgs_trainer.py.
+# Archive with the teaching renderer, multi-splat trainer and their exclusive helpers.
+
 """Train one anisotropic 3D Gaussian against synthetic target images with Warp.
 
 Usage:
@@ -7,10 +11,8 @@ This is the Unit 8 teaching trainer. It keeps the scene deliberately tiny: one G
 three known cameras, synthetic target images, and no tiling or densification. The goal is to
 show the training loop before Unit 9 adds the full renderer and adaptive density control.
 
-Requires your Assignment 1 renderer. The synthetic target images come from
-`3dgs_renderer_v1.py`'s `CpuRenderer.render`, whose compositing loop ships unimplemented, so
-until you paste your own solution in there the targets are all black and the reported PSNR is
-meaningless. Assignment 2 proper -- the backward pass in `3dgs_trainer.py` -- does not use this.
+Synthetic targets use the implemented `CpuRenderer.render` in `3dgs_renderer_v1.py`.
+The full trainer in `3dgs_trainer.py` does not depend on this exercise.
 """
 
 from __future__ import annotations

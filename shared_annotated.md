@@ -1,3 +1,5 @@
+<!-- ARCHIVE CANDIDATE (2026-10-29): Teaching-era shared-module map; predates D-SSIM, SH and surfel extensions. Successors: shared/ source docstrings and docs/project-passes.md. Archive this guide only; shared/ remains active. -->
+
 # Annotated Walkthrough: the `shared/` package
 
 `shared/` holds the code used by more than one program: the Assignment 1 reference renderer and the

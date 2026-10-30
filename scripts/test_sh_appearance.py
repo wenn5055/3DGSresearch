@@ -207,8 +207,8 @@ class SHTests(unittest.TestCase):
         children = trainer.densify_and_prune(np.ones((4, 3)), 1.0)
         np.testing.assert_array_equal(children, [1])
         np.testing.assert_array_equal(trainer.sh.coefficients.numpy().reshape(4, 15, 3)[1], original[0])
-        np.testing.assert_array_equal(trainer.sh.moment.numpy(), 0)
-        self.assertEqual(trainer.sh.steps, [0, 0, 0])
+        np.testing.assert_array_equal(trainer.sh.moment.numpy(), 1)
+        self.assertEqual(trainer.sh.steps, [3, 2, 1])
         logits = trainer.opacity.numpy()
         logits[0] = -12
         trainer.opacity.assign(logits)
@@ -317,6 +317,22 @@ class SHTests(unittest.TestCase):
             values[section][key] = value
             with self.subTest(section=section, key=key, value=value), self.assertRaises(ValueError):
                 TrainingConfig(values).validate()
+
+    def test_density_inherits_sh_moments_without_resetting_band_clocks(self):
+        trainer = self.trainer(2, capacity=4)
+        trainer.training_options['multiview_adc']['enabled'] = False
+        trainer.step([0])
+        appearance = trainer.sh
+        steps = appearance.steps.copy()
+        moment = appearance.moment.numpy().reshape(4, appearance.rest_count, 3).copy()
+        variance = appearance.variance.numpy().reshape(4, appearance.rest_count, 3).copy()
+        children = trainer.densify_and_prune(np.ones((4, 3)), 1.)
+        self.assertEqual(children.tolist(), [1])
+        self.assertEqual(appearance.steps, steps)
+        for current, old in ((appearance.moment, moment), (appearance.variance, variance)):
+            rows = current.numpy().reshape(4, appearance.rest_count, 3)
+            np.testing.assert_array_equal(rows[0], old[0])
+            np.testing.assert_array_equal(rows[1], old[0])
 
 
 if __name__ == '__main__':

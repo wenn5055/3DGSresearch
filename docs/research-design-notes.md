@@ -1,3 +1,5 @@
+<!-- ARCHIVE CANDIDATE (2026-10-29): Original design reasoning retains pre-implementation status claims. Successors: project-plan.md (scope), project-passes.md and materials-red-rose-silver.md (implementation), findings.md (results). Preserve as historical rationale. -->
+
 # Research design record: Deferred Specular Shading with Gaussian Surfels
 
 **Last updated:** 29 October 2026 (Asia/Singapore).
@@ -5,8 +7,10 @@
 **Purpose:** Document the reasoning, literature checks, implementation choices,
 and unresolved questions developed so far, as preparation for the final report.
 
-**Living document:** These notes will be updated as implementation, experiments,
-and literature review progress, recording new evidence and changes to decisions.
+**Historical design record:** Earlier implementation/status claims below describe
+the original planning stage. Use [project-plan.md](project-plan.md) for current scope,
+[materials-red-rose-silver.md](materials-red-rose-silver.md) for the latest workflow,
+and [findings.md](findings.md) for measured results.
 
 **28–29 October implementation update:** Fixed RGB, staged D-SSIM and SH degrees 0–3
 are implemented; [findings](findings.md) consolidates measured RGB/SH results and the

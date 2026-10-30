@@ -1,3 +1,5 @@
+<!-- ARCHIVE CANDIDATE (2026-10-29): Assignment 2 skeleton walkthrough; backward kernels and later research features are now implemented. Successors: 3dgs_trainer.py, docs/project-passes.md and docs/materials-red-rose-silver.md. -->
+
 # Annotated Walkthrough: `3dgs_trainer.py`
 
 This walkthrough explains the Assignment 2 trainer skeleton. Everything in the file is described

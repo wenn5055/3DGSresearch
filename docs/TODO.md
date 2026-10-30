@@ -1,9 +1,33 @@
 # Project todo list
 
 Unchecked items are planned, not completed. Follow [researchStages.md](researchStages.md)
-for rationale and stage completion criteria. Immediate milestone: a measured Materials
-comparison of the three project passes. Current implementation details and commands:
+for rationale and stage completion criteria. The final held-out comparison and
+[ablation write-up](experiments/2026-10-29-normal-consistency-final.md) are complete;
+normal-consistency tuning is closed. Details:
+[design update log](project-plan.md#design-update-log). Current implementation and commands:
 [project-passes.md](project-passes.md); measured results: [findings.md](findings.md).
+
+## Optimizer and geometry follow-up — 29 October
+
+Design reasoning and configuration: [update log](project-plan.md#design-update-log).
+
+- [x] Audit losses, per-step geometry updates, pruning and densification.
+- [x] Fix RGB endpoint recovery in dense, sparse and surfel paths.
+- [x] Preserve existing optimizer trajectories and inherit parent state for children;
+  avoid resets when no children are created, including SH/reflection state.
+- [x] Add quiet refinement with independently configurable pruning and no final-step growth.
+- [x] Allow optional propagation plus normal-depth consistency; add matched propagation-off
+  coefficient 0/0.01 presets with 10k final fixed-topology steps.
+- [x] Complete and inspect the fresh full-budget matched consistency pair: weight 0
+  wins image scores; 0.01 produces smoother normal/depth previews. Preserve both.
+- [x] Close normal-weight tuning at the user's request; move on to final renders/write-up.
+- [x] Prepare final matched held-out renders/reflection crops and describe the tradeoff:
+  200 test views, four pose-selected figure cameras, eight alpha-defined crops,
+  normal/depth figures and [write-up](experiments/2026-10-29-normal-consistency-final.md).
+- [ ] Optional future evaluation: Blender normal/depth references and foreground metrics;
+  reference geometry evaluation is deferred by user preference.
+- [ ] Evaluate contribution-aware pruning and accumulated growth statistics separately.
+- [ ] If geometry remains inaccurate, investigate ray/plane depth and layer concentration.
 
 ## Consultation follow-up — 29 October
 
@@ -16,8 +40,8 @@ Details and verified sources: [consultation notes](consultation-2026-10-29.md).
 - [x] Automate validation-only deferred normal-weight tuning with resumption and saved winner.
 - [x] Stop the old normal-weight sweep and replace the active deferred preset with
   paper-style reflection normal gradients/propagation, retaining alpha-mask BCE.
-- [ ] Complete the [replacement propagation-factor sweep](../outputs/materials_red-rose-silver-Oct29-1656-deferred-propagation-sweep/summary.md)
-  (running, paper factor 1.5 first) and inspect image/geometry outcomes.
+- [x] Complete the [replacement propagation-factor sweep](../outputs/materials_red-rose-silver-Oct29-1656-deferred-propagation-sweep/summary.md)
+  and inspect the saved normals. Factor 1.5 won validation PSNR; normals remain noisy.
 - [ ] Compare normal-loss training on the subset; inspect normal/depth maps and validation scores.
 
 ## First: decisions and experiment records

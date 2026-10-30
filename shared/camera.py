@@ -1,3 +1,7 @@
+# ARCHIVE CANDIDATE (2026-10-29): Camera helper used only by the teaching renderer/trainer chain.
+# Current camera loading: 3dgs_trainer.py. Archive only with 3dgs_renderer_v1.py
+# and both synthetic trainers; the rest of shared/ remains active.
+
 """Camera data model and +z-forward look-at construction."""
 
 from __future__ import annotations

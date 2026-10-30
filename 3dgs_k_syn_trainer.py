@@ -1,3 +1,7 @@
+# ARCHIVE CANDIDATE (2026-10-29): Small synthetic teaching exercise, superseded by full multi-view training.
+# Successor: 3dgs_trainer.py; research extensions: src/cp4282_gs/surfels/.
+# Archive with 3dgs_1_syn_trainer.py, 3dgs_renderer_v1.py and their exclusive helpers.
+
 """Train three overlapping coloured Gaussians against synthetic views with Warp.
 
 Usage:
@@ -10,9 +14,8 @@ random initialization that leaves one target under-covered can still recover. Un
 trainer reuses this same densify_and_prune, adding multi-view scoring and late pruning on top.
 Tile assignment, Adam, and the full multi-splat trainer belong to Unit 9.
 
-Requires your Assignment 1 renderer, for the same reason as `3dgs_1_syn_trainer.py`: the
-synthetic targets come from `3dgs_renderer_v1.py`'s unimplemented `CpuRenderer.render`, and are
-all black until you fill that loop in.
+Synthetic targets use the implemented `CpuRenderer.render` in `3dgs_renderer_v1.py`,
+via `3dgs_1_syn_trainer.py`.
 """
 
 from __future__ import annotations

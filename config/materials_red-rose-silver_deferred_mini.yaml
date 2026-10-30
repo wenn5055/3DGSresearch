@@ -17,6 +17,7 @@ surfel:
   initial_reflection: 0.001
   reflection_lr: 0.006
   environment_lr: 0.05
+  refinement: {start_iteration: 24001, prune_interval: 0}
   normal_propagation:
     enabled: true
     interval: 1000

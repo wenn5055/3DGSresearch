@@ -1,3 +1,7 @@
+# ARCHIVE CANDIDATE (2026-10-29): Lego-only setup check; not applicable to configured Materials scenes.
+# Successor: python scripts/run_experiment.py CONFIG --prepare-only (configured-dataset checks).
+# Keep this only if the standalone Lego check is still wanted.
+
 import json
 from pathlib import Path
 import sys

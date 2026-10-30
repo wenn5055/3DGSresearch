@@ -1,19 +1,18 @@
-# CP4282 Gaussian Splatting — Assignment 2 (Training)
+# CP4282 Gaussian Splatting Research
 
-Starter code and data for the CP4282 Gaussian Splatting **training** assignment.
+Custom NVIDIA Warp Gaussian/surfel training, built from the CP4282 assignments.
 
-Research extensions now include staged D-SSIM, SH degrees 0–3, and independent
-Gaussian-control / RGB-surfel / deferred-surfel passes. Start with
-[project passes](docs/project-passes.md) for the new experiments and
-[findings](docs/findings.md) for measured baseline results. The first full Materials
-comparison is recorded; separate mask/normal-depth loss presets are ready for the
-next geometry experiments.
+Research extensions include staged D-SSIM, SH degrees 0–3, and independent
+Gaussian-control / RGB-surfel / deferred-surfel passes. Start with the
+[edited-scene workflow](docs/materials-red-rose-silver.md) for current reflection-driven
+normal propagation, [project passes](docs/project-passes.md) for the earlier comparisons,
+and [findings](docs/findings.md) for measured results.
 For a one-line explanation of each output folder, see the auto-updated
 [output index](docs/output-index.md).
 
-This repository intentionally contains incomplete teaching implementations. The missing sections
-are the work: read the corresponding unit in the course notes, implement the marked functions,
-and use the supplied checks before moving on.
+Historical teaching files and their successors are listed in the
+[archive candidates](docs/archive-candidates.md). Archive headers identify these files;
+the main trainer and its shared dependencies remain active.
 
 ## Setup
 
@@ -45,10 +44,10 @@ validation views are never used to compute a gradient. The trainer prints exactl
 picked on its first line, and `reporting.eval_manifest: null` reverts to evaluating on training
 views if you want the old behaviour.
 
-## The assignment
+## Gaussian baseline
 
-1. `3dgs_trainer.py`: implement the backward rendering pass. Two kernels are marked TODO,
-   `render_backward` for the dense path and `render_sparse_backward` for the sampled one.
+`3dgs_trainer.py` implements dense and sampled backward rendering, optimization,
+density control, D-SSIM and SH appearance.
 
 ```bash
 python 3dgs_trainer.py config/3dgs_training_gpu.yaml
@@ -60,11 +59,9 @@ Check your gradients against finite differences before judging a training run:
 python 3dgs_gradient_check_gpu.py --device cpu
 ```
 
-As shipped this check fails, reporting an analytic gradient of zero: nothing accumulates into the
-gradient buffers until you write the kernels. Training also runs to completion without improving,
-for the same reason.
+The backward kernels are implemented; use the checks to verify changes before training.
 
-The annotated walkthrough explains the whole file without giving the TODO solution:
+The original assignment walkthrough is retained as a historical reference:
 
 - `3dgs_trainer_annotated.md`
 
@@ -76,12 +73,10 @@ Shared and support files:
 - `gaussian_first_tile_workspace_gpu.py`: tile record construction used by the trainer
 - `config/3dgs_training_gpu.yaml`: the starter YAML for training runs. Its paths are resolved
   relative to the config file, and `shared/training_config.py` lists every key it may contain.
-- `3dgs_renderer_v1.py`, `3dgs_1_syn_trainer.py`, `3dgs_k_syn_trainer.py`: Assignment 1's renderer
-  and the two small Unit 8 synthetic trainers. **These carry Assignment 1's own unfinished
-  `render` loop.** The synthetic trainers build their ground truth by calling it, so until you
-  paste your Assignment 1 solution into `3dgs_renderer_v1.py` they train against an all-black
-  target and their PSNR figures are meaningless. Assignment 2's task does not depend on any of
-  these three files.
+- `3dgs_renderer_v1.py`, `3dgs_1_syn_trainer.py`, `3dgs_k_syn_trainer.py`: historical
+  teaching renderer and synthetic trainers; archive together with `shared/camera.py`
+  and `shared/projected_gaussians.py`. Current Gaussian rendering/training uses
+  `3dgs_evaluator.py` and `3dgs_trainer.py`.
 
 ## Evaluating your output
 
@@ -213,12 +208,10 @@ first.
 
 ```bash
 python -m compileall src scripts shared 3dgs_trainer.py 3dgs_gradient_check_gpu.py gaussian_first_tile_workspace_gpu.py 3dgs_1_syn_trainer.py 3dgs_k_syn_trainer.py image_metrics.py 3dgs_evaluator.py 3dgs_renderer_v1.py
-python scripts/check_setup.py
 python -m unittest discover -s scripts -p "test_*.py"
 ```
 
-After implementing `3dgs_trainer.py`'s backward pass, verify it with a finite-difference gradient
-check:
+Verify the Gaussian backward pass with finite differences:
 
 ```bash
 python 3dgs_gradient_check_gpu.py --device cpu

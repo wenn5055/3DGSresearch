@@ -204,8 +204,10 @@ class SHAppearance:
         if len(children):
             parent_ids = wp.array(np.asarray(parents, np.int32), dtype=wp.int32, device=self.device)
             child_ids = wp.array(np.asarray(children, np.int32), dtype=wp.int32, device=self.device)
-            wp.launch(copy_sh_children, dim=(len(children), self.rest_count),
-                      inputs=[parent_ids, child_ids, self.rest_count], outputs=[self.coefficients], device=self.device)
+            # Keep per-band clocks and copy the complete parent trajectory.
+            for values in (self.coefficients, self.moment, self.variance):
+                wp.launch(copy_sh_children, dim=(len(children), self.rest_count),
+                          inputs=[parent_ids, child_ids, self.rest_count], outputs=[values], device=self.device)
 
     def reset_optimizer(self):
         self.moment.zero_()

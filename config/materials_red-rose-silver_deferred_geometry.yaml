@@ -44,6 +44,7 @@ surfel:
   environment_width: 128
   environment_height: 64
   save_debug: true
+  refinement: {start_iteration: 24001, prune_interval: 0}
   photometric_loss: l1_dssim
   normal_propagation:
     enabled: true

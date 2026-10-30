@@ -179,6 +179,9 @@ def write_record(run_dir: Path, record: dict) -> None:
         lines += ['', '- Actual image objective: L1 + D-SSIM from step 1 (overrides the inherited loss curriculum).',
                   '- Normal optimization: reflection gradients plus scheduled propagation when enabled; mask BCE retained.',
                   f"- Normal propagation settings: {config['surfel']['normal_propagation']}"]
+    if config.get('surfel'):
+        lines += [f"- Quiet refinement settings: {config['surfel'].get('refinement', {})}",
+                  '- D-SSIM convention: mean((1 - SSIM) / 2).']
     if "training_result" in record:
         lines.extend(["", f"- Training result: {record['training_result']}"])
     for metric, value in record.get("mean_metrics", {}).items():
