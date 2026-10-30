@@ -72,7 +72,7 @@ def run_probe(args):
     validate_config(args.config)
     parser = experiment.build_parser()
     prepared_args = parser.parse_args([str(args.config), '--pipeline', 'surfel', '--prepare-only',
-        '--eval-manifest', 'transforms_val.json', '--metrics', 'psnr', 'ssim', '--name', args.name,
+        '--eval-manifest', 'transforms_val.json', '--metrics', *args.metrics, '--name', args.name,
         '--note', 'Controlled Gaussian RGB/MSE backbone audit; optimizer policy ' + args.policy])
     started = perf_counter()
     directory = experiment.run_experiment(prepared_args)
@@ -112,6 +112,8 @@ def main():
         subparser.add_argument('--policy', choices=POLICIES, required=True)
         if command == 'run':
             subparser.add_argument('--name', required=True)
+            subparser.add_argument('--metrics', nargs='+', choices=('psnr', 'ssim', 'lpips'),
+                                   default=['psnr', 'ssim', 'lpips'])
     args = parser.parse_args()
     if args.command == 'run':
         run_probe(args)

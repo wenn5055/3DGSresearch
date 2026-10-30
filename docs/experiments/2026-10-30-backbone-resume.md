@@ -13,6 +13,14 @@ on. The implementation passes 117 CPU tests, 55 CUDA surfel tests and four new
 CUDA policy tests. Gaussian and deferred-SH3 GPU runner smokes completed reload
 and all-view evaluation. Full 30k SH3 validation is next. The original Materials
 benchmark remains the user's confirmed target.
+
+User metric preference: include **LPIPS AlexNet** alongside PSNR and SSIM in all
+subsequent validation/test quality reports. The currently running full Gaussian
+job was launched with PSNR/SSIM before this request; its frozen-model validation
+comparison will add LPIPS over all 100 views. Future run commands and probe
+defaults include all three metrics. LPIPS uses float images normalized to
+[-1, 1], and lower is better; the comparison tool limits CPU inference to two
+threads. Training objectives/curriculum are separate from this reporting choice.
 Working tree was clean at restart (`a4d8fdf`). CUDA is available. All generated
 compiler caches stay under `outputs/`; source/input/runtime fingerprints accompany
 each experiment. Completed results and context are in the
