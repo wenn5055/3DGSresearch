@@ -170,6 +170,7 @@ def evaluate(args):
         'runs': [str(run) for run in runs], 'labels': labels, 'manifest': args.manifest,
         'derivations': [record.get('derivation') for record in records],
         'resolution': [width, height], 'selected_views': [int(view) for view in selected],
+        'save_all_renders': bool(getattr(args, 'save_all_renders', False)),
         'crop_boxes_xyxy_half_open': [{'view': view, 'region': region, 'bounds': bounds} for (view, region), bounds in boxes.items()],
         'material_box_definition': 'Projected mesh bounding boxes include background, pedestals and possible occlusion; not a visible-material segmentation.',
         'reflection_blend_definition': 'Mean per-pixel blended scalar reflection strength on reference foreground; zero when deferred shading is inactive. Not physical reflectance.',
@@ -264,9 +265,10 @@ def evaluate(args):
                         diagnostic[f'{material}_depth_mae'] = (float(np.abs(
                             depth[material_valid] - truth_depth[material_valid]).mean()) if material_valid.any() else None)
                 geometry_rows.append(diagnostic)
-            if view in selected:
+            if view in selected or getattr(args, 'save_all_renders', False):
                 path = args.output / f'model-{model_index}-{view}.png'
                 save_image(path, image)
+            if view in selected:
                 image_paths[view].append(path)
                 if is_surfel:
                     trainer.save_debug(path)
@@ -389,6 +391,7 @@ def main():
     parser.add_argument('--cpu-threads', type=int, default=2)
     parser.add_argument('--timing-repeats', type=int, default=10)
     parser.add_argument('--skip-timing', action='store_true', help='Skip speed measurement, e.g. while other GPU work runs.')
+    parser.add_argument('--save-all-renders', action='store_true', help='Keep every RGB view for inspection or orbit videos; figures still use the predefined cameras.')
     parser.add_argument('--material-inspection', type=Path)
     parser.add_argument('--geometry-reference', type=Path)
     parser.add_argument('--materials', nargs='+', default=['Chrome'])

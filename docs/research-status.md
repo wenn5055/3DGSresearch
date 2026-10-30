@@ -1,6 +1,6 @@
 # Reflection research status
 
-Updated **30 October, 16:04 Singapore**. Original Materials remains the primary benchmark.
+Updated **30 October, 16:53 Singapore**. Original Materials remains the primary benchmark.
 
 | Completed model, 800px / 100 validation views | PSNR | SSIM | LPIPS ↓ |
 | --- | ---: | ---: | ---: |
@@ -8,9 +8,10 @@ Updated **30 October, 16:04 Singapore**. Original Materials remains the primary 
 | Random surfel SH3 | 27.8901 | 0.944841 | 0.042719 |
 | Random deferred + SH3 | 27.7544 | 0.942944 | 0.046788 |
 | Hull-initialized deferred + SH3 | 27.7503 | 0.942333 | 0.038428 |
+| Hull-initialized surfel SH3 | 27.7921 | 0.942775 | 0.037801 |
 
 **No deferred win established yet.** Hull initialization improves perceptual quality,
-but Chrome normals remain about 42° wrong. Its matched SH-only control is running.
+but Chrome normals remain about 42° wrong. The matched SH-only control also wins.
 
 **Pruning works:** the validated 600k export preserves quality and reduces required
 files from 239 to 142 MB. All 200 test views also preserve quality: **27.3129 dB,
@@ -20,8 +21,11 @@ files from 239 to 142 MB. All 200 test views also preserve quality: **27.3129 dB
 geometry. A global environment pass cannot directly trace that local parallax.
 
 **Next:** protect hull geometry with ray-plane depth/normal consistency and earlier
-reflection training. The enlarged chrome pair runs first, followed by the protected
-original Materials pair. Hard stop: **20:23 Singapore**.
+reflection training. Enlarged chrome deferred training is complete; its matched
+surfel control is running, followed by the protected original Materials pair.
+The Chrome material also contains a strong view-angle color ramp, absent from our
+current shader. An optional early-SH Gaussian reference is queued if time permits.
+Hard stop: **20:23 Singapore**.
 
 [Detailed research log](experiments/2026-10-30-backbone-resume.md) ·
 [Initializer/protected protocol](experiments/2026-10-30-initializer-controls.md) ·
