@@ -471,7 +471,15 @@ geometry, quaternion, SH and reflection moments. Historical inheritance and
 legacy-reset modes remain explicit options. The global environment optimizer is
 preserved. Verification: 117 CPU tests, 55 CUDA surfel tests and four new CUDA
 policy tests passed; Gaussian and deferred-SH3 GPU runner smokes completed reload
-and evaluation. Full 30k SH3 validation is next.
+and evaluation.
+
+Full 30k Gaussian SH3 validation confirms recovery: **27.7246 dB**, **0.944346
+SSIM**, **0.040411 LPIPS AlexNet**, versus 23.0872 / 0.899692 / 0.083528 with
+inherited histories. Inputs and non-policy settings match; all 100 views improve
+in all three metrics. The earlier tuned SH3 reference scores 27.3372 / 0.933825 /
+0.048299. Actual chrome quality improves only slightly against that strong
+reference (16.2963 versus 16.1635 dB on 96 visible views). Blurred reflections
+remain; matched surfel/deferred controls are running on original Materials.
 
 [Protocol, complete contrasts and scope](experiments/2026-10-30-backbone-resume.md).
 Figures and machine-readable evidence: `outputs/first-principles-2026-10-30/`.

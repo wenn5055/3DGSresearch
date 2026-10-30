@@ -11,13 +11,15 @@ All five cases are complete. Fresh children score 26.0921 dB versus 18.6229
 with inherited histories and 25.7094 with global resets, with foreground rejection
 on. The implementation passes 117 CPU tests, 55 CUDA surfel tests and four new
 CUDA policy tests. Gaussian and deferred-SH3 GPU runner smokes completed reload
-and all-view evaluation. Full 30k SH3 validation is next. The original Materials
-benchmark remains the user's confirmed target.
+and all-view evaluation. Full 30k Gaussian SH3 validation now reaches **27.7246 dB,
+SSIM 0.944346, LPIPS AlexNet 0.040411**. Matched surfel SH3 and deferred SH3
+controls are running sequentially. The original Materials benchmark remains
+the user's confirmed target.
 
 User metric preference: include **LPIPS AlexNet** alongside PSNR and SSIM in all
-subsequent validation/test quality reports. The currently running full Gaussian
-job was launched with PSNR/SSIM before this request; its frozen-model validation
-comparison will add LPIPS over all 100 views. Future run commands and probe
+subsequent validation/test quality reports. The full Gaussian job was launched
+with PSNR/SSIM before this request; its completed frozen-model validation
+comparison includes LPIPS over all 100 views. Future run commands and probe
 defaults include all three metrics. LPIPS uses float images normalized to
 [-1, 1], and lower is better; the comparison tool limits CPU inference to two
 threads. Training objectives/curriculum are separate from this reporting choice.
@@ -180,3 +182,50 @@ verify integration, not quality. Next: rerun the original 800px/1M/30k Gaussian
 SH3 preset with the fresh workflow default and otherwise unchanged settings.
 Retain the historical 27.3372 dB model as the strong reference. Measure chrome
 and overall quality before resuming deferred-vs-SH and initialization comparisons.
+
+### Full Gaussian SH3 recovery, approximately 14:27 Singapore
+
+Common float-render evaluation over all 100 original Materials validation views
+at 800px (arithmetic means of per-view scores):
+
+| Gaussian model | PSNR, dB | SSIM | LPIPS AlexNet, lower better | Foreground PSNR | Chrome PSNR |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Inherited child histories | 23.0872 | 0.899692 | 0.083528 | 18.6712 | 14.5111 |
+| Historical tuned SH3 reference | 27.3372 | 0.933825 | 0.048299 | 21.4286 | 16.1635 |
+| Fresh child histories | **27.7246** | **0.944346** | **0.040411** | **21.8805** | **16.2963** |
+
+Fresh and inherited models have matching input hashes and non-policy settings:
+800px, capacity/final population 1M, 30k steps, seed 7. The fresh policy improves
+PSNR, SSIM, foreground PSNR and LPIPS on all 100 views. The historical tuned model
+has different curriculum/SH learning-rate settings, so its comparison is a strong
+reference rather than a policy-only ablation. Fresh wins PSNR on 68/100 views,
+SSIM on 94, LPIPS on 84; mean LPIPS is about 16.3% lower. All three models have
+active SH degree 3, verified from their saved appearance sidecars.
+
+Chrome scores cover the 96 views with visible reference Chrome pixels. Fresh
+beats inheritance on 94/96, but beats the historical reference on only 49/96,
+with a small mean +0.1328 dB. Material crops still show blurred reflections.
+The shared backbone regression is resolved for this benchmark; high-quality
+reflection reconstruction remains the research target. This is not a deferred win.
+
+Fresh training switches MSE to DSSIM at step 7,000 versus 21,800 with inheritance.
+It takes 1,883.52 trainer seconds; the required model checkpoint files total
+238,859,495 bytes. Its fresh-process Warp allocation peak is 2,516,299,571 bytes,
+which excludes CUDA driver/context and non-Warp allocations. GPU render timings
+were deliberately skipped while a surfel control was training; measure them on
+an otherwise idle GPU. Native GPU and common CPU MSE reductions differ slightly
+(27.724982 versus 27.724554 dB); use the common comparison for model contrasts.
+
+Evidence: [HTML and crops](../../outputs/first-principles-2026-10-30/materials-gaussian-validation/index.html),
+[scores](../../outputs/first-principles-2026-10-30/materials-gaussian-validation/summary.csv),
+[paired contrasts](../../outputs/first-principles-2026-10-30/gaussian-validation-contrasts.json).
+The sequential surfel/deferred controls both explicitly request PSNR, SSIM and
+LPIPS AlexNet. No new chrome scene is used.
+
+### Output naming preference, 14:34 Singapore
+
+New experiment and sweep folders begin `MonDD-HHMM-` in Singapore time, e.g.
+`Oct30-1434-materials-fresh-deferred-sh3`. Use the same prefix for new report/study
+folders. Existing folders and active runs retain their paths. Both sweep launchers
+and the shared run launcher are updated; all 11 existing runner checks pass.
+Commit: `eff28fe`. This naming change does not alter training mathematics.
