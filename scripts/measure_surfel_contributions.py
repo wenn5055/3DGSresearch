@@ -131,6 +131,7 @@ def main():
     args.output.mkdir(parents=True, exist_ok=True)
     np.savez_compressed(args.output / 'weights.npz', total=total, foreground=foreground,
                         background=background, opacity=scene.opacities)
+    summary['weights_sha256'] = hashlib.sha256((args.output / 'weights.npz').read_bytes()).hexdigest()
     (args.output / 'summary.json').write_text(json.dumps(summary, indent=2), encoding='utf-8')
     print(json.dumps({key: value for key, value in summary.items() if key not in ('inputs', 'checkpoints')}, indent=2), flush=True)
 

@@ -483,3 +483,19 @@ remain; matched surfel/deferred controls are running on original Materials.
 
 [Protocol, complete contrasts and scope](experiments/2026-10-30-backbone-resume.md).
 Figures and machine-readable evidence: `outputs/first-principles-2026-10-30/`.
+
+## 2026-10-30: Visibility pruning removes 40% with preserved validation quality
+
+The corrected original Materials SH-only surfel control scores 27.8901 dB,
+0.944841 SSIM, 0.042719 LPIPS, but has 53.87-degree Chrome normal error. Actual
+all-training-view blending weights expose redundant capacity: the lowest 40% of
+points carry just 0.20157% of the weight. Frozen removal leaves **600k points**,
+**27.8975 dB**, **0.944875 SSIM**, **0.042633 LPIPS**, Chrome **16.1568 dB**;
+required model files fall **238.9 to 142.3 MB**. These tiny quality changes mean
+preserved quality, not a reflection breakthrough. The compact model inherits
+the full parent's training cost; timing is pending an idle GPU.
+
+The reusable export preserves raw point/SH/material state, verifies provenance,
+and labels derived checkpoints separately. Three CPU regression tests and a
+separate all-100-view production-export validation pass. Parent files are intact.
+[Results, limits and reproduction](experiments/2026-10-30-frozen-pruning.md).

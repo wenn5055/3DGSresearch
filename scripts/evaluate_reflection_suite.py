@@ -107,8 +107,10 @@ def evaluate(args):
         raise ValueError('Use an empty output directory; preserve existing evidence.')
     runs = [path.resolve() for path in args.runs]
     records = [json.loads((path / 'run.json').read_text(encoding='utf-8')) for path in runs]
-    if any(record['status'] != 'completed' for record in records):
-        raise ValueError('All training/evaluation runs must be completed.')
+    if any(record['status'] not in ('completed', 'derived') for record in records):
+        raise ValueError('Use completed runs or frozen derived checkpoints.')
+    if any(record['status'] == 'derived' and not record.get('derivation') for record in records):
+        raise ValueError('Derived checkpoints must retain parent/selection provenance.')
     labels = args.labels or [path.name for path in runs]
     if len(labels) != len(runs) or len(set(labels)) != len(labels):
         raise ValueError('Provide one unique label per run.')
@@ -166,6 +168,7 @@ def evaluate(args):
                            np.where(mask[:, :, None], reference['normal'] * .5 + .5, 0))
     protocol = {'status': 'running', 'created_utc': datetime.now(timezone.utc).isoformat(),
         'runs': [str(run) for run in runs], 'labels': labels, 'manifest': args.manifest,
+        'derivations': [record.get('derivation') for record in records],
         'resolution': [width, height], 'selected_views': [int(view) for view in selected],
         'crop_boxes_xyxy_half_open': [{'view': view, 'region': region, 'bounds': bounds} for (view, region), bounds in boxes.items()],
         'material_box_definition': 'Projected mesh bounding boxes include background, pedestals and possible occlusion; not a visible-material segmentation.',
@@ -295,6 +298,9 @@ def evaluate(args):
                                  (run / 'train.log').read_text(encoding='utf-8'), re.MULTILINE)
         timing['training_warp_pool_high_bytes'] = int(memory_match[1]) if memory_match else None
         timing['training_memory_scope'] = 'Fresh training process Warp allocation peak; excludes driver/context and external allocations. Missing for older runs.'
+        if record.get('derivation'):
+            timing['training_memory_scope'] += ' Inherited from the full parent; no post-pruning training-memory reduction.'
+            timing['training_time_scope'] = 'Parent training cost; pruning/export time is separate in run.json.'
         timings.append(timing)
         summary = {'model': label}
         for field in ('psnr_db', 'ssim', 'foreground_psnr_db', 'lpips_alex',
@@ -345,10 +351,14 @@ def evaluate(args):
     table += '</table>'
     normals_html = '<h2>Normals</h2><img src="normals-comparison.png">' if normal_labels else ''
     material_html = '<h2>Target material crops</h2><img src="material-crops.png">' if material_panels else ''
+    derived_html = ('<p>Frozen pruning derivatives reuse their full parent training. '
+                    'They have no post-pruning optimization; inherited training time/memory '
+                    'does not describe training a compact model from scratch.</p>'
+                    if any(record.get('derivation') for record in records) else '')
     body = f'''<!doctype html><html lang="en"><meta charset="utf-8"><title>Reflection comparison</title>
 <style>body{{font:16px system-ui;max-width:1500px;margin:30px auto;padding:0 20px}}table{{border-collapse:collapse}}td,th{{padding:8px;border:1px solid #ccc}}img{{max-width:100%}}a{{color:#075ea8}}</style>
 <h1>Reflection comparison</h1><p>{html.escape(args.manifest)}, {width} x {height}; means of per-view scores; LPIPS AlexNet. Foreground: reference alpha at least 0.95.</p>
-{table}<p>Camera and component crops selected from poses/alpha before rendering. Material boxes use mesh bounds and can include occlusion. See <a href="protocol.json">protocol and config differences</a>, <a href="metrics.csv">per-view scores</a>, <a href="crop-metrics.csv">crop scores</a>, <a href="performance.json">performance</a>.</p>
+{table}{derived_html}<p>Camera and component crops selected from poses/alpha before rendering. Material boxes use mesh bounds and can include occlusion. See <a href="protocol.json">protocol and config differences</a>, <a href="metrics.csv">per-view scores</a>, <a href="crop-metrics.csv">crop scores</a>, <a href="performance.json">performance</a>.</p>
 {material_html}<h2>RGB</h2><img src="rgb-comparison.png"><h2>Fixed crops</h2><img src="crop-comparison.png">
 {normals_html}</html>'''
     (args.output / 'index.html').write_text(body, encoding='utf-8')

@@ -254,3 +254,10 @@ establish reflection-ready surface alignment. These normals exclude shader bump.
 with timing skipped during concurrent deferred training. The deferred control
 started in `Oct30-1444-materials-fresh-deferred-sh3`, confirming the new naming
 rule. Idle-GPU reports and the predeclared initializer pairs are queued next.
+
+While the deferred model trained, an independent visibility audit and frozen
+compression experiment reduced the SH-only model from 1M to **600k surfels** with
+preserved validation/Chrome/LPIPS quality and **40.4% smaller required files**.
+The reusable exporter preserves matching geometry/SH/material rows and records
+parent provenance. This is inference compression, not an automatic new training
+pruner or a reflection-normal fix. [Evidence and reproduction](2026-10-30-frozen-pruning.md).

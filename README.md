@@ -93,6 +93,19 @@ Add `--name cap1k` to get `Oct28-1305-materials-cap1k`. Repeated names receive `
 Use the same timestamp prefix for new manually created report/study folders.
 Existing folders retain their names so saved references continue to work.
 
+To export a compact checkpoint after measuring training-view contributions:
+
+```bash
+python scripts/prune_frozen_splats.py outputs/YOUR_RUN --importance outputs/YOUR_IMPORTANCE_AUDIT --remove-fraction 0.4
+```
+
+The export gets a timestamp-first folder automatically and preserves the parent.
+It verifies input/checkpoint fingerprints and retains matching geometry, SH and
+material rows. This reduces inference size; it does not retrain the model or
+reduce its original training cost. Validate PSNR, SSIM, LPIPS and reflection
+quality before choosing a fraction. See the
+[measured pruning comparison](docs/experiments/2026-10-30-frozen-pruning.md).
+
 The Materials config enables the Unit 10 loss curriculum: MSE warm-up, then dense
 `0.8 * MSE + 0.2 * D-SSIM` with reflected 11x11 windows. It switches when the smoothed
 validation MSE reaches 21 dB PSNR (`adaptive.dssim_psnr_threshold`), chosen below the
