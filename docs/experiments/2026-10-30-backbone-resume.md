@@ -318,3 +318,29 @@ with another **3–19%** hitting the same Chrome mesh. The single global environ
 does not directly trace those local paths. This is not an error lower bound,
 but it explains why correct far-field training alone cannot implement all the
 original scene's transport. [Scope evidence and limits](2026-10-30-reflection-model-scope.md).
+
+## 16:58 Singapore: matched hull result and angular-response variant
+
+The unregularized hull surfel SH3 control completes at **27.7921 / 0.942775 /
+0.037801**, Chrome **16.0594 dB**. It slightly beats its paired deferred model
+on global quality; there is still no deferred win. Initializer treatment helps
+LPIPS but is not evidence that the reflection branch works. Full five-model
+report: `outputs/Oct30-1615-materials-initializer-controls-val`.
+
+The protected Chrome deferred run completes at **19.6184 / 0.783578 / 0.145693**
+on all 100 validation views. Direct image inspection confirms smeared, watery
+reflections; its matched surfel control is still training. This is a separate,
+enlarged scene and its global scores must not be compared to original Materials.
+
+Read-only material-graph inspection identifies a linked view-angle color ramp,
+not the constant socket color previously listed. The original and new scenes
+share this response. An optional HDR/learned-angular shader is implemented,
+tested and committed as **43da501**, without changing default LDR rendering.
+Full runs wait behind the existing controls and early-SH baseline; original
+Materials has priority, and each job requires at least an hour remaining for
+training and final evaluation. No quality improvement is claimed yet.
+[Model, protocol and checks](2026-10-30-angular-response.md).
+
+The output naming/metric policy remains date-time first and PSNR/SSIM/LPIPS.
+Video exports retain float-based metric provenance; eight-bit clips are visual
+artifacts only. Tooling/material diagnosis was committed as **6c054f5**.

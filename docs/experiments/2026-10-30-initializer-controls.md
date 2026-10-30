@@ -175,3 +175,30 @@ LPIPS gain to deferred shading.
 [Standalone normal-error plot](../../outputs/Oct30-1519-materials-geometry-trajectories/normal-error-trajectory.png).
 Matplotlib 3.11.2 was added for the scientific PNG/SVG figure; seven core numeric,
 rendering and metric package versions were pinned and verified unchanged.
+
+## 16:58 Singapore: completed pair and auxiliary diagnostics
+
+The matched hull surfel SH3 result is **27.7921 / 0.942775 / 0.037801**, Chrome
+16.0594 dB; normal errors are 33.75 degrees overall and 42.28 on Chrome. This
+slightly beats hull deferred globally, which remains 27.7503 / 0.942333 / 0.038428.
+The common five-model report is `outputs/Oct30-1615-materials-initializer-controls-val`.
+
+The enlarged Chrome protected deferred run has finished at 19.6184 / 0.783578 /
+0.145693 on all 100 validation views. Its matched surfel control is running.
+The predefined camera's normal error starts at 6.82 degrees overall / 5.99 on
+Chrome, reaches 12.63 / 10.90 at 5k, then 11.92 / 10.25 at 15k. Depth MAE also
+worsens from initialization. This trajectory uses one predefined camera and
+cannot establish an all-view or cross-dataset causal comparison.
+
+A CPU-only smoothing check changes the initializer's grid-gradient sigma from
+1 to 3 while retaining the same training masks, 512 grid, 100k points and seed.
+All-100-view untrained geometry error changes **9.2869 -> 8.8174 degrees**, depth
+MAE **0.034324 -> 0.031937**, silhouette IoU **0.977980 -> 0.985816**. This is a
+modest initializer gain, not a trained reflection result. Neither paired quality
+preset was changed to this initializer. Artifacts:
+`outputs/Oct30-1435-materials-chrome-audit/Oct30-1630-training-mask-smooth3` and
+`Oct30-1632-smooth3-initial-geometry` under the same audit folder.
+
+The separate [angular-response variant](2026-10-30-angular-response.md) addresses
+another verified model mismatch while holding each protected preset's geometry
+settings and initializer fixed. It remains untested at quality-training scale.

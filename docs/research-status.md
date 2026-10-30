@@ -23,8 +23,9 @@ geometry. A global environment pass cannot directly trace that local parallax.
 **Next:** protect hull geometry with ray-plane depth/normal consistency and earlier
 reflection training. Enlarged chrome deferred training is complete; its matched
 surfel control is running, followed by the protected original Materials pair.
-The Chrome material also contains a strong view-angle color ramp, absent from our
-current shader. An optional early-SH Gaussian reference is queued if time permits.
+The Chrome material also contains a strong view-angle color ramp, absent from the
+current LDR shader. A tested optional HDR/angular shader and an early-SH Gaussian
+reference are queued if time permits; neither has a full quality result yet.
 Hard stop: **20:23 Singapore**.
 
 [Detailed research log](experiments/2026-10-30-backbone-resume.md) ·
