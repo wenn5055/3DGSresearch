@@ -134,3 +134,13 @@ explains loss-stage bookkeeping after disturbances. Units 13 and 15 concern
 city-scale/codec work, and Units 16 and 18 image/video/spacetime representations;
 they do not justify expanding this static reflection project. Unit 16's 2D image
 Gaussians are also distinct from oriented surfels in a 3D scene.
+
+## Follow-up evidence, 30 October
+
+The matched fixed-MSE Gaussian backbone audit improves 10k-step validation PSNR
+from 17.2023 to **18.6229 dB** when foreground rejection is enabled, with higher
+PSNR in all 100 views and higher mean SSIM. Both cases finish at 1M points;
+growth refills removed slots. This supports the policy beyond operation-only
+checks, while leaving the shared training regression unresolved. See the
+[resumed investigation](experiments/2026-10-30-backbone-resume.md) for settings,
+source checks and the pending optimizer comparisons.

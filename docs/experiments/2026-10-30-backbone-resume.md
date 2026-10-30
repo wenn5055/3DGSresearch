@@ -51,3 +51,42 @@ Keep changes and measured findings committed at reviewable milestones. Do not
 start an additional renderer/normal-weight sweep while these questions remain
 unanswered. Session state, controller, logs and result summaries live under
 `outputs/first-principles-2026-10-30/`.
+
+## Measurements
+
+First completed case: `materials-Oct30-1249-backbone-inherit-fg`, all 100
+validation views after 10k fixed-MSE steps: **18.6229 dB**, SSIM **0.774763**,
+mean MSE **0.0141149**. Final population: 1M; cumulative children: 1,445,817;
+ordinary density/opacity removals: 13,760; foreground removals: **433,057**.
+The population accounting balances. This confirms poor early convergence and
+working foreground rejection; the cause awaits the controlled comparisons.
+
+### First matched pair, 13:05 Singapore
+
+| Inherited child-state policy, 10k MSE | Foreground on | Foreground off |
+| --- | ---: | ---: |
+| Mean per-view validation PSNR, dB | **18.6229** | 17.2023 |
+| SSIM | **0.774763** | 0.699172 |
+| Mean validation MSE | **0.0141149** | 0.0199634 |
+| Final active points | 1,000,000 | 1,000,000 |
+| Cumulative foreground removals | 433,057 | 0 |
+
+Turning foreground rejection on improves PSNR by **1.4206 dB**, on **100/100**
+views; per-view differences range from +0.5155 to +3.2804 dB. Non-treatment
+settings and training implementation hashes match. The treatment also changes
+subsequent allocation/ADC behavior; it is the complete foreground policy's
+effect, not just deletion of a fixed frozen set. This is early convergence at
+one seed, but it rules out simply blaming the mask correction for this early
+regression. Both cases remain poor; optimizer-state comparisons are pending.
+Unmasked run: `materials-Oct30-1256-backbone-inherit-unmasked`.
+
+Session `summarize_backbone.py` writes per-case metrics, matched-view contrasts,
+curves and source/run fingerprints to `backbone-results.json` and CSV files.
+It checks common non-treatment settings and training implementation hashes,
+and remains marked partial until all five cases finish. View-level win counts
+are descriptive; this single-seed audit is not a statistical generality claim.
+
+The inherited recovery-window log calls a foreground-pruning recovery an
+"opacity reset". Actual opacity resets are disabled in these probes. Explicit
+foreground/density event lines and their counts identify what happened; defer
+the wording fix until the common-source audit has finished.

@@ -1,6 +1,6 @@
 # Output folders — quick guide
 
-Updated 29 Oct 2026 (Singapore).
+Updated 30 Oct 2026 (Singapore).
 
 - Each bullet says **what changed**; multiple changes are not isolated causal tests.
 - `prepared` = no training; `smoke` = tiny execution check, not a quality experiment.
@@ -66,6 +66,9 @@ Updated 29 Oct 2026 (Singapore).
 - [materials-Oct29-2223-pruned-proposal-materials-gaussian_sh3](../outputs/materials-Oct29-2223-pruned-proposal-materials-gaussian_sh3/) — Foreground-pruning corrected reflection study; training-only alpha, explicit removal/growth logs, frozen validation protocol. Closest prior: materials-Oct29-2107-reflection-gaussian-sh3; learning_rates.position_max_steps: 30000 → 60000, model.capacity: 200000 → 1000000, model.height: 400 → 800, model.width: 400 → 800, +14 other settings (see config). [completed; val]
 - [materials-Oct29-2255-optimizer-policy-smoke](../outputs/materials-Oct29-2255-optimizer-policy-smoke/) — Controlled Gaussian RGB/MSE backbone audit; optimizer policy fresh_children Closest prior: materials-Oct29-2223-pruned-proposal-materials-gaussian_sh3; densification.interval: 100 → 2, loss.mode: mse_dssim → mse, model.capacity: 1000000 → 128, model.height: 800 → 32, +9 other settings (see config). [completed; val]
 - [materials-Oct29-2257-backbone-inherit-fg](../outputs/materials-Oct29-2257-backbone-inherit-fg/) — Controlled Gaussian RGB/MSE backbone audit; optimizer policy inherit Closest prior: materials-Oct29-2223-pruned-proposal-materials-gaussian_sh3; adaptive.dssim_psnr_threshold: 21.0 → 25.0, loss.mode: mse_dssim → mse, model.sh_degree: 3 → 0, reporting.log_every: 20 → 100, +2 other settings (see config). [interrupted; val]
+- [materials-Oct30-1249-backbone-inherit-fg](../outputs/materials-Oct30-1249-backbone-inherit-fg/) — Controlled Gaussian RGB/MSE backbone audit; optimizer policy inherit Closest prior: materials-Oct29-2223-pruned-proposal-materials-gaussian_sh3; adaptive.dssim_psnr_threshold: 21.0 → 25.0, loss.mode: mse_dssim → mse, model.sh_degree: 3 → 0, reporting.log_every: 20 → 100, +2 other settings (see config). [completed; val]
+- [materials-Oct30-1256-backbone-inherit-unmasked](../outputs/materials-Oct30-1256-backbone-inherit-unmasked/) — Controlled Gaussian RGB/MSE backbone audit; optimizer policy inherit Closest prior: materials-Oct30-1249-backbone-inherit-fg; surfel.foreground_pruning.enabled: True → False. [completed; val]
+- [materials-Oct30-1304-backbone-fresh-fg](../outputs/materials-Oct30-1304-backbone-fresh-fg/) — Controlled Gaussian RGB/MSE backbone audit; optimizer policy fresh_children Closest prior: materials-Oct30-1249-backbone-inherit-fg; same recorded settings. [running; val]
 
 ## Tuning
 
@@ -83,6 +86,7 @@ Updated 29 Oct 2026 (Singapore).
 - [dssim-smoke-input-64a59d5c](../outputs/dssim-smoke-input-64a59d5c/) — tiny D-SSIM check config.
 - [eval](../outputs/eval/) — legacy evaluation images/CSV; source checkpoint unrecorded here.
 - [first-principles-2026-10-29](../outputs/first-principles-2026-10-29/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
+- [first-principles-2026-10-30](../outputs/first-principles-2026-10-30/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [implementation-smoke-configs](../outputs/implementation-smoke-configs/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [materials-red-rose-silver-final-comparison-2026-10-29](../outputs/materials-red-rose-silver-final-comparison-2026-10-29/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [paper-normal-smoke-64265072](../outputs/paper-normal-smoke-64265072/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
@@ -99,6 +103,6 @@ Updated 29 Oct 2026 (Singapore).
 - [tmpggz1922j](../outputs/tmpggz1922j/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [tmpvqlvzp4a](../outputs/tmpvqlvzp4a/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [warp-training_snapshots](../outputs/warp-training_snapshots/) — legacy direct-trainer snapshots; source run unrecorded here.
-- `audit-warp-cache`, `blender-optix-cache`, `contribution-test-warp-cache`, `dssim-test-warp-cache`, `geometry-loss-warp-cache`, `runner-validation-warp-cache`, `sh-test-warp-cache`, `surfel-test-warp-cache`, `warp-cache` — compiled Warp kernels reused by checks; not experiments.
+- `audit-warp-cache`, `blender-optix-cache`, `contribution-test-warp-cache`, `cuda-cache`, `dssim-test-warp-cache`, `geometry-loss-warp-cache`, `runner-validation-warp-cache`, `sh-test-warp-cache`, `surfel-test-warp-cache`, `warp-cache` — compiled Warp kernels reused by checks; not experiments.
 
 Scores: [findings](findings.md). Commands: [project passes](project-passes.md).
