@@ -63,6 +63,22 @@ The derived-artifact interface also passed a separate all-100-view validation,
 reproducing every reported mean exactly:
 [production export report](../../outputs/Oct30-1509-production-pruned-validation/index.html).
 
+## Frozen-fraction test confirmation
+
+The 40% fraction was chosen and committed from validation before evaluating all
+200 original Materials test views. No fraction was retuned on test. Both models
+reuse the original full training, with no post-pruning optimization.
+
+| Test model | PSNR | SSIM | LPIPS | Chrome PSNR |
+| --- | ---: | ---: | ---: | ---: |
+| Parent, 1M | 27.3063 | 0.939810 | 0.045083 | 15.7626 |
+| Compact, 600k | 27.3129 | 0.939948 | 0.044983 | 15.7706 |
+
+Chrome is visible in all 200 test views. Worst per-view compact changes: PSNR
+-0.000897 dB, LPIPS +0.0000626, SSIM -0.000958, Chrome PSNR -0.00706 dB. These
+confirm preserved image/reflection quality for this frozen model, rather than a
+substantial quality gain. [Full test report and figures](../../outputs/Oct30-1549-materials-frozen-pruning-test/index.html).
+
 Timing was skipped while the deferred control trained. Required checkpoint size
 falls about **40.4%**. No FPS speedup or reduced training peak/time is claimed yet;
 the pruned artifact inherits the original 1M-point training cost. Measure rendering

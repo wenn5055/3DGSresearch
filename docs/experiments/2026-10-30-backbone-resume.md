@@ -308,3 +308,13 @@ quality training. The frozen 40%-pruned SH-only export is being evaluated on all
 200 test views with its fraction already chosen from validation.
 
 For a short current overview, use [research status](../research-status.md).
+
+The frozen 600k export also preserves quality on all **200 test views**:
+27.3129 / 0.939948 / 0.044983 (PSNR/SSIM/LPIPS), versus the full parent's
+27.3063 / 0.939810 / 0.045083. Its removal fraction was fixed from validation.
+An independent ideal-mirror ray audit reveals a second issue: **12–23%** of
+visible Chrome pixels reflect other geometry in the four predefined cameras,
+with another **3–19%** hitting the same Chrome mesh. The single global environment
+does not directly trace those local paths. This is not an error lower bound,
+but it explains why correct far-field training alone cannot implement all the
+original scene's transport. [Scope evidence and limits](2026-10-30-reflection-model-scope.md).

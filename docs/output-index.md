@@ -77,8 +77,9 @@ Updated 30 Oct 2026 (Singapore).
 - [materials-Oct30-1416-fresh-surfel-sh3](../outputs/materials-Oct30-1416-fresh-surfel-sh3/) — Matched original Materials control after fresh-child optimizer correction; 800px, 1M capacity, 30k steps, common late SH3/mask policy. Closest prior: materials-Oct30-1337-fresh-gaussian-sh3; model.geometry: gaussian → surfel. [completed; val]
 - [Oct30-1444-materials-fresh-deferred-sh3](../outputs/Oct30-1444-materials-fresh-deferred-sh3/) — Matched original Materials control after fresh-child optimizer correction; 800px, 1M capacity, 30k steps, common late SH3/mask policy. Closest prior: materials-Oct30-1416-fresh-surfel-sh3; surfel.mode: rgb → deferred. [completed; val]
 - [Oct30-1508-materials-pruned-0.4](../outputs/Oct30-1508-materials-pruned-0.4/) — Compact inference checkpoint. Parent training costs are inherited; quality needs validation. Closest prior: materials-Oct30-1416-fresh-surfel-sh3; same recorded settings. [derived; ]
-- [Oct30-1515-materials-hull-deferred-sh3](../outputs/Oct30-1515-materials-hull-deferred-sh3/) — Training-alpha-only visual-hull treatment; common 800px/1M/30k/seed7/late SH3 policy. Reference geometry is evaluation-only. Closest prior: Oct30-1444-materials-fresh-deferred-sh3; model.initial_splats: 1000 → 100000, paths.init_ply: None → C:\Users\e1355010\3DGSresearch\outputs\first-principles-2026-10-29\materials-mask-initializer\initial.ply. [running; val]
+- [Oct30-1515-materials-hull-deferred-sh3](../outputs/Oct30-1515-materials-hull-deferred-sh3/) — Training-alpha-only visual-hull treatment; common 800px/1M/30k/seed7/late SH3 policy. Reference geometry is evaluation-only. Closest prior: Oct30-1444-materials-fresh-deferred-sh3; model.initial_splats: 1000 → 100000, paths.init_ply: None → C:\Users\e1355010\3DGSresearch\outputs\first-principles-2026-10-29\materials-mask-initializer\initial.ply. [completed; val]
 - [Oct30-1523-materials_chrome-protected-smoke](../outputs/Oct30-1523-materials_chrome-protected-smoke/) — Eight-step integration: training-mask hull, ray-plane normal consistency, reflection from step 1, 512x256 environment and SH3 save/reload. Not a quality result. [completed; val]
+- [Oct30-1545-materials-hull-surfel-sh3](../outputs/Oct30-1545-materials-hull-surfel-sh3/) — Training-alpha-only visual-hull treatment; common 800px/1M/30k/seed7/late SH3 policy. Reference geometry is evaluation-only. Closest prior: Oct30-1515-materials-hull-deferred-sh3; surfel.mode: deferred → rgb. [running; val]
 
 ## Tuning
 
@@ -106,6 +107,7 @@ Updated 30 Oct 2026 (Singapore).
 - [Oct30-1509-production-pruned-validation](../outputs/Oct30-1509-production-pruned-validation/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [Oct30-1513-materials-random-controls-val](../outputs/Oct30-1513-materials-random-controls-val/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [Oct30-1519-materials-geometry-trajectories](../outputs/Oct30-1519-materials-geometry-trajectories/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
+- [Oct30-1544-deferred-branch-audit](../outputs/Oct30-1544-deferred-branch-audit/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [paper-normal-smoke-64265072](../outputs/paper-normal-smoke-64265072/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [paper-workflow-i56mzrx7](../outputs/paper-workflow-i56mzrx7/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [pdf-reader](../outputs/pdf-reader/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
