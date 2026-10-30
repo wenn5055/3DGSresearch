@@ -308,6 +308,7 @@ def evaluate(args):
                   'warp_pool_process_high_bytes': int(wp.get_mempool_used_mem_high(device)) if device != 'cpu' else None,
                   'memory_scope': 'evaluation process allocation pool; cumulative high watermark across models, not peak training VRAM',
                   'trainer_seconds': record.get('training_result', {}).get('trainer_seconds')}
+        timing['training_time_scope'] = 'Observed training-process wall time; diagnostic jobs may overlap in this research session. Not a controlled training-speed comparison.'
         memory_match = re.search(r'^Training Warp pool high bytes: (\d+)$',
                                  (run / 'train.log').read_text(encoding='utf-8'), re.MULTILINE)
         timing['training_warp_pool_high_bytes'] = int(memory_match[1]) if memory_match else None

@@ -115,3 +115,43 @@ mirror. Keep the current pair and the shader-only HDR comparison unchanged;
 otherwise the shading contrast would also change its objective. If the shading
 correction does not cross the gate, a separately matched objective experiment
 is warranted, rather than silently calling the run an MSE+D-SSIM fit.
+
+## 17:22 Singapore: pre-training mask revision
+
+The enlarged Chrome matched pair is complete. Surfel SH3 gives **19.8175 /
+0.792973 / 0.130209**, Chrome **13.9886 dB**; LDR deferred gives **19.6178 /
+0.783578 / 0.145693**, Chrome **14.4575 dB**. Deferred improves the target material
+by **0.4689 dB**, with worse global/perceptual scores. Chrome normal errors are
+15.97 versus 12.65 degrees, and deferred's mean effective Chrome blend is 0.640.
+The image still lacks sharp reflection detail.
+
+Recovering pixel-weighted error sums from the existing float metrics reveals
+foreground MSE **0.036532 -> 0.033027**, but nonforeground MSE **0.000488 ->
+0.002281** (4.67x). Here nonforeground includes alpha boundaries and background;
+these cannot be separated from the archived scalar errors. The diagnostic is
+`outputs/first-principles-2026-10-30/chrome-error-partition.json`, with per-view
+counts, source hashes and no new GPU rendering.
+
+Before either HDR quality run starts, revise **both full HDR presets** to use
+the already implemented training-alpha mask BCE with weight **0.1**. This supplies
+direct per-pixel silhouette supervision, whereas the existing mask pruner only
+rejects repeatedly empty full support boxes. Keep the original protected pair
+unchanged. This supersedes the earlier shader-only design: the upcoming HDR run
+is a **combined shading and mask-supervision treatment**, so its quality cannot
+be attributed to HDR/angular response alone. Other fields stay fixed. Frozen
+appearance diagnostics have fixed coverage and retain mask weight zero.
+
+The original HDR queue was verified waiting with zero model jobs, archived and
+superseded. Its owned process tree was stopped; no active training was stopped.
+The revised queue has a fresh controller identity and the same absolute deadline.
+The final selector continues to wait on the canonical queue state. Gradient
+checks now also cover HDR shading with mask and normal/depth losses jointly.
+Future performance JSON explicitly labels training times as observed wall time,
+including possible diagnostic interference, rather than controlled speed ratios.
+
+The revision passes 10 HDR/freeze tests on both CPU and CUDA, including 33
+finite-difference cases per device. Its full eight-step integration smoke,
+`outputs/Oct30-1722-materials_chrome-hdr-mask-smoke`, completes with growth,
+SH3, mask/normal losses, format-2 save/reload and all three validation metrics.
+Smoke scores are not quality evidence. The earlier no-mask source/presets remain
+available in Git history and the archived waiting-queue source/state.

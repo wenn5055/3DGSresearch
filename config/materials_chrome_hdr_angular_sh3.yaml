@@ -1,4 +1,4 @@
-# Optional HDR + learned angular response; other fields match the protected LDR control.
+# Combined HDR/angular + training-alpha mask supervision; not a shader-only ablation.
 adaptive:
   dssim_psnr_threshold: 21.0
 convergence:
@@ -50,6 +50,7 @@ surfel:
   shading_model: hdr_angular
   angular_lr: 0.001
 geometry_loss:
+  mask_weight: 0.1
   normal_depth_weight: 0.01
   normal_start_iteration: 1
   normal_ramp_iterations: 2000

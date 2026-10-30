@@ -34,6 +34,10 @@ class HDRTests(unittest.TestCase):
         check_gradients(DEVICE, 'deferred', overlapping=True, shading_model='hdr_angular')
         check_gradients(DEVICE, 'deferred', blended=True, shading_model='hdr_angular')
 
+    def test_hdr_with_mask_and_normal_regularization_adjoints(self):
+        check_gradients(DEVICE, 'deferred', blended=True, overlapping=True,
+                        geometry=True, shading_model='hdr_angular')
+
     def test_display_conversion_precedes_alpha_composition(self):
         # Pure reflection of 0.25 linear radiance with 40% foreground coverage.
         values = np.zeros((1, 9), np.float32)
