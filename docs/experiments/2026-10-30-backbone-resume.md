@@ -6,7 +6,12 @@ the original ten-hour **total active-work** limit: stop by **20:23 Singapore**
 (12:23 UTC) today. New controllers enforce that deadline; yesterday's controllers
 and interrupted evidence remain unchanged.
 
-Status: **active — finish the backbone audit before choosing further training.**
+Status: **active — fresh child optimizer state restores early convergence.**
+The first three cases are complete. Fresh children score 26.0921 dB versus
+18.6229 with inherited histories, both with foreground rejection. Finish the
+legacy-reset controls, then integrate/test the selected policy and validate a
+full SH3 model before further reflection comparisons. The original Materials
+benchmark remains the user's confirmed target.
 Working tree was clean at restart (`a4d8fdf`). CUDA is available. All generated
 compiler caches stay under `outputs/`; source/input/runtime fingerprints accompany
 each experiment. Completed results and context are in the
@@ -90,3 +95,31 @@ The inherited recovery-window log calls a foreground-pruning recovery an
 "opacity reset". Actual opacity resets are disabled in these probes. Explicit
 foreground/density event lines and their counts identify what happened; defer
 the wording fix until the common-source audit has finished.
+
+### Fresh-child result, 13:13 Singapore
+
+`materials-Oct30-1304-backbone-fresh-fg` completes 10k fixed-MSE steps at
+**26.0921 dB**, SSIM **0.908585**, mean MSE **0.00263596**. Relative to inherited
+child state with the same foreground policy, PSNR improves **7.4692 dB**, on
+**100/100** validation views; per-view differences range from +5.6749 to
++9.6392 dB. Source hashes and non-treatment settings match.
+
+This directly identifies child-history transfer as a major cause of poor early
+convergence in the audited backbone. The previous change to inherit parent
+moments was verified for state copying but had not been validated for quality;
+its theoretical rationale was insufficient. This result is RGB before SH or
+reflection, not a claim that deferred shading now beats a strong SH model.
+The complete earlier 4.25 dB SH3 gap also includes curriculum/source differences.
+
+The treatment clears moments only in newly allocated child slots and keeps all
+shared clocks and existing-slot histories, including reused split-parent slots.
+It does not reset unchanged live points, add per-child clocks, change initial
+parameters or inject reference geometry. Cumulative births: 1,062,252; ordinary
+prunes: 51,665; foreground prunes: 11,587; final population: 1M. Better optimization
+therefore also changes which descendants survive and how capacity is allocated.
+
+Fixed-pose figures: session `backbone-figures/rgb-comparison.png` and
+`chrome-crops.png`. These use saved PNGs only; quantitative metrics use float
+renders. The legacy-reset cases are still running. Keep production training
+unchanged until every audit case has captured the same source. A full 30k SH3
+validation is required before treating the regression as resolved.
