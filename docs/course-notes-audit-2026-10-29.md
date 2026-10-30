@@ -113,11 +113,13 @@ Weights and provenance:
 
 ## Remaining course differences and scope
 
-- **Optimizer history:** Unit 7 recommends fresh child state. The current research
-  trainer inherits parent trajectories while preserving unchanged live state.
-  That is a deliberate experimental policy, not a demonstrated universally better
-  choice. The pruning correction does not silently change it; stale recycled-slot
-  history must never survive a new child.
+- **Optimizer history:** Unit 7 recommends fresh child state. The 29 October
+  trainer inherited parent trajectories; the 30 October controlled audit found
+  this severely slowed fitting. Fresh child moments reached 26.0921 dB versus
+  18.6229 for inheritance at 10k steps, with the same masks/settings. YAML workflows
+  now default to fresh child state while preserving existing-slot histories and
+  clocks. Explicit inheritance/global-reset ablations remain available. Full SH3
+  validation is pending; this is not yet a deferred-shading quality result.
 - **Initialization:** a capacity cap is not an allocation policy. If pruning alone
   leaves poor coverage, a training-only geometric initializer or controlled
   reallocation is a better next question than another normal-loss weight sweep.
@@ -141,6 +143,7 @@ The matched fixed-MSE Gaussian backbone audit improves 10k-step validation PSNR
 from 17.2023 to **18.6229 dB** when foreground rejection is enabled, with higher
 PSNR in all 100 views and higher mean SSIM. Both cases finish at 1M points;
 growth refills removed slots. This supports the policy beyond operation-only
-checks, while leaving the shared training regression unresolved. See the
+checks. The subsequent optimizer comparison identifies the major convergence
+regression and selects fresh child state. See the
 [resumed investigation](experiments/2026-10-30-backbone-resume.md) for settings,
 source checks and the pending optimizer comparisons.

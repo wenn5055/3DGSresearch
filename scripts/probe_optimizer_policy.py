@@ -61,6 +61,8 @@ def validate_config(path):
     config = SurfelTrainingConfig.load(path)
     if config['model']['geometry'] != 'gaussian' or config['model']['sh_degree'] != 0:
         raise ValueError('Backbone probes require Gaussian RGB, without SH or surfel state.')
+    if config['densification']['child_optimizer_state'] != 'inherit':
+        raise ValueError("Probes override policy in a scoped context; set densification.child_optimizer_state: inherit.")
     if config['loss']['mode'] != 'mse' or config['surfel']['mode'] != 'rgb':
         raise ValueError('Use fixed MSE and RGB to isolate backbone learning.')
     return config

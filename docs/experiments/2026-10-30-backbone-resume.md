@@ -6,11 +6,12 @@ the original ten-hour **total active-work** limit: stop by **20:23 Singapore**
 (12:23 UTC) today. New controllers enforce that deadline; yesterday's controllers
 and interrupted evidence remain unchanged.
 
-Status: **active — fresh child optimizer state restores early convergence.**
-The first three cases are complete. Fresh children score 26.0921 dB versus
-18.6229 with inherited histories, both with foreground rejection. Finish the
-legacy-reset controls, then integrate/test the selected policy and validate a
-full SH3 model before further reflection comparisons. The original Materials
+Status: **active — backbone audit complete; selective fresh state integrated.**
+All five cases are complete. Fresh children score 26.0921 dB versus 18.6229
+with inherited histories and 25.7094 with global resets, with foreground rejection
+on. The implementation passes 117 CPU tests, 55 CUDA surfel tests and four new
+CUDA policy tests. Gaussian and deferred-SH3 GPU runner smokes completed reload
+and all-view evaluation. Full 30k SH3 validation is next. The original Materials
 benchmark remains the user's confirmed target.
 Working tree was clean at restart (`a4d8fdf`). CUDA is available. All generated
 compiler caches stay under `outputs/`; source/input/runtime fingerprints accompany
@@ -123,3 +124,51 @@ Fixed-pose figures: session `backbone-figures/rgb-comparison.png` and
 renders. The legacy-reset cases are still running. Keep production training
 unchanged until every audit case has captured the same source. A full 30k SH3
 validation is required before treating the regression as resolved.
+
+### Completed audit and implementation, approximately 13:35 Singapore
+
+| Policy | Foreground | Validation PSNR, dB | SSIM |
+| --- | --- | ---: | ---: |
+| Inherit parent history | On | 18.6229 | 0.774763 |
+| Inherit parent history | Off | 17.2023 | 0.699172 |
+| Fresh child history | On | **26.0921** | **0.908585** |
+| Global reset on child creation | On | 25.7094 | 0.905184 |
+| Global reset on child creation | Off | 25.7015 | 0.900073 |
+
+All training implementation hashes, non-treatment settings and input-file hashes
+match. Fresh versus global reset with foreground on improves PSNR by 0.38265 dB
+in 92/100 views. Under global resets, foreground rejection has essentially equal
+mean PSNR (+0.00798 dB, 55/100 views) and higher SSIM. Its benefit depends on the
+optimizer context; the 1.42 dB inheritance-case gain is not universal. No fresh/
+unmasked case was run. The selected fresh/on combination is the best measured
+case, not a claim to have exhaustively optimized every combination.
+
+Implemented `densification.child_optimizer_state` with `fresh_children` as the
+YAML-workflow default, plus explicit `inherit` and `legacy_reset` ablations.
+Fresh births copy parameter values but zero new-slot moments for geometry,
+quaternion, SH and reflection, preserving live-slot histories, shared clocks and
+the global environment optimizer. Reused split-parent slots retain history,
+matching the tested treatment. Zero-child events reset nothing. Legacy restarts
+occur only after actual child creation; this does not reintroduce the earlier
+zero-child global-reset bug. Direct constructor defaults remain `inherit` for
+API compatibility; both CLI workflows explicitly pass the configured policy.
+Diagnostic probe presets explicitly choose `inherit` as their base policy before
+the scoped intervention; a guard prevents misleading diagnostic labels.
+
+The source candidate was staged separately, and the full audit finished before
+production files changed. New regression tests cover Gaussian/deferred training,
+SH, clones/splits, live/free rows, clocks, zero-child events and identical initial
+renders across all policies. An initial integration check caught an argument
+scope error in buffer initialization, corrected before verification. New tests
+pass on CPU/CUDA; the full CPU suite is **117 passed**, the CUDA surfel suite
+**55 passed**, plus **four new CUDA policy tests**. Sandbox-only temporary-directory
+permission errors in the first broad check were resolved by running the unchanged
+tests with reviewed access; both failed and successful logs are retained.
+
+Eight-step GPU smokes: `materials-Oct30-1332-fresh-policy-gaussian-smoke` and
+`materials-Oct30-1332-fresh-policy-surfel-smoke`. Both trained, saved, reloaded and
+evaluated all validation views; the latter unlocked/saved SH3. These tiny models
+verify integration, not quality. Next: rerun the original 800px/1M/30k Gaussian
+SH3 preset with the fresh workflow default and otherwise unchanged settings.
+Retain the historical 27.3372 dB model as the strong reference. Measure chrome
+and overall quality before resuming deferred-vs-SH and initialization comparisons.

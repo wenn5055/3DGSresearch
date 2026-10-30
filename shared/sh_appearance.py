@@ -159,6 +159,15 @@ def copy_sh_children(
     coefficients[children[pair] * rest_count + basis] = coefficients[parents[pair] * rest_count + basis]
 
 
+@wp.kernel
+def clear_sh_child_state(children: wp.array(dtype=wp.int32), rest_count: int,
+                         moment: wp.array(dtype=wp.vec3), variance: wp.array(dtype=wp.vec3)):
+    pair, basis = wp.tid()
+    index = children[pair] * rest_count + basis
+    moment[index] = wp.vec3(0.0)
+    variance[index] = wp.vec3(0.0)
+
+
 class SHAppearance:
     def __init__(self, capacity: int, max_degree: int, learning_rate: float, device):
         if not isinstance(max_degree, int) or isinstance(max_degree, bool) or not 1 <= max_degree <= 3:
@@ -200,14 +209,23 @@ class SHAppearance:
                           self.rest_count, self.live_count, wp.vec3(*self.steps), self.learning_rate],
                   device=self.device)
 
-    def copy_children(self, parents, children):
+    def copy_children(self, parents, children, optimizer_state="inherit"):
+        if optimizer_state not in ("inherit", "fresh_children", "legacy_reset"):
+            raise ValueError("Unknown SH child optimizer-state policy.")
         if len(children):
             parent_ids = wp.array(np.asarray(parents, np.int32), dtype=wp.int32, device=self.device)
             child_ids = wp.array(np.asarray(children, np.int32), dtype=wp.int32, device=self.device)
-            # Keep per-band clocks and copy the complete parent trajectory.
-            for values in (self.coefficients, self.moment, self.variance):
-                wp.launch(copy_sh_children, dim=(len(children), self.rest_count),
-                          inputs=[parent_ids, child_ids, self.rest_count], outputs=[values], device=self.device)
+            wp.launch(copy_sh_children, dim=(len(children), self.rest_count),
+                      inputs=[parent_ids, child_ids, self.rest_count], outputs=[self.coefficients], device=self.device)
+            if optimizer_state == "legacy_reset":
+                self.reset_optimizer()
+            elif optimizer_state == "fresh_children":
+                wp.launch(clear_sh_child_state, dim=(len(children), self.rest_count),
+                          inputs=[child_ids, self.rest_count], outputs=[self.moment, self.variance], device=self.device)
+            else:
+                for values in (self.moment, self.variance):
+                    wp.launch(copy_sh_children, dim=(len(children), self.rest_count),
+                              inputs=[parent_ids, child_ids, self.rest_count], outputs=[values], device=self.device)
 
     def reset_optimizer(self):
         self.moment.zero_()

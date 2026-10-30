@@ -5,6 +5,11 @@ Status: **stopped at the user's request, 29 October, approximately 23:02 Singapo
 All research training processes and waiting controllers were terminated; logs,
 completed models and the partial probe's 5k snapshot are retained.
 
+**30 October continuation:** the [resumed audit](2026-10-30-backbone-resume.md)
+identified inherited child optimizer history as a major convergence regression.
+Fresh child state improves the matched 10k RGB case from 18.62 to 26.09 dB.
+The workflow correction is tested; full SH3/reflection validation continues there.
+
 **Handoff:** subsequent full-resolution jobs remain unrun pending a backbone
 audit: the new Gaussian baseline scored only 23.09 dB versus the earlier tuned
 27.34 dB. Controlled fixed-MSE probes will separate foreground pruning and

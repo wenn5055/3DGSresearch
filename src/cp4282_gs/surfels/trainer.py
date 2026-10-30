@@ -404,9 +404,9 @@ class SurfelTrainer(TrainingOnlyInitialization, base.WarpImageTrainer):
         self.active_device.assign(self.active.astype(np.int32))
         if count:
             parent_ids, child_ids = self.optimizers.inherit_children(parents, children)
-            base.inherit_adam_rows(self.reflection_optimizer, parent_ids, child_ids)
+            base.initialize_adam_rows(self.reflection_optimizer, parent_ids, child_ids, self.optimizers.child_state_policy)
             if self.sh is not None:
-                self.sh.copy_children(parents, children)
+                self.sh.copy_children(parents, children, self.optimizers.child_state_policy)
         if self.foreground_pruner is not None:
             self.foreground_pruner.reset_children(children)
         return children

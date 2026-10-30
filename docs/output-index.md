@@ -69,7 +69,10 @@ Updated 30 Oct 2026 (Singapore).
 - [materials-Oct30-1249-backbone-inherit-fg](../outputs/materials-Oct30-1249-backbone-inherit-fg/) — Controlled Gaussian RGB/MSE backbone audit; optimizer policy inherit Closest prior: materials-Oct29-2223-pruned-proposal-materials-gaussian_sh3; adaptive.dssim_psnr_threshold: 21.0 → 25.0, loss.mode: mse_dssim → mse, model.sh_degree: 3 → 0, reporting.log_every: 20 → 100, +2 other settings (see config). [completed; val]
 - [materials-Oct30-1256-backbone-inherit-unmasked](../outputs/materials-Oct30-1256-backbone-inherit-unmasked/) — Controlled Gaussian RGB/MSE backbone audit; optimizer policy inherit Closest prior: materials-Oct30-1249-backbone-inherit-fg; surfel.foreground_pruning.enabled: True → False. [completed; val]
 - [materials-Oct30-1304-backbone-fresh-fg](../outputs/materials-Oct30-1304-backbone-fresh-fg/) — Controlled Gaussian RGB/MSE backbone audit; optimizer policy fresh_children Closest prior: materials-Oct30-1249-backbone-inherit-fg; same recorded settings. [completed; val]
-- [materials-Oct30-1312-backbone-legacy-fg](../outputs/materials-Oct30-1312-backbone-legacy-fg/) — Controlled Gaussian RGB/MSE backbone audit; optimizer policy legacy_reset Closest prior: materials-Oct30-1304-backbone-fresh-fg; same recorded settings. [running; val]
+- [materials-Oct30-1312-backbone-legacy-fg](../outputs/materials-Oct30-1312-backbone-legacy-fg/) — Controlled Gaussian RGB/MSE backbone audit; optimizer policy legacy_reset Closest prior: materials-Oct30-1304-backbone-fresh-fg; same recorded settings. [completed; val]
+- [materials-Oct30-1320-backbone-legacy-unmasked](../outputs/materials-Oct30-1320-backbone-legacy-unmasked/) — Controlled Gaussian RGB/MSE backbone audit; optimizer policy legacy_reset Closest prior: materials-Oct30-1256-backbone-inherit-unmasked; same recorded settings. [completed; val]
+- [materials-Oct30-1332-fresh-policy-gaussian-smoke](../outputs/materials-Oct30-1332-fresh-policy-gaussian-smoke/) — gaussian/rgb/SH0; 8 steps; 128 capacity. Closest prior: materials-Oct30-1312-backbone-legacy-fg; adaptive.dssim_psnr_threshold: 25.0 → 21.0, densification.child_optimizer_state: (unset) → fresh_children, densification.interval: 100 → 2, model.capacity: 1000000 → 128, +13 other settings (see config). [completed; val]
+- [materials-Oct30-1332-fresh-policy-surfel-smoke](../outputs/materials-Oct30-1332-fresh-policy-surfel-smoke/) — surfel/deferred/SH3; 8 steps; 128 capacity. Closest prior: materials-Oct29-2223-pruned-proposal-materials-gaussian_sh3; densification.child_optimizer_state: (unset) → fresh_children, densification.interval: 100 → 2, loss.mode: mse_dssim → mse, model.capacity: 1000000 → 128, +17 other settings (see config). [completed; val]
 
 ## Tuning
 
@@ -101,8 +104,18 @@ Updated 30 Oct 2026 (Singapore).
 - [red-rose-silver-capture-verified](../outputs/red-rose-silver-capture-verified/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [runner-validation-inputs-f2cfb4b9](../outputs/runner-validation-inputs-f2cfb4b9/) — small manifests/config for runner checks.
 - [sh-smoke-input-2f60e9eb](../outputs/sh-smoke-input-2f60e9eb/) — tiny SH check config/launcher log.
+- [tmp11g3f1nx](../outputs/tmp11g3f1nx/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
+- [tmp8j2nxetr](../outputs/tmp8j2nxetr/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
+- [tmp_xf_yls2](../outputs/tmp_xf_yls2/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
+- [tmpdergvcu8](../outputs/tmpdergvcu8/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
+- [tmpdjtui0o0](../outputs/tmpdjtui0o0/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
+- [tmpdmdgcdw_](../outputs/tmpdmdgcdw_/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
+- [tmperag_iax](../outputs/tmperag_iax/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [tmpggz1922j](../outputs/tmpggz1922j/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
+- [tmpjvvqjeoc](../outputs/tmpjvvqjeoc/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
+- [tmplfzo3pl2](../outputs/tmplfzo3pl2/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [tmpvqlvzp4a](../outputs/tmpvqlvzp4a/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
+- [tmpz0_ujyk3](../outputs/tmpz0_ujyk3/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [warp-training_snapshots](../outputs/warp-training_snapshots/) — legacy direct-trainer snapshots; source run unrecorded here.
 - `audit-warp-cache`, `blender-optix-cache`, `contribution-test-warp-cache`, `cuda-cache`, `dssim-test-warp-cache`, `geometry-loss-warp-cache`, `runner-validation-warp-cache`, `sh-test-warp-cache`, `surfel-test-warp-cache`, `warp-cache` — compiled Warp kernels reused by checks; not experiments.
 

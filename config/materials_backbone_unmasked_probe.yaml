@@ -7,7 +7,7 @@ model: {width: 800, height: 800, capacity: 1000000, initial_splats: 1000, backgr
 training: {iterations: 10000}
 learning_rates: {position_max_steps: 60000}
 loss: {mode: mse}
-densification: {interval: 100, fraction: 0.2}
+densification: {interval: 100, fraction: 0.2, child_optimizer_state: inherit}
 convergence: {enabled: false}
 reporting: {snapshot_every: 5000, log_every: 100}
 sparse: {enabled: false}

@@ -443,3 +443,35 @@ backbone ablation or trained visual-hull comparison exists yet.
 Evidence and exact resume state: [investigation log](experiments/2026-10-29-first-principles.md)
 and [course-notes audit](course-notes-audit-2026-10-29.md). The completed edited
 comparison is in `outputs/first-principles-2026-10-29/edited-pruning-val/index.html`.
+
+
+## 2026-10-30 ? Fresh child optimizer state restores backbone convergence
+
+Five matched Gaussian RGB probes used original Materials at 800px, 1M capacity,
+1k initial points, seed 7, 10k fixed dense-MSE steps, no SH/reflection. Training
+implementation, non-treatment settings and input hashes were checked equal.
+
+| Policy | Foreground pruning | Validation PSNR | SSIM |
+| --- | --- | ---: | ---: |
+| Inherit parent history | On | 18.6229 | 0.774763 |
+| Inherit parent history | Off | 17.2023 | 0.699172 |
+| Fresh child history | On | **26.0921** | **0.908585** |
+| Global reset on births | On | 25.7094 | 0.905184 |
+| Global reset on births | Off | 25.7015 | 0.900073 |
+
+Fresh children improve over inheritance in all 100 validation views, by 7.4692 dB
+on average. They beat global resets by 0.38265 dB, improving 92/100 views. The
+previous parent-state transfer was tested for copying correctness but severely
+hurt fitting here. This demonstrates why that earlier theoretical fix needed
+quality validation. It does not yet establish a final deferred-rendering win.
+
+YAML training workflows now default to `densification.child_optimizer_state:
+fresh_children`, preserving existing-slot histories/clocks and resetting new-slot
+geometry, quaternion, SH and reflection moments. Historical inheritance and
+legacy-reset modes remain explicit options. The global environment optimizer is
+preserved. Verification: 117 CPU tests, 55 CUDA surfel tests and four new CUDA
+policy tests passed; Gaussian and deferred-SH3 GPU runner smokes completed reload
+and evaluation. Full 30k SH3 validation is next.
+
+[Protocol, complete contrasts and scope](experiments/2026-10-30-backbone-resume.md).
+Figures and machine-readable evidence: `outputs/first-principles-2026-10-30/`.

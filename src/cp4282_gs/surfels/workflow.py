@@ -44,6 +44,7 @@ def train(config_path):
         tile_pair_capacity=model['tile_pair_capacity'], surfel_options=config['surfel'],
         training_view_count=len(targets),
         sh_degree=model['sh_degree'],
+        child_optimizer_state=config['densification']['child_optimizer_state'],
         training_options={key: config[key] for key in ('loss', 'sparse', 'compact_box', 'multiview_adc')}, **extra)
     if paths['init_ply']:
         sidecar = paths['init_ply'].with_suffix('.surfel.npz')
@@ -66,6 +67,7 @@ def run_training(trainer, config, training_views, eval_ids, frame_ids=None):
     snapshots.mkdir(exist_ok=True)
     print(f"Geometry: {config['model']['geometry']}; training-only initialization statistics; dense rendering.", flush=True)
     print(base.describe_evaluation_views(eval_ids, frame_ids, reporting['eval_manifest']), flush=True)
+    print(f"Density child optimizer state: {trainer.optimizers.child_state_policy}", flush=True)
     want_deferred = settings['mode'] == 'deferred'
     target_sh_degree = config['model']['sh_degree']
     if target_sh_degree:

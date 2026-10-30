@@ -52,7 +52,7 @@ if str(_shared) not in sys.path:
 from trainable_gaussian import TrainableGaussianSet
 from dssim_loss import DSSIMComputer
 from sh_appearance import SHAppearance
-from optimizer_state import copy_state_rows, inherit_adam_rows
+from optimizer_state import CHILD_STATE_POLICIES, copy_state_rows, clear_state_rows, inherit_adam_rows, initialize_adam_rows
 from gaussian_set import GaussianSet
 from profiling import profile_stage
 from splat_math import (
@@ -943,7 +943,10 @@ class SplatOptimizers:
     Every gradient produced by the backward pass is consumed by Adam in the same iteration.
     """
 
-    def __init__(self, trainable, capacity, learning_rates, device):
+    def __init__(self, trainable, capacity, learning_rates, device, child_state_policy="inherit"):
+        if child_state_policy not in CHILD_STATE_POLICIES:
+            raise ValueError("Unknown child optimizer-state policy.")
+        self.child_state_policy = child_state_policy
         self.device = device
         self.learning_rates = learning_rates
         self.quaternions = trainable.quaternions
@@ -1013,17 +1016,26 @@ class SplatOptimizers:
         self.quaternion_adam_t = 0
 
     def inherit_children(self, parents, children):
-        """Preserve existing trajectories and copy parent state into reused slots.
+        """Initialize new slots under the configured optimizer-state policy.
 
-        Split children inherit the pre-split history as a warm start, just as
-        clones do. No global timestep or unchanged slot is reset.
+        The historical method name remains for callers/probes. Fresh state does
+        not copy parent moments; existing slots and clocks remain unchanged.
         """
         parent_ids = wp.array(np.asarray(parents, np.int32), dtype=wp.int32, device=self.device)
         child_ids = wp.array(np.asarray(children, np.int32), dtype=wp.int32, device=self.device)
-        for optimizer in self.optimizers:
-            inherit_adam_rows(optimizer, parent_ids, child_ids)
-        for values in (self.quaternion_m, self.quaternion_v):
-            wp.launch(copy_state_rows, len(children), inputs=[values, parent_ids, child_ids], device=self.device)
+        policy = getattr(self, 'child_state_policy', 'inherit')
+        if not len(children):
+            return parent_ids, child_ids
+        if policy == 'legacy_reset':
+            self.reset()
+        else:
+            for optimizer in self.optimizers:
+                initialize_adam_rows(optimizer, parent_ids, child_ids, policy)
+            for values in (self.quaternion_m, self.quaternion_v):
+                if policy == 'inherit':
+                    wp.launch(copy_state_rows, len(children), inputs=[values, parent_ids, child_ids], device=self.device)
+                else:
+                    wp.launch(clear_state_rows, len(children), inputs=[values, child_ids], device=self.device)
         return parent_ids, child_ids
 
     def reset_opacity(self):
@@ -1036,7 +1048,11 @@ class WarpImageTrainer:
 
     def __init__(self, targets, cameras, focal, scene_radius, capacity, initial_splats,
                  device, seed, init_scene=None, background=(1.0, 1.0, 1.0),
-                 learning_rates=None, tile_pair_capacity=None, training_options=None, sh_degree=0):
+                 learning_rates=None, tile_pair_capacity=None, training_options=None, sh_degree=0,
+                 child_optimizer_state="inherit"):
+        if child_optimizer_state not in CHILD_STATE_POLICIES:
+            raise ValueError("Unknown child optimizer-state policy.")
+        self.child_optimizer_state = child_optimizer_state
         self.focal = float(focal)
         self.height, self.width = targets.shape[1], targets.shape[2]
         self.capacity, self.device = capacity, wp.get_device(device)
@@ -1149,6 +1165,7 @@ class WarpImageTrainer:
         )
         self.optimizers = SplatOptimizers(
             self.trainable, capacity, self.learning_rates, self.device,
+            child_state_policy=self.child_optimizer_state,
         )
         self.last_pair_count = 0
         self.image = wp.empty(
@@ -1643,7 +1660,7 @@ class WarpImageTrainer:
         chosen_children = np.asarray(free[:pair_count], dtype=np.intp)
         if len(chosen_parents):
             if self.sh is not None:
-                self.sh.copy_children(chosen_parents, chosen_children)
+                self.sh.copy_children(chosen_parents, chosen_children, self.optimizers.child_state_policy)
             self.active[chosen_children] = True
             parent_scales = np.exp(log_scales[chosen_parents])
             is_split = parent_scales.max(axis=1) > split_size
@@ -1967,6 +1984,7 @@ def main() -> None:
         background=background,
         learning_rates=rates,
         sh_degree=model["sh_degree"],
+        child_optimizer_state=config["densification"]["child_optimizer_state"],
         tile_pair_capacity=model["tile_pair_capacity"],
         training_options={
             "compact_box": compact,
@@ -2005,6 +2023,7 @@ def run_training(
     target_sh_degree = model["sh_degree"]
     dssim_threshold = 10.0 ** (-adaptive["dssim_psnr_threshold"] / 10.0)
     device = trainer.device
+    print(f"Density child optimizer state: {trainer.optimizers.child_state_policy}", flush=True)
 
     # Densification runs for the whole run. The active-splat growth plateau arms late pruning,
     # but does not stop densification: the two are separate decisions, and stopping on that

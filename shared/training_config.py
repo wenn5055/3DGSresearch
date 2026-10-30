@@ -74,6 +74,8 @@ class TrainingConfig:
         },
         "densification": {
             "interval": 100,
+            # New parameter slots learn their own optimizer history; old runs may select inherit.
+            "child_optimizer_state": "fresh_children",
             "fraction": 0.5,
             # A splat is "large" when its biggest scale exceeds percent_dense * scene_radius.
             # Large splats are split; small ones are cloned. This is the reference percent_dense.
@@ -270,6 +272,8 @@ class TrainingConfig:
             raise ValueError("model.tile_pair_capacity must be a positive integer or null.")
         if model["scene_radius"] is not None and model["scene_radius"] <= 0.0:
             raise ValueError("model.scene_radius must be positive or null.")
+        if densification["child_optimizer_state"] not in ("inherit", "fresh_children", "legacy_reset"):
+            raise ValueError("densification.child_optimizer_state must be inherit, fresh_children or legacy_reset.")
         if not isinstance(densification["interval"], int) or densification["interval"] < 0:
             raise ValueError("densification.interval must be a non-negative integer.")
         if not 0.0 < densification["fraction"] <= 1.0:
