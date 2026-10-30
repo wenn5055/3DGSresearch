@@ -79,7 +79,8 @@ def export_pruned(run, importance, remove_fraction, output=None):
             continue
         point_key = 'sh_rest' if path.name == 'model.sh.npz' else 'reflection_logits'
         with np.load(path, allow_pickle=False) as archive:
-            if int(archive['format_version']) != 1 or archive[point_key].shape[0] != len(vertices):
+            allowed_versions = (1, 2) if point_key == 'reflection_logits' else (1,)
+            if int(archive['format_version']) not in allowed_versions or archive[point_key].shape[0] != len(vertices):
                 raise ValueError('Unsupported sidecar format or inconsistent point count.')
             sidecars[path.name] = {key: value[keep] if key == point_key else value.copy()
                                   for key, value in archive.items()}

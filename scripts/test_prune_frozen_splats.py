@@ -71,6 +71,20 @@ class FrozenPruningTests(unittest.TestCase):
             export_pruned(self.run, self.importance, .5, output)
         self.assertFalse(output.exists())
 
+    def test_hdr_global_angular_knots_survive_compaction(self):
+        path = self.run / 'model.surfel.npz'
+        knots = np.linspace(-1, 1, 16, dtype=np.float32)
+        np.savez(path, format_version=2, shading_model='hdr_angular', angular_gain_logits=knots,
+                 reflection_logits=np.arange(4, dtype=np.float32), environment_logits=self.environment)
+        self.metadata['checkpoints'][-1]['sha256'] = hashlib.sha256(path.read_bytes()).hexdigest()
+        self.write_metadata()
+        output = export_pruned(self.run, self.importance, .5, self.root / 'compact-hdr')
+        with np.load(output / 'model.surfel.npz') as state:
+            np.testing.assert_array_equal(state['angular_gain_logits'], knots)
+            np.testing.assert_array_equal(state['reflection_logits'], [0., 2.])
+            np.testing.assert_array_equal(state['environment_logits'], self.environment)
+            self.assertEqual(int(state['format_version']), 2)
+
     def test_held_out_importance_and_changed_weights_are_rejected(self):
         output = self.root / 'must-not-exist'
         self.metadata['manifest'] = 'transforms_val.json'

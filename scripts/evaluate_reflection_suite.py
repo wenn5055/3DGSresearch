@@ -247,6 +247,9 @@ def evaluate(args):
                     coherence = np.clip(length / np.maximum(buffers[:, :, 7], 1e-8), 0, 1)
                     blend = (np.clip(buffers[:, :, 8] / np.maximum(buffers[:, :, 7], 1e-8), 0, 1)
                              if trainer.specular_active else np.zeros_like(length))
+                    if trainer.specular_active and getattr(trainer, 'hdr_angular', False):
+                        from cp4282_gs.surfels.hdr_shader import effective_blend
+                        blend = effective_blend(buffers, cameras[view], focal, trainer.angular_gain.numpy())
                     diagnostic['normal_coherence'] = float(coherence[valid].mean()) if valid.any() else None
                     diagnostic['mean_reflection_blend'] = float(blend[ray_foreground & alpha_foreground].mean())
                     diagnostic['normal_valid_fraction'] = float(valid.sum() / max((ray_foreground & alpha_foreground).sum(), 1))

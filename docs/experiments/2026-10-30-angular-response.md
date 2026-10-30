@@ -33,6 +33,41 @@ copy Blender ramp parameters, ground-truth normals, mesh geometry or environment
 textures into training. Keep the current controls and default shader intact.
 This does not address nearby-object parallax or remaining normal error.
 
+## Implemented, 16:58 Singapore
+
+Optional `surfel.shading_model: hdr_angular` uses 16 shared learned logit offsets
+interpolated by absolute N dot V, added to the rasterized base reflection logit.
+All knots start at zero. The environment uses positive softplus radiance, with
+parameter bounds [-16, 100]. Initial radiance is converted from the training-only
+mean display color, avoiding a clipped-white initialization. Shading converts base
+display RGB to linear light, blends with HDR reflection, clips to Standard's display
+range and applies the sRGB transfer, then composites coverage over the background.
+SH remains an optional base-color residual. No material labels enter optimization.
+
+The original scene's read-only inspection also confirms Standard / None / exposure
+0 / gamma 1 and the same linked Chrome ramp, retained in `original-chrome-response.json`.
+Saved scene settings do not independently prove the historical PNG capture pipeline;
+the new Chrome capture pipeline is recorded and verified.
+
+The default LDR kernel and optimization arithmetic remain unchanged. HDR sidecars
+use format 2 so older readers reject them instead of silently interpreting HDR
+parameters as LDR. Current evaluation routes from saved shader metadata. Contribution
+compaction preserves the global angular knots and HDR environment.
+
+Checks: 6 HDR tests on CPU and CUDA, including 22 finite-difference cases per
+device with a nonconstant angular response; 12 existing CUDA trainer regressions;
+frozen-compaction regressions. Final-format eight-step 800px integration smoke
+completed with SH3, growth 100k -> 160k, sidecar reload and all three metrics:
+`outputs/Oct30-1654-materials_chrome-hdr-angular-smoke-v2`. Its scores are not a
+quality result. The earlier smoke is preserved as a format-1 prototype, readable
+with its source snapshot rather than the final reader.
+
+Full presets change the shading model relative to each protected LDR control;
+initializer, geometry loss, reflection prior, resolution, capacity, seed, optimizer
+policy, SH schedule and 30k budget stay fixed within each scene. The original
+Materials variant has priority. Runs may be skipped to retain at least one hour
+for a final training job plus validation/test/video work before the hard stop.
+
 ## Evaluation tooling
 
 `evaluate_reflection_suite.py --save-all-renders` optionally retains all RGB frames;

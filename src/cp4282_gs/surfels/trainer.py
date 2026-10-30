@@ -112,6 +112,15 @@ class SurfelTrainer(TrainingOnlyInitialization, base.WarpImageTrainer):
         self.env_height = options["environment_height"] if options["mode"] == "deferred" else 1
         colour = np.clip(self.initial_training_colour, 0.001, 0.999)
         environment = np.broadcast_to(np.log(colour / (1.0 - colour)), (self.env_width * self.env_height, 3)).copy()
+        self.hdr_angular = options['shading_model'] == 'hdr_angular'
+        self.angular_gain = None
+        if self.hdr_angular:
+            # Initialize the same display colour, rather than interpreting LDR
+            # logits as HDR radiance (which would clip and kill gradients).
+            linear = np.where(colour <= 0.04045, colour / 12.92, ((colour + 0.055) / 1.055) ** 2.4)
+            environment[:] = np.log(np.expm1(linear))
+            self.angular_gain = wp.zeros(16, dtype=wp.float32, device=self.device, requires_grad=True)
+            self.angular_optimizer = Adam([self.angular_gain], lr=options['angular_lr'])
         self.environment = wp.array(environment.astype(np.float32), dtype=wp.vec3, device=self.device, requires_grad=True)
         self.environment_optimizer = Adam([self.environment], lr=options["environment_lr"])
         self.specular_active = options["mode"] == "deferred" and options["specular_start_iteration"] == 0
@@ -225,6 +234,7 @@ class SurfelTrainer(TrainingOnlyInitialization, base.WarpImageTrainer):
         self.specular_active = True
 
     def _forward(self, view, record=False):
+        self._last_forward_view = int(view)
         if self._shader_tape is not None:
             self._shader_tape.zero()
         started = perf_counter()
@@ -243,12 +253,17 @@ class SurfelTrainer(TrainingOnlyInitialization, base.WarpImageTrainer):
                           + self.compact_box_args, outputs=[self.buffers], device=self.device)
         inputs = [self.buffers, self.environment, self.env_width, self.env_height, self.cameras, view,
                   self.width, self.height, self.focal, int(self.specular_active), self.background]
+        shader = k.deferred_shader
+        if self.hdr_angular:
+            from .hdr_shader import deferred_hdr_shader
+            shader = deferred_hdr_shader
+            inputs.append(self.angular_gain)
         if record:
             self._shader_tape = wp.Tape()
             with self._shader_tape:
-                wp.launch(k.deferred_shader, dim=self.width * self.height, inputs=inputs, outputs=[self.image], device=self.device)
+                wp.launch(shader, dim=self.width * self.height, inputs=inputs, outputs=[self.image], device=self.device)
         else:
-            wp.launch(k.deferred_shader, dim=self.width * self.height, inputs=inputs, outputs=[self.image], device=self.device)
+            wp.launch(shader, dim=self.width * self.height, inputs=inputs, outputs=[self.image], device=self.device)
         self.loss.zero_()
         wp.launch(k.mse_loss, dim=self.width * self.height,
                   inputs=[self.image, self.targets, view, self.width * self.height],
@@ -266,6 +281,8 @@ class SurfelTrainer(TrainingOnlyInitialization, base.WarpImageTrainer):
         self.optimizers.zero_gradients()
         self.normal_gradient.zero_()
         self.reflection_gradient.zero_()
+        if self.hdr_angular:
+            self.angular_gain.grad.zero_()
         offsets, pairs = self._forward(view, record=True)
         started = perf_counter()
         mse = float(self.loss.numpy()[0]) if download_loss else None
@@ -305,7 +322,13 @@ class SurfelTrainer(TrainingOnlyInitialization, base.WarpImageTrainer):
             self.reflection_optimizer.step([self.reflection_gradient])
             self.environment_optimizer.step([self.environment.grad])
             wp.launch(k.clamp_logits, dim=self.capacity, inputs=[self.reflection_logits], device=self.device)
-            wp.launch(k.clamp_environment, dim=self.env_width * self.env_height, inputs=[self.environment], device=self.device)
+            environment_clamp = k.clamp_environment
+            if self.hdr_angular:
+                from .hdr_shader import clamp_hdr_environment
+                environment_clamp = clamp_hdr_environment
+                self.angular_optimizer.step([self.angular_gain.grad])
+                wp.launch(k.clamp_logits, dim=16, inputs=[self.angular_gain], device=self.device)
+            wp.launch(environment_clamp, dim=self.env_width * self.env_height, inputs=[self.environment], device=self.device)
             wp.synchronize_device(self.device)
             self.last_timings["device"] += perf_counter() - started
         return loss, gradient
@@ -420,8 +443,10 @@ class SurfelTrainer(TrainingOnlyInitialization, base.WarpImageTrainer):
         path = Path(path)
         appearance = super().save_sidecars(path)
         sidecar = path.with_suffix('.surfel.npz')
-        np.savez_compressed(sidecar, format_version=np.int32(1), geometry='rank2_local_z_zero',
+        np.savez_compressed(sidecar, format_version=np.int32(2 if self.hdr_angular else 1), geometry='rank2_local_z_zero',
                             mode=self.surfel_options['mode'], specular_active=np.bool_(self.specular_active),
+                            shading_model=self.surfel_options['shading_model'],
+                            angular_gain_logits=(self.angular_gain.numpy() if self.hdr_angular else np.zeros(0, np.float32)),
                             depth_mode=self.surfel_options['depth_mode'],
                             sh_degree=np.int32(self.active_sh_degree),
                             max_sh_degree=np.int32(self.sh.max_degree if self.sh is not None else 0),
@@ -432,6 +457,10 @@ class SurfelTrainer(TrainingOnlyInitialization, base.WarpImageTrainer):
             self.save_debug(path)
             if self.surfel_options['mode'] == 'deferred':
                 environment = base.sigmoid(self.environment.numpy()).reshape(self.env_height, self.env_width, 3)
+                if self.hdr_angular:
+                    linear = np.logaddexp(0, self.environment.numpy()).reshape(self.env_height, self.env_width, 3)
+                    environment = np.where(linear <= 0.0031308, 12.92 * linear,
+                                           1.055 * np.maximum(linear, 0) ** (1 / 2.4) - 0.055)
                 Image.fromarray(np.uint8(np.clip(environment, 0, 1) * 255)).save(path.with_name(path.stem + '.environment.png'))
         return [sidecar] + appearance
 
@@ -451,6 +480,10 @@ class SurfelTrainer(TrainingOnlyInitialization, base.WarpImageTrainer):
             Image.fromarray(np.uint8(np.clip(image, 0, 1) * 255)).save(path.with_name(path.stem + f'.{suffix}.png'))
         if self.surfel_options['mode'] == 'deferred':
             strength = values[:, :, 8] / np.maximum(coverage, 1e-8)
+            if self.hdr_angular and self.specular_active:
+                from .hdr_shader import effective_blend
+                strength = effective_blend(values, self.cameras.numpy()[self._last_forward_view],
+                                           self.focal, self.angular_gain.numpy())
             if not self.specular_active:
                 strength = np.zeros_like(strength)
             Image.fromarray(np.uint8(np.clip(strength * coverage, 0, 1) * 255)).save(path.with_name(path.stem + '.reflection.png'))
@@ -458,6 +491,10 @@ class SurfelTrainer(TrainingOnlyInitialization, base.WarpImageTrainer):
 
     def load_materials(self, path, count, for_evaluation=False):
         values = read_surfel_sidecar(path, count)
+        if values['shading_model'] != self.surfel_options['shading_model']:
+            raise ValueError('Shading model differs from the source checkpoint.')
+        if self.hdr_angular:
+            self.angular_gain.assign(values['angular_gain_logits'])
         if values['max_sh_degree']:
             self.load_appearance(Path(path).with_suffix('').with_suffix('.sh.npz'), count)
             if self.active_sh_degree != values['sh_degree']:
@@ -478,9 +515,17 @@ class SurfelTrainer(TrainingOnlyInitialization, base.WarpImageTrainer):
 
 def read_surfel_sidecar(path, count):
     with np.load(path, allow_pickle=False) as data:
-        if int(data['format_version']) != 1 or str(data['geometry'].item()) != 'rank2_local_z_zero':
+        version = int(data['format_version'])
+        if version not in (1, 2) or str(data['geometry'].item()) != 'rank2_local_z_zero':
             raise ValueError('Unsupported surfel checkpoint format or geometry.')
         mode = str(data['mode'].item())
+        shading_model = str(data['shading_model'].item()) if 'shading_model' in data else 'ldr'
+        angular = np.asarray(data['angular_gain_logits'], np.float32) if 'angular_gain_logits' in data else np.zeros(0, np.float32)
+        if (shading_model not in ('ldr', 'hdr_angular') or
+                (version == 2) != (shading_model == 'hdr_angular') or
+                angular.shape != ((16,) if shading_model == 'hdr_angular' else (0,)) or
+                not np.isfinite(angular).all() or (shading_model == 'hdr_angular' and mode != 'deferred')):
+            raise ValueError('Invalid angular shading metadata.')
         depth_mode = str(data['depth_mode'].item()) if 'depth_mode' in data else 'centre'
         if depth_mode not in ('centre', 'ray_plane'):
             raise ValueError('Unsupported surfel checkpoint depth mode.')
@@ -500,6 +545,7 @@ def read_surfel_sidecar(path, count):
             raise ValueError('Invalid SH degree in surfel checkpoint.')
         if not np.isfinite(radius) or radius <= 0 or (mode == 'rgb' and activated):
             raise ValueError('Invalid surfel radius or shading-stage metadata.')
-        return {'mode': mode, 'depth_mode': depth_mode, 'reflection_logits': reflection, 'environment_logits': environment,
+        return {'mode': mode, 'shading_model': shading_model, 'angular_gain_logits': angular,
+                'depth_mode': depth_mode, 'reflection_logits': reflection, 'environment_logits': environment,
                 'sh_degree': sh_degree, 'max_sh_degree': max_sh_degree,
                 'specular_active': activated, 'scene_radius': radius}

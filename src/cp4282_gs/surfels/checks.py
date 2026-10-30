@@ -12,7 +12,7 @@ from .trainer import SurfelTrainer
 reference = importlib.import_module('3dgs_gradient_check_gpu')
 
 
-def make_trainer(device='cpu', mode='rgb', blended=False, overlapping=False, capacity=None, geometry=False):
+def make_trainer(device='cpu', mode='rgb', blended=False, overlapping=False, capacity=None, geometry=False, shading_model='ldr'):
     initial = reference.one_splat_scene()
     if overlapping:
         initial = GaussianSet(
@@ -32,19 +32,22 @@ def make_trainer(device='cpu', mode='rgb', blended=False, overlapping=False, cap
         device, 7, init_scene=initial, training_options={'compact_box': {'enabled': False},
             'loss': {'mode': 'mse_dssim' if blended else 'mse', 'dssim_window': 3}},
         surfel_options={'mode': mode, 'environment_width': 8, 'environment_height': 4,
+                        'shading_model': shading_model,
                         'specular_start_iteration': 0, 'initial_reflection': 0.3, 'save_debug': False}, **geometry_kwargs)
     if mode == 'deferred':
         u, v = np.meshgrid(np.arange(8) * 2 * np.pi / 8, np.linspace(-1, 1, 4))
         environment = np.stack([1.2 * np.sin(u) + 0.4 * v, -0.6 * np.cos(u) + 0.3 * v,
                                 0.8 * np.sin(u + 0.5) - 0.4 * v], axis=-1)
         trainer.environment.assign(environment.astype(np.float32).reshape(-1, 3))
+        if shading_model == 'hdr_angular':
+            trainer.angular_gain.assign(np.linspace(-.8, .4, 16, dtype=np.float32))
     if blended:
         trainer.advance_dssim_stage()
     return trainer
 
 
-def check_gradients(device='cpu', mode='rgb', blended=False, overlapping=False, verbose=True, geometry=False):
-    trainer = make_trainer(device, mode, blended, overlapping, geometry=geometry)
+def check_gradients(device='cpu', mode='rgb', blended=False, overlapping=False, verbose=True, geometry=False, shading_model='ldr'):
+    trainer = make_trainer(device, mode, blended, overlapping, geometry=geometry, shading_model=shading_model)
     trainer.loss_and_gradients([0])
     if geometry and trainer.last_geometry_terms['normal_pixels'] == 0:
         raise AssertionError('Geometry gradient checks must exercise valid normal-depth pixels.')
@@ -64,6 +67,12 @@ def check_gradients(device='cpu', mode='rgb', blended=False, overlapping=False, 
         index = np.unravel_index(np.argmax(np.abs(env)), env.shape)
         cases += [('reflection logit', trainer.reflection_logits, wp.float32, 0, float(trainer.reflection_gradient.numpy()[0]), 0.01),
                   ('environment logit', trainer.environment, wp.vec3, index, float(env[index]), 0.01)]
+        if shading_model == 'hdr_angular':
+            gain = trainer.angular_gain.grad.numpy()
+            index = int(np.argmax(np.abs(gain)))
+            if np.max(np.abs(gain)) < 1e-7:
+                raise AssertionError('Angular response gradient must be exercised.')
+            cases += [('angular gain', trainer.angular_gain, wp.float32, index, float(gain[index]), 0.01)]
     results = []
     for label, field, dtype, index, analytic, epsilon in cases:
         numeric = reference.finite_difference(trainer, field, dtype, index, epsilon)

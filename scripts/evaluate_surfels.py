@@ -33,6 +33,7 @@ def build_trainer(args, scene, targets, cameras, focal, device):
         training_view_count=0,
         sh_degree=metadata['max_sh_degree'],
         surfel_options={'mode': metadata['mode'], 'environment_width': environment.shape[1],
+                        'shading_model': metadata['shading_model'],
                         'environment_height': environment.shape[0], 'save_debug': False})
     trainer.load_materials(metadata_path, len(scene.means), for_evaluation=True)
     if requested_degree is not None and trainer.sh is not None:

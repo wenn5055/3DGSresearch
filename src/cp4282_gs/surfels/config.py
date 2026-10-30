@@ -23,6 +23,8 @@ class SurfelTrainingConfig(TrainingConfig):
     DEFAULTS['geometry_loss'] = deepcopy(GEOMETRY_DEFAULTS)
     DEFAULTS["surfel"] = {
         "mode": "rgb",
+        "shading_model": "ldr",
+        "angular_lr": 0.001,
         "depth_mode": "centre",
         "specular_start_iteration": 10000,
         "initial_reflection": 0.1,
@@ -89,6 +91,10 @@ class SurfelTrainingConfig(TrainingConfig):
             raise ValueError("Surfel G-buffers require dense rendering; set sparse.enabled: false.")
         if settings["mode"] not in ("rgb", "deferred"):
             raise ValueError("surfel.mode must be rgb or deferred.")
+        if settings['shading_model'] not in ('ldr', 'hdr_angular'):
+            raise ValueError('surfel.shading_model must be ldr or hdr_angular.')
+        if settings['shading_model'] == 'hdr_angular' and (geometry != 'surfel' or settings['mode'] != 'deferred'):
+            raise ValueError('hdr_angular shading requires deferred surfels.')
         if settings['depth_mode'] not in ('centre', 'ray_plane'):
             raise ValueError('surfel.depth_mode must be centre or ray_plane.')
         if geometry == 'gaussian' and settings['depth_mode'] != 'centre':
@@ -100,7 +106,7 @@ class SurfelTrainingConfig(TrainingConfig):
         value = settings["specular_start_iteration"]
         if not isinstance(value, int) or isinstance(value, bool) or value < 0:
             raise ValueError("surfel.specular_start_iteration must be a non-negative integer.")
-        for key in ("reflection_lr", "environment_lr"):
+        for key in ("reflection_lr", "environment_lr", "angular_lr"):
             value = settings[key]
             if not isinstance(value, (int, float)) or isinstance(value, bool) or not math.isfinite(value) or value <= 0:
                 raise ValueError(f"surfel.{key} must be finite and positive.")

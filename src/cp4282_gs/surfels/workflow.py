@@ -76,6 +76,7 @@ def run_training(trainer, config, training_views, eval_ids, frame_ids=None):
     print(f"Surfel pass: {settings['mode']}; deferred start iteration: {settings['specular_start_iteration']}", flush=True)
     if config['model']['geometry'] == 'surfel':
         print(f"Surfel depth mode: {settings['depth_mode']}", flush=True)
+        print(f"Deferred shading model: {settings['shading_model']}", flush=True)
     geometry = config['geometry_loss']
     if geometry['mask_weight'] or geometry['normal_depth_weight']:
         print(f"Geometry losses (training alpha only): mask={geometry['mask_weight']}, "
