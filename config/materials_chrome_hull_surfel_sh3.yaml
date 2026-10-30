@@ -1,0 +1,51 @@
+# Training-alpha visual-hull initialization; no mesh/reference training inputs.
+# Matched 800px/1M/30k/late-SH3 policy; initialization is the full treatment.
+adaptive:
+  dssim_psnr_threshold: 21.0
+convergence:
+  enabled: false
+densification:
+  fraction: 0.2
+  interval: 100
+  child_optimizer_state: fresh_children
+learning_rates:
+  position_max_steps: 60000
+loss:
+  dssim_weight: 0.2
+  dssim_window: 11
+  mode: mse_dssim
+model:
+  background: white
+  capacity: 1000000
+  geometry: surfel
+  height: 800
+  initial_splats: 100000
+  sh_degree: 3
+  width: 800
+paths:
+  data: ../data/materials_chrome
+  init_ply: ../outputs/Oct30-1435-materials-chrome-audit/Oct30-1436-training-mask-init/initial.ply
+  output: ../outputs/materials_chrome_hull_surfel_sh3/model.png
+reporting:
+  snapshot_every: 5000
+runtime:
+  arch: gpu
+  seed: 7
+sparse:
+  enabled: false
+  samples_per_tile: 256
+surfel:
+  foreground_pruning:
+    enabled: true
+  environment_height: 64
+  environment_lr: 0.01
+  environment_width: 128
+  initial_reflection: 0.1
+  mode: rgb
+  reflection_lr: 0.01
+  save_debug: true
+  sh_band_interval: 2000
+  sh_start_iteration: 20001
+  specular_start_iteration: 10000
+training:
+  iterations: 30000

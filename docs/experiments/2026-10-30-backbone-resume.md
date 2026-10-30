@@ -229,3 +229,9 @@ New experiment and sweep folders begin `MonDD-HHMM-` in Singapore time, e.g.
 folders. Existing folders and active runs retain their paths. Both sweep launchers
 and the shared run launcher are updated; all 11 existing runner checks pass.
 Commit: `eff28fe`. This naming change does not alter training mathematics.
+
+The user then granted full access and authorized the new chrome dataset,
+parameter changes and longer training while away. Keep original Materials as
+the primary benchmark. Prepared training-only initializer controls and an
+enlarged-mirror diagnostic, with provenance checks and separate reporting:
+[decision record](2026-10-30-initializer-controls.md). The hard stop is unchanged.
