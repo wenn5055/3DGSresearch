@@ -181,7 +181,7 @@ def validate_baseline(directory, candidate, config):
                "--sh-degree", str(record["training_result"]["sh_degree"]),
                "--arch", config["runtime"]["arch"], "--width", str(config["model"]["width"]),
                "--height", str(config["model"]["height"]), "--background", config["model"]["background"],
-               "--metrics", "psnr", "ssim", "--output-dir", str(output / "renders"), "--csv", str(csv_path)]
+               "--metrics", "psnr", "ssim", "lpips", "--output-dir", str(output / "renders"), "--csv", str(csv_path)]
     if config["model"]["tile_pair_capacity"] is not None:
         command += ["--tile-pair-capacity", str(config["model"]["tile_pair_capacity"])]
     candidate["validation_command"] = command
@@ -241,7 +241,7 @@ def execute(directory, root=runner.ROOT):
                 write_progress(directory, plan)
                 args = runner.build_parser().parse_args([
                     candidate["config"], "--name", f"sh{config['model']['sh_degree']}-tune-{candidate['label']}",
-                    "--eval-manifest", "transforms_val.json", "--metrics", "psnr", "ssim",
+                    "--eval-manifest", "transforms_val.json", "--metrics", "psnr", "ssim", "lpips",
                     "--note", f"Validation-only SH learning-rate tuning; sweep: {directory.name}"])
                 with log_path.open("w", encoding="utf-8") as log, contextlib.redirect_stdout(log), contextlib.redirect_stderr(log):
                     run_dir = runner.run_experiment(args, root)

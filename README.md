@@ -83,7 +83,7 @@ Shared and support files:
 To train and evaluate in a new run folder:
 
 ```bash
-python scripts/run_experiment.py config/materials_rgb.yaml --metrics psnr ssim
+python scripts/run_experiment.py config/materials_rgb.yaml --metrics psnr ssim lpips
 ```
 
 New run and sweep folders begin with the month, day and 24-hour Singapore time,

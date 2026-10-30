@@ -24,6 +24,8 @@ comparison includes LPIPS over all 100 views. Future run commands and probe
 defaults include all three metrics. LPIPS uses float images normalized to
 [-1, 1], and lower is better; the comparison tool limits CPU inference to two
 threads. Training objectives/curriculum are separate from this reporting choice.
+The legacy SH-learning-rate and deferred-normal sweep launchers also now request
+all three metrics for new evaluations; their 6 + 11 existing CPU checks pass.
 Working tree was clean at restart (`a4d8fdf`). CUDA is available. All generated
 compiler caches stay under `outputs/`; source/input/runtime fingerprints accompany
 each experiment. Completed results and context are in the

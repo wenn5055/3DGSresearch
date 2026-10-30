@@ -279,7 +279,7 @@ def execute(directory, root=runner.ROOT):
             print(f"Starting {parameter} {candidate['weight']:g}; log: {log_path}", flush=True)
             args = runner.build_parser().parse_args([
                 candidate['config'], '--pipeline', 'surfel', '--eval-manifest', 'transforms_val.json',
-                '--metrics', 'psnr', 'ssim', '--name', f"deferred-tune-{candidate['label']}",
+                '--metrics', 'psnr', 'ssim', 'lpips', '--name', f"deferred-tune-{candidate['label']}",
                 '--note', f'Validation-only deferred {parameter} sweep: {directory.name}'])
             with log_path.open('w', encoding='utf-8') as handle, \
                     contextlib.redirect_stdout(handle), contextlib.redirect_stderr(handle):
