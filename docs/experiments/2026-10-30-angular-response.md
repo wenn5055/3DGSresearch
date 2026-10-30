@@ -82,3 +82,25 @@ An additional Gaussian SH3 reference with bands at 1k/2k/3k is queued only if ti
 permits, following the original implementation's early SH schedule. It changes
 the full schedule, not merely the final degree; do not call it a matched late-SH
 control. Final model selection must use validation before test rendering.
+
+## Final selection rule, fixed at 17:01 Singapore
+
+Within each original-scene representation family (Gaussian SH3, surfel SH3,
+deferred SH3), select the maximum mean validation Chrome PSNR. Break exact ties
+by lower LPIPS, then higher global PSNR, then run path. Retain every candidate's
+full global PSNR/SSIM/LPIPS and Chrome scores. Eligible runs must complete 30k,
+800px, 1M capacity, SH3 and the corrected fresh-child optimizer policy in this
+session. This selects complete family treatments, not matched causal ablations;
+the initializer and SH schedule may differ. The matched reports remain separate.
+
+The auxiliary Chrome report will evaluate all completed protected surfel, LDR
+deferred and HDR/angular members separately. Selection is frozen to JSON with
+checkpoint and validation-source hashes before rendering any final test report.
+All 200 test frames, the three metrics, geometry diagnostics and idle-GPU timing
+are scheduled, followed by labelled videos. No test-based retuning. The earlier
+frozen-pruning test remains an independently completed derivative comparison.
+
+Machine-readable plan and dry-run-checked controller:
+`outputs/first-principles-2026-10-30/final-evaluation-plan.json` and
+`final_evaluation_queue.py`. They wait for the training queues to end and share
+the same absolute deadline.
