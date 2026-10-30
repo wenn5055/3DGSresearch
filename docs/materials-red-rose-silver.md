@@ -16,11 +16,13 @@ This selects the project's Python 3.12.10 environment. Use `python` in the comma
 
 ```bash
 "/c/Program Files/Blender Foundation/Blender 5.0/blender.exe" \
-  --background --disable-autoexec \
-  data/blender/materials_red-rose-silver.blend \
+  --background \
+  --disable-autoexec \
+  "data/blender/materials_red-rose-silver.blend" \
   --python-exit-code 1 \
-  --python scripts/capture_blender_views.py \
-  -- --output data/materials_red-rose-silver
+  --python "scripts/capture_blender_views.py" \
+  -- \
+  --output "data/materials_red-rose-silver"
 ```
 
 This renders 100 training, 100 validation and 200 test views at 800 × 800,
