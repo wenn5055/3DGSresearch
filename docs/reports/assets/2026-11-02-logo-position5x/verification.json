@@ -1,0 +1,20 @@
+{
+  "status": "completed",
+  "manifest": "transforms_val.json",
+  "views_per_arm": 100,
+  "paired_source_differences": [
+    [],
+    []
+  ],
+  "psnr_improved_views": 99,
+  "ssim_improved_views": 100,
+  "lpips_improved_views": 100,
+  "updated_utc": "2026-11-02T08:55:56.214553+00:00",
+  "config_difference_keys_checked": [
+    "learning_rates.position_final",
+    "learning_rates.position_initial",
+    "paths.output"
+  ],
+  "shell_wrapper_exit_code": 1,
+  "shell_wrapper_note": "PowerShell classified torchvision deprecation warnings on stderr as NativeCommandError. Evaluator wrote completed protocol, both 100-view tables and final report; verified artifacts rather than claiming success from shell status."
+}

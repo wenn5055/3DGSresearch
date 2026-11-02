@@ -533,3 +533,29 @@ with an invalidation note. Training-cost reduction is not claimed.
 
 [Illustrated report and committed per-view evidence](reports/2026-10-30-research-wrap-up.md).
 All session jobs are stopped; full checkpoints/logs remain local.
+
+## 2026-11-02 - Chrome logo: position refinement rate x5
+
+**Question:** Are small position updates preventing the frozen-hull HDR model
+from recovering the logo's local shape?
+
+**Matched setup:** same frozen 10k HDR parent, seed 7, 100k surfels, 800px,
+5k continuation steps (15k total), Adam restart, identical loss and all other
+learning rates. Only initial/final position rates change from 1e-5/1e-6 to
+5e-5/5e-6. Training sources and all 204 input hashes match the baseline.
+
+All-100-view paired validation improves PSNR **21.3361 -> 21.7076**, SSIM
+**0.821520 -> 0.833744**, LPIPS **0.140111 -> 0.132206**, and Chrome PSNR
+**15.7505 -> 16.0461**. PSNR improves on 99/100 views, SSIM/LPIPS on 100/100.
+Chrome normal error falls **7.2173 -> 6.7867 degrees**, while depth MAE worsens
+**0.017007 -> 0.017998**. The frame-18 fixed logo rectangle improves only
+**28.2311 -> 27.8420 degrees** and **15.0369 -> 15.1486 dB**; its recessed
+centre/ridges remain visibly incorrect.
+
+**Interpretation:** this rate change improves overall reconstruction under the
+tested policy, but fails to recover the logo. Preserve both variants, including
+the depth-error tradeoff; do not replace the baseline or continue a rate sweep
+on the assumption that it will recover missing concavities. No test images were
+evaluated; this is a single-seed auxiliary development result.
+
+[Protocol, full results and figures](experiments/2026-11-02-logo-position-rate.md).

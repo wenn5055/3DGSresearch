@@ -1,0 +1,75 @@
+{
+  "scope": "Supplemental user-selected validation frame18; fixed rectangle from reference extent, not exact logo segmentation. RGB metrics use float renders; reference geometry is evaluation-only.",
+  "view": 18,
+  "roi_xyxy": [
+    215,
+    365,
+    455,
+    575
+  ],
+  "rows": [
+    {
+      "model": "Position LR 1x",
+      "region": "logo_rectangle",
+      "pixels": 50400,
+      "normal_valid_fraction": 1.0,
+      "normal_mae_deg": 28.231101989746094,
+      "depth_mae": 0.05989961326122284,
+      "psnr_db": 15.036895171070615,
+      "crop_ssim": 0.34518733620643616
+    },
+    {
+      "model": "Position LR 1x",
+      "region": "foreground",
+      "pixels": 176147,
+      "normal_valid_fraction": 0.9999659387010156,
+      "normal_mae_deg": 14.520309448242188,
+      "depth_mae": 0.028629781678318977,
+      "psnr_db": 16.708830079491765
+    },
+    {
+      "model": "Position LR 1x",
+      "region": "foreground_outside_logo_rectangle",
+      "pixels": 125747,
+      "normal_valid_fraction": 0.9999522874205784,
+      "normal_mae_deg": 9.024959564208984,
+      "depth_mae": 0.0160966869443655,
+      "psnr_db": 17.61434654018737
+    },
+    {
+      "model": "Position LR 5x",
+      "region": "logo_rectangle",
+      "pixels": 50400,
+      "normal_valid_fraction": 1.0,
+      "normal_mae_deg": 27.841989517211914,
+      "depth_mae": 0.058687929064035416,
+      "psnr_db": 15.148559431906376,
+      "crop_ssim": 0.36856022477149963
+    },
+    {
+      "model": "Position LR 5x",
+      "region": "foreground",
+      "pixels": 176131,
+      "normal_valid_fraction": 0.9998751085703905,
+      "normal_mae_deg": 13.85192584991455,
+      "depth_mae": 0.02908255159854889,
+      "psnr_db": 17.05116282725954
+    },
+    {
+      "model": "Position LR 5x",
+      "region": "foreground_outside_logo_rectangle",
+      "pixels": 125731,
+      "normal_valid_fraction": 0.9998250538754543,
+      "normal_mae_deg": 8.243928909301758,
+      "depth_mae": 0.01721506379544735,
+      "psnr_db": 18.132054623303052
+    }
+  ],
+  "runs": [
+    "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Oct30-1733-materials_chrome-staged-hdr-refine-5k",
+    "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov02-1651-materials_chrome-staged-hdr-refine-position5x-5k"
+  ],
+  "reference_sha256": "df5b5909e9bfc46230bfa5072c1233e94b73ce2a0d6377e625bc0c536861a167",
+  "script_sha256": "a3937accf99b631ca2a83be7bc0d4976ed838b4bb36040d879d8c27f0a722ebb",
+  "created_utc": "2026-11-02T08:53:33.518090+00:00"
+}

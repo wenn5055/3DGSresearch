@@ -1,8 +1,9 @@
 # Reflection research status
 
-**Updated 2 November 2026, 13:28 Singapore: original Materials matched protected
-SH-only control and paired validation completed.**
-[Current protocol](experiments/2026-11-02-protected-control.md).
+**Updated 2 November 2026, 16:55 Singapore: matched Chrome position-rate trial
+completed. Image quality improves; the distorted logo remains unresolved.**
+[Latest experiment](experiments/2026-11-02-logo-position-rate.md) and
+[original Materials protected control](experiments/2026-11-02-protected-control.md).
 The previous session stopped on request on 30 October at 17:55; its completed
 evidence is in the [illustrated wrap-up report](reports/2026-10-30-research-wrap-up.md).
 
@@ -17,11 +18,15 @@ evidence is in the [illustrated wrap-up report](reports/2026-10-30-research-wrap
 - **Auxiliary Chrome staged diagnostic:** 100k points / 15k cumulative steps,
   HDR refinement 21.3361 / 0.821520 / 0.140111 versus fixed SH3
   19.0057 / 0.767141 / 0.176790. Images still lack sharp tree reflections.
-- **Implemented, smoke-tested, untrained:** combined HDR/angular + alpha-mask
-  supervision presets. Early-SH Gaussian, Ship and new-method test/video runs
+- **Position LR x5 follow-up:** same parent and 5k refinement budget, 21.7076 /
+  0.833744 / 0.132206; Chrome 16.0461 dB, normal error 6.79 degrees. Chrome
+  depth error worsens 5.8%, while logo-region normal error improves only
+  28.23 -> 27.84 degrees. Preserve separately; this does not recover the logo.
+- **Full 30k joint HDR/angular + alpha-mask presets remain untrained.**
+  Early-SH Gaussian, Ship and new-method test/video runs
   were cancelled before starting.
 
-Next: predeclare a bounded staged HDR/angular refinement experiment to improve
-normal accuracy and reflection detail, then fix settings and evaluate untouched
-test views. Full logs/checkpoints remain
+Next: address the missing local shape and complete fair SH controls before
+final selection/evaluation; disclose that historical Materials test scores have
+already been inspected. Full logs/checkpoints remain
 in `outputs/first-principles-2026-10-30/` and the timestamped run folders.

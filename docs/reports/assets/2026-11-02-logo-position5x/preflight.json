@@ -1,0 +1,21 @@
+{
+  "status": "passed",
+  "baseline": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Oct30-1733-materials_chrome-staged-hdr-refine-5k",
+  "parent": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Oct30-1718-materials_chrome-frozen-hdr-10k",
+  "config_differences": {
+    "learning_rates.position_initial": [
+      1e-05,
+      5e-05
+    ],
+    "paths.output": [
+      "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Oct30-1733-materials_chrome-staged-hdr-refine-5k\\model.png",
+      "C:\\Users\\e1355010\\3DGSresearch\\outputs\\materials_chrome_staged_hdr_refine_position5x\\model.png"
+    ],
+    "learning_rates.position_final": [
+      1e-06,
+      5e-06
+    ]
+  },
+  "changed_python_since_baseline": [],
+  "identical_input_files": 204
+}

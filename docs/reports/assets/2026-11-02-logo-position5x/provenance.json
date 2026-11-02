@@ -1,0 +1,61 @@
+{
+  "scope": "Single-seed auxiliary Chrome position-LR trial, 100 validation views,15k total steps. Frame18 fixed ROI is a development diagnostic. No test selection.",
+  "files": [
+    {
+      "path": "outputs/Nov02-1651-logo-position5x-session/paired-validation/summary.csv",
+      "sha256": "96e7ca510d70db6c7563fce5983c8864337a61b95c43d46d1a019a4488598c65"
+    },
+    {
+      "path": "outputs/Nov02-1651-logo-position5x-session/paired-validation/metrics.csv",
+      "sha256": "89b7869651c4474a7477424563ae9355ce9cd3af0f070adb61df8aa03ab9bced"
+    },
+    {
+      "path": "outputs/Nov02-1651-logo-position5x-session/paired-validation/geometry-summary.csv",
+      "sha256": "7b3e286780ac23f784500639d86d6c22dcb564ebfe8789deb5e5c91bfd751358"
+    },
+    {
+      "path": "outputs/Nov02-1651-logo-position5x-session/paired-validation/geometry-metrics.csv",
+      "sha256": "a704bc3fc29a5b4f425ffb99368d503528d57dc2e4dbd13452097ff972a46c7c"
+    },
+    {
+      "path": "outputs/Nov02-1651-logo-position5x-session/preflight.json",
+      "sha256": "e48c1f7b011fc149bba714e94053b1c51674499da5c90068f7bf45406a653f6b"
+    },
+    {
+      "path": "outputs/Nov02-1651-logo-position5x-session/logo-summary.json",
+      "sha256": "0750519d661eb5f16d941976f2f00152e9410add36ac268f2a409a2f2c4bf22d"
+    },
+    {
+      "path": "outputs/Nov02-1651-logo-position5x-session/logo-comparison.png",
+      "sha256": "b9c8b77648fac2e63c7ea51209a6de00f75198994b74bd3f32563ed357fe80c0"
+    },
+    {
+      "path": "outputs/Nov02-1651-logo-position5x-session/verification.json",
+      "sha256": "19d5cb7d08af054185875e13ed2ba75b7c0d2c73f662b36cf0cc6d99804675c1"
+    },
+    {
+      "path": "outputs/Nov02-1651-logo-position5x-session/analyze_logo.py",
+      "sha256": "a3937accf99b631ca2a83be7bc0d4976ed838b4bb36040d879d8c27f0a722ebb"
+    },
+    {
+      "path": "outputs/Nov02-1651-logo-position5x-session/paired-validation/protocol.json",
+      "sha256": "9e8e68ba6febba278f8d849d9f552c9244c261c6ced8909e2b69791a5f075d58"
+    },
+    {
+      "path": "outputs/Oct30-1733-materials_chrome-staged-hdr-refine-5k/run.json",
+      "sha256": "3c1c617d2fbca21d82c865c75c1bc868b64e7b01a8727ba55634ce60eace0d24"
+    },
+    {
+      "path": "outputs/Oct30-1733-materials_chrome-staged-hdr-refine-5k/stage_history.json",
+      "sha256": "650e0a9041633e40e43324fea2c95197e72922b73c75db41a49abb964e8ae590"
+    },
+    {
+      "path": "outputs/Nov02-1651-materials_chrome-staged-hdr-refine-position5x-5k/run.json",
+      "sha256": "93b9944553834eab1e73a669371d8a247ebf50810cd7a2b29616b50b5ec67065"
+    },
+    {
+      "path": "outputs/Nov02-1651-materials_chrome-staged-hdr-refine-position5x-5k/stage_history.json",
+      "sha256": "5ca8955937656f5b44acb3fd312f8b20c58952f777416bf62c8c442497652558"
+    }
+  ]
+}
