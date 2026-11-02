@@ -1,0 +1,438 @@
+{
+  "method": "training-alpha visual hull, smoothed signed-distance zero crossings",
+  "inputs": [
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\transforms_train.json",
+      "sha256": "18980135ed77b46c9f4a6ecc28fc29c7908d19a025a59416c11dcd2e71165f3a"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_0.png",
+      "sha256": "e08b9cb9524b09abd0eac448f2962b51a0aa07ea3d7037a0b711f47931a6e7fa"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_1.png",
+      "sha256": "96bf116b2d6f449fe78260644609a85178baf3f35cf0f9377aca0ee988393796"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_2.png",
+      "sha256": "46b2e34e0acee7641600601aa15fd8811353991e7e13d2ad1e018ad826619b90"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_3.png",
+      "sha256": "430f5fd298b4a14e01378f61d7d6eab9d42b1c17c4c0799d93808fbb7fe49a57"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_4.png",
+      "sha256": "319f490cd40bcb23f1ab8088ab4ea7f1f145382378a94da29a661ec26ae00c8b"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_5.png",
+      "sha256": "bb6009b15d8a06bebf35ff15df6f78089861a805ee9a27aabb2ced49289e8eba"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_6.png",
+      "sha256": "1b8a3f84ef35e5882fa813332a9a34aef376ba4ca604720261ac5478be91f983"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_7.png",
+      "sha256": "ac8098c703fbf257dcfa0d2cb1efcf85e5824dfa3d1b63bc22e779a3e5dcb88a"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_8.png",
+      "sha256": "c1c76f5015041772c800f7728e888b4f3b9c2bd5681856ef4f3ddc5b1fbc9847"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_9.png",
+      "sha256": "3410f7e12d004fca1987b01169c2197ecb5ce4514b532e3116a26eb590b2068c"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_10.png",
+      "sha256": "f2739c7d8e1b674bdf671d0ed90ea222a22b5878bccba8c6636c7a66456f4d83"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_11.png",
+      "sha256": "c46fc675e92bc718a3243106178756511cd3d725aa62fe790d4d3e54bc04d4db"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_12.png",
+      "sha256": "6aebb180ac6a58f37e7418400ba1bf4640688ee6b1afa1d88f15538274a31052"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_13.png",
+      "sha256": "0f6fea7ec73787c8ef301f8e4d1f8186fc12adc6547d9dfeffcbf0d53dd7803d"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_14.png",
+      "sha256": "1e78162d2eeb995cc4575c3f54ff552428ab65ac123a0ee98957ae6db1415b80"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_15.png",
+      "sha256": "78b39c3447dfd246d62c836aaf48cac85cb47760d561991f1da3dd0575105d41"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_16.png",
+      "sha256": "1104a1fb6532a95c7952531edd8595b3af697bd9a523fe69382ed07a39558da9"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_17.png",
+      "sha256": "9f8f60d4089cf91ec482f704586f00f0c4efe5921b602d20854e16e378d3091f"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_18.png",
+      "sha256": "f7216b9d2bd37bdc922d8374b6773888a03d928e3b4a55724bb21d8600d43ab0"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_19.png",
+      "sha256": "09a8968277d18469ed7d90333fcad5364f8cd446519af23d45c108f2757acaf7"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_20.png",
+      "sha256": "65b9393caaa72cd136389cc5a1d50e34e936a4fd14b19b6651f36e066a2226b2"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_21.png",
+      "sha256": "9c4221cc63290c1d58e4e92d932131ecefb7a3e197e21fa6b0c28521a789350b"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_22.png",
+      "sha256": "01874f8f7c892a0f86b466bf54618d9415a20dcbb84852d7f12f5880f033b63b"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_23.png",
+      "sha256": "a718d1252c001ac71ca653a4a6f2c115b9140199b0b4733a3d659cfc65b9b12d"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_24.png",
+      "sha256": "9c0c581b85213a5fda1bd6b0ca3d0a3488a6f95f26bc048bbeb1ce9b190b69a6"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_25.png",
+      "sha256": "f789433a389b18debcb13b93fd0178cdc3403e24b946ba22fc55d2e307a57be9"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_26.png",
+      "sha256": "65ace1fc1518af88ac768d1bca7813d06442b9fb14be1742be03d4b13ae6a6d0"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_27.png",
+      "sha256": "ca83fd804f3b011a97274f03ab39114259ca577bcad45c30caaa9dfc3c3ac81d"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_28.png",
+      "sha256": "857b16cd16b2147085459204a243f02aa8528cb17ba99202839dc7407b7ebc44"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_29.png",
+      "sha256": "5927ee040f5f28f134450e940c265b68c93c0a7044fd7d489846b7764ba703fa"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_30.png",
+      "sha256": "400920603bce6c7c16519aef622da314014fee49eccf86038f4197209b12717c"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_31.png",
+      "sha256": "72d660fe5bb80e5097e2f3190c3743c0694e2089124b36ba83043c74490d1024"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_32.png",
+      "sha256": "2192ffca0516e58a81c1c02adce6e3523e50b6547b258da8b9527726a51d23a1"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_33.png",
+      "sha256": "2117552fcbff66d68fa8b12f4b1825f5cd77e48d64f3b0d3c1c0050c666b745d"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_34.png",
+      "sha256": "b9ab4d482dd5fc83dcb6b8ec3333910f29af09633a000821f67aef0d73476b49"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_35.png",
+      "sha256": "a2e157f564a58469929d596eed3b54382ee7517f71b83cf3cfad43733f44e19e"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_36.png",
+      "sha256": "984340e2eaaf6ca73829c6f7a9557fa76dd04025fe6aa17d81fec3d327141365"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_37.png",
+      "sha256": "b8da9b7efc2116ff37de52533c8984ca126bc77ba8836e4b23bf5bdee4f29e59"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_38.png",
+      "sha256": "7c34d9cc290cfdac3338d7e1d242324d48a49c0f288aeabd74e7d595067389fc"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_39.png",
+      "sha256": "89b8c5238a8bad8a9fcdcdccded627c5bb6bfd89f9e80cb25d3f4fa4e7690119"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_40.png",
+      "sha256": "f46a3cd5d8d5afe833d32abcfae14db700fd5057fd2951a268c12fa871eea689"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_41.png",
+      "sha256": "f2bfd66054d53ad2d0394a61bfaa08722605e08a305dd6b01d004080c6b97129"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_42.png",
+      "sha256": "3379fe72b042a6f1c9892253daf0e4c603c78da85747a406e40155cfececcabb"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_43.png",
+      "sha256": "b60a911ddf1062dfd06c635e67d72f0bbcb99e8e08f485848ca565b0b59e3305"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_44.png",
+      "sha256": "8e3b5a806000c7c089e240e2300c9f877f19e50df0d07ec95879b6a508bcc21d"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_45.png",
+      "sha256": "29567a285efe64d134ce50ae09d0a629bb555bf55dacf118d5560df0672e0ba3"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_46.png",
+      "sha256": "abb91d6e02ac924022d7e78f3860aa65cba4b445067f31d1cec7e22eaf5a03a6"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_47.png",
+      "sha256": "e4e408523b3161e9598a8983628e5209fb8f73e1dabf66048107f1c4a3c2fad6"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_48.png",
+      "sha256": "6e67d41478d6c9a471a167cf8993de0fd615584ff60e0cf87f63a3db76720708"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_49.png",
+      "sha256": "c420513ebaf03c9efab345c795924a3b48603654202052ebe239853548f93caf"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_50.png",
+      "sha256": "9a274db7c60d59dd80e7ecbf2a9a733c8379fe59ad3e92938c34b2a544ab97c1"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_51.png",
+      "sha256": "f2fa64ea083ecd96f3834b9b5321cf15173b2e22067d6aee201af87d36aba537"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_52.png",
+      "sha256": "4c3d96871c1fa48bd1a97a844ec9e3d7ef98ed2ba15cb779af84b4c36225c3bb"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_53.png",
+      "sha256": "f110db812bf30cdaac49567cc23ef785d15e22b410ab5870eed17792784a9c5c"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_54.png",
+      "sha256": "924fcdf47b5372652a0c8c68c1a3fa35a1070a2cc909a90977f87e709c862a3d"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_55.png",
+      "sha256": "9dd05a6e45c717639aa8a892922957f88f892787974f9884ecf6ee8dd459b91a"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_56.png",
+      "sha256": "4ac5bbfaa2d8b85913ba4c4ea8fd899da17030d8fa9ce9979d4cf1b8fa349ce4"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_57.png",
+      "sha256": "2c0f2c05622c15035eba7e9c199bb5a2b770ca6421a28142b8c27fdc7ca26ea8"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_58.png",
+      "sha256": "d41db95926f43ede78ddc91c8817f0d22e031b5cce5d4b06643280ab64e10581"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_59.png",
+      "sha256": "60d9b933dce2e466cd006df38899adc70793aa1c164d8d08bc844dadbb6963f6"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_60.png",
+      "sha256": "e36524bcf02e7d0a5f447b0988e91d1a84d2d454e801a1c7b330075e13423963"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_61.png",
+      "sha256": "8a83b38a16239f18332991016bb908719e270316a8dd17480aa55bdb63161442"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_62.png",
+      "sha256": "49aa10193cad103a9f22160399a38302b1e4ab2fb7eccb4a70e271ee153a31e4"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_63.png",
+      "sha256": "43dd3d4424f96579595b17ea3fbbf60afa217219a52940d97073b754bf9bfbf0"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_64.png",
+      "sha256": "a0d4182f4431e3a7215f756e8bd5afb58990aa54fb09cbd3a817d9a8767b6d99"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_65.png",
+      "sha256": "00690953117f8e821e970611c6f7ce8cea0588f620a66102b5d798c470e178e2"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_66.png",
+      "sha256": "d4d220fc5862c4d9beef9c1f9a385b71728132d7df60f10a04f44d70c2576542"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_67.png",
+      "sha256": "cc5134256af81d2ff28a95ee6827d2cf4857ba22e6d5403dacace04f4874385b"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_68.png",
+      "sha256": "ccfffa119560a284b40e888d4a823f134623c5f4c8c5375b4aa8cc4ecf0bdad5"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_69.png",
+      "sha256": "2c8b0430b56bfeba710023344637c01cb61245b694e3112dfc282287e367c59d"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_70.png",
+      "sha256": "d5d14177c1366eba75dc8d0d8cc04fb4c5724b316993c5ab234381eef6c7bccd"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_71.png",
+      "sha256": "3a5ba53974c012e9c3076eb6447d9423cc91e15d299bfb80769ade6e6b3c86cf"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_72.png",
+      "sha256": "2a476046a15f97d967b093c0d1abb63ff1389c03ee722e96e3c434dd762f33fb"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_73.png",
+      "sha256": "eae9d391dd2f69f8db2acc4e6fe504ac367634a33afbf56d067be5880ebc6edf"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_74.png",
+      "sha256": "87055174b2e292506e5a09d64b3566aebdac45f746ae0129b5b01c11d162a40a"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_75.png",
+      "sha256": "57132e50c72e289b4c651677f08602001abc503e4e5a689ea2a3344561862fba"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_76.png",
+      "sha256": "4998f5739669c271c34af2e289eaaf4e5582a3479a6144e074bafe360c0dfe2e"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_77.png",
+      "sha256": "355bcb4b24f6ef42d4dd07d79d11aa042e839fdd62fb47a5186839490385efbc"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_78.png",
+      "sha256": "56c1865b22f3dcc9b3a40b8c7ef4d218453cf2e489d391d84d4527981fd2de94"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_79.png",
+      "sha256": "559758199b211c183418f44b8108d126b453b1acc4c7b9a53c5369b27e324cf2"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_80.png",
+      "sha256": "396451bc159077543c225fe34ac47045d48f037eda98cd55feed22671f2cab6f"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_81.png",
+      "sha256": "9a3b5b1f09b0fbc19dabcdc3be357f96137a14f33861558e18cd33577097da7e"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_82.png",
+      "sha256": "00b8132d6897a5e54c7c753bd9e75eab318824e8b0e635a2833d5e0dafe06256"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_83.png",
+      "sha256": "9e08e22d398cf7fa44fc34f365bbe03e9bcf160ed3955768d3733ca957c38263"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_84.png",
+      "sha256": "b57f917826a23da20342af6fd40e82492f83ae88fcd7b65208fc696df9d677d1"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_85.png",
+      "sha256": "51438c0b08d9ca6003b547ce920067249c9e8576dfc9cf251819da3b28d0c157"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_86.png",
+      "sha256": "5bf5b5dfb702333d4f52226caf26ab1b6c55368d4881ff4f74fd31f08d630fa6"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_87.png",
+      "sha256": "7fb95799e344e7e25172076be523fab10a3875596c713d0c51cc186f0b3484d3"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_88.png",
+      "sha256": "1de9920c8a7089bc4ae8eac92a94998749e5659e91f11331da394057cdcb176a"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_89.png",
+      "sha256": "5716ea149f77c3e639ab76d07b7cdf73bbec0e8c90ec2aaa83f4c4bf0cbb11cc"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_90.png",
+      "sha256": "6f9e98abe3d71b295f0a969e9b91d31bbff3711a58a74d6cce0e2fdb85ff8064"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_91.png",
+      "sha256": "fbcadbb344852db48caceef3c31359a0808e5eaf792a172704069a9f902b5b73"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_92.png",
+      "sha256": "fae47434201993d254c10b95ee17a74561e443bd011612f6e8d5869800de4665"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_93.png",
+      "sha256": "1deb74d87d1d00607b08f7ffee09c7a42f4e411976011881a451d2e0993b37df"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_94.png",
+      "sha256": "a4a96989368df7111e700e74ded2d3186377a5084955c835de4acdb523c7288e"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_95.png",
+      "sha256": "79009fada8d040861a209175e0f0ef83bd61f9916dab97e92a7b2615d690f619"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_96.png",
+      "sha256": "a54ebbedc7490979b208f167e8910b0b7912ab864d20ce7d95310bb802d58e56"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_97.png",
+      "sha256": "cabac8bc25005e3486fd98e572acbfa8ad437702c8c97f3b857d0ab445b1eaab"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_98.png",
+      "sha256": "d9b751c15da5f8867914c10b6a1553d3afabf5a927f26d399a0f68713add11a6"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\train\\r_99.png",
+      "sha256": "9b85fc7eedd3972d2cef14656956a93a92a1b55fcdc151b4ae67365930cf7808"
+    }
+  ],
+  "training_views": 100,
+  "uses_held_out_images": false,
+  "uses_reference_geometry": false,
+  "bounds_xyz": [
+    [
+      -1.4108951065886555,
+      -1.4108951065886555,
+      -1.4108951065886555
+    ],
+    [
+      1.4108951065886555,
+      1.4108951065886555,
+      1.4108951065886555
+    ]
+  ],
+  "grid_resolution": 512,
+  "voxel_step": 0.005511309010111935,
+  "mask_resolution": 800,
+  "alpha_threshold": 0.5,
+  "mask_margin_pixels": 1,
+  "sdf_smoothing_voxels": 3.0,
+  "occupied_voxels": 7326461,
+  "raw_surface_points": 273750,
+  "exported_points": 100000,
+  "initial_tangent_scale": 0.009118676859941138,
+  "seed": 7,
+  "seconds": 68.79339330000221,
+  "script_sha256": "68a668b96da63a02e43e064197ea958a4a44d3ac62dcf224349b2cbedd809261",
+  "limitation": "Silhouettes cannot recover unseen concavities; this is an inferred initializer, not ground-truth geometry."
+}

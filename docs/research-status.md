@@ -1,10 +1,12 @@
 # Reflection research status
 
 **Updated 2 November 2026: focus on specular reflection reconstruction.
-Logo-specific geometry investigation closed by scope decision.**
+Logo-specific geometry investigation closed; plain-sphere capture and staged HDR completed.**
+[Today's illustrated closeout](reports/2026-11-02-research-wrap-up.md) includes
+the new dataset, both training stages and reflection crops.
 [Scope decision and proposed sphere diagnostic](research-scope-2026-11-02.md).
 The completed position-rate trial improves image quality; the logo remains unresolved.
-[Latest experiment](experiments/2026-11-02-logo-position-rate.md) and
+[Position-rate experiment](experiments/2026-11-02-logo-position-rate.md) and
 [original Materials protected control](experiments/2026-11-02-protected-control.md).
 The previous session stopped on request on 30 October at 17:55; its completed
 evidence is in the [illustrated wrap-up report](reports/2026-10-30-research-wrap-up.md).
@@ -24,13 +26,19 @@ evidence is in the [illustrated wrap-up report](reports/2026-10-30-research-wrap
   0.833744 / 0.132206; Chrome 16.0461 dB, normal error 6.79 degrees. Chrome
   depth error worsens 5.8%, while logo-region normal error improves only
   28.23 -> 27.84 degrees. Preserve separately; this does not recover the logo.
+- **New `justChromeBall` dataset and HDR workflow:** 400 captured 800px views
+  (100/100/200), training-mask initialization, 10k frozen HDR then 5k refinement.
+  All-100-view validation PSNR improves **22.4996 -> 24.1250**, SSIM
+  **0.842281 -> 0.874920**. PSNR improves on 95 views, SSIM on all 100;
+  fine reflections remain blurred. No SH/LDR sphere controls or test evaluation yet.
 - **Full 30k joint HDR/angular + alpha-mask presets remain untrained.**
   Early-SH Gaussian, Ship and new-method test/video runs
   were cancelled before starting.
 
-Next: specify a plain-sphere appearance diagnostic with matched SH3, LDR deferred
-and HDR/angular controls; complete fair SH controls for the primary Materials
-benchmark. The sphere scene and runs remain planned. Preserve the logo failure
+Next: specify equal-budget SH3, LDR deferred and HDR/angular sphere controls on
+the same fixed estimated geometry, with matched refinement studied separately.
+Today's sphere continuation is complete; those controlled comparisons remain
+planned. Preserve the logo failure
 as a limitation and disclose prior inspection of historical Materials test scores.
 Full logs/checkpoints remain
 in `outputs/first-principles-2026-10-30/` and the timestamped run folders.

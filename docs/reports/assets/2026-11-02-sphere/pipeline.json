@@ -1,0 +1,25 @@
+{
+  "status": "completed",
+  "data": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall",
+  "cumulative_training_iterations": 15000,
+  "initializer_command": [
+    "C:\\Users\\e1355010\\3DGSresearch\\.venv\\Scripts\\python.exe",
+    "-u",
+    "C:\\Users\\e1355010\\3DGSresearch\\scripts\\initialize_from_training_masks.py",
+    "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall",
+    "--output",
+    "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov02-202000-justChromeBall-staged-hdr-pipeline\\initializer",
+    "--grid-resolution",
+    "512",
+    "--mask-resolution",
+    "800",
+    "--max-points",
+    "100000",
+    "--smoothing",
+    "3",
+    "--seed",
+    "7"
+  ],
+  "frozen_run": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov02-2021-justChromeBall-frozen-hdr-10k",
+  "refined_run": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov02-2023-justChromeBall-staged-hdr-refine-5k"
+}

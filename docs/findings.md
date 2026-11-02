@@ -559,3 +559,30 @@ on the assumption that it will recover missing concavities. No test images were
 evaluated; this is a single-seed auxiliary development result.
 
 [Protocol, full results and figures](experiments/2026-11-02-logo-position-rate.md).
+
+## 2026-11-02 evening - New plain-sphere capture and staged HDR
+
+Created `justChromeBall`: one Chrome sphere without logo/base, forest lighting,
+800px RGBA, 100/100/200 train/validation/test views using Materials camera
+templates. All capture hashes match; split camera matrices do not overlap at
+seven decimal places. A fresh training-alpha hull supplied 100k surface points.
+
+Frozen-geometry HDR/angular fitting for 10k steps followed by 5k gentle geometry
+refinement completed. On the same 100 validation cameras, PSNR increases
+**22.4996 -> 24.1250 dB**, SSIM **0.842281 -> 0.874920**. PSNR improves on 95
+views and SSIM on all 100. Both image losses stayed MSE; refinement also adds
+mask/normal-depth terms. Its PLY and HDR/material parent hashes were verified.
+
+![Plain chrome sphere: reference, frozen HDR and refined HDR reflection crops](reports/assets/2026-11-02-sphere/reflection-crops.png)
+
+*`justChromeBall`, validation r_0, r_13, r_73 and r_88, top to bottom. Columns:
+reference, frozen HDR at 10k, refined HDR at 15k total. Identical central crops;
+labels show whole-image PSNR. Sky/foliage structure improves, while wavy distortion
+and missing fine detail remain.*
+
+Five views lose PSNR, with the largest drop -0.5050 dB at r_51, preserved in the
+closeout. Extra steps, released geometry and geometry losses change together;
+this is not an equal-budget SH/LDR/frozen-control comparison or evidence of
+accurate recovered normals. No test evaluation or LPIPS was performed here.
+
+[Full daily closeout, dataset views, regressions and reproducible command](reports/2026-11-02-research-wrap-up.md).

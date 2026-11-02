@@ -2,6 +2,12 @@
 
 Recorded 2 November 2026 (Singapore), following the user's scope clarification.
 
+**Evening update:** the sphere was subsequently created as `justChromeBall`,
+captured and trained with 10k frozen HDR + 5k refinement. See the
+[illustrated closeout](reports/2026-11-02-research-wrap-up.md). The equal-budget
+SH3/LDR/HDR appearance comparison below remains planned; today's continuation
+does not supply those controls.
+
 ## Research objective
 
 Investigate whether deferred shading with explicit surfel normals improves the
@@ -51,7 +57,8 @@ this benchmark. Secondary-scene requirements remain in the project plan.
 
 **Proposed auxiliary scene: one smooth chrome sphere**, without a logo or pedestal,
 under the same forest environment and matched camera poses. Preserve the old Chrome
-dataset separately. The new sphere has not been created, captured or trained.
+dataset separately. At the time of this scope decision, the sphere had not yet
+been created, captured or trained; the evening update above records completion.
 
 ![Existing auxiliary Chrome reference, fixed SH3, fixed HDR and refined HDR appearance comparison](reports/assets/2026-10-30/chrome-appearance.png)
 
@@ -59,7 +66,7 @@ dataset separately. The new sphere has not been created, captured or trained.
 fixed-geometry HDR/angular, and HDR/angular after geometry refinement, all at 15k
 cumulative steps. Reflection detail improves but remains blurred. The refined
 arm also changes geometry. This is evidence from the existing scene; no plain-sphere
-result is shown because that study is still planned.*
+result appears in this historical figure; new sphere results are in the evening closeout.*
 
 Before implementation, fix the material response, capture settings, disjoint
 splits, initialization, resolution, budgets, metrics and comparison arms:
@@ -82,6 +89,9 @@ evaluation. Disclose prior inspection of historical Materials test results.
 Higher global PSNR or stronger highlights alone do not establish sharper reflections.
 
 ## Report wording
+
+The following wording records the earlier scope decision, before the sphere
+capture and training reported in the evening closeout.
 
 > We evaluated the deferred surfel pipeline on Materials and an enlarged Chrome
 > diagnostic. Inspection of the Chrome logo exposed errors in recessed geometry

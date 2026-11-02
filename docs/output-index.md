@@ -95,6 +95,8 @@ Updated 02 Nov 2026 (Singapore).
 - [Oct30-1753-materials-hull-protected-surfel-sh3](../outputs/Oct30-1753-materials-hull-protected-surfel-sh3/) — Original Materials protected hull: ray-plane depth, training-only normal-depth weight .01 from step 1/ramp 2k; reflection from step 1 for deferred mode. Matched 800px/1M/30k/late SH3 pair. Closest prior: Oct30-1717-materials-hull-protected-deferred-sh3; surfel.mode: deferred → rgb. [interrupted; val]
 - [Nov02-1257-materials-hull-protected-surfel-sh3](../outputs/Nov02-1257-materials-hull-protected-surfel-sh3/) — Nov 2: complete missing original Materials protected SH-only control. Fresh 30k, 800px, 1M, seed 7; matched to Oct30-1717 deferred except appearance mode. No test evaluation. Closest prior: Oct30-1717-materials-hull-protected-deferred-sh3; surfel.mode: deferred → rgb. [completed; val]
 - [Nov02-1651-materials_chrome-staged-hdr-refine-position5x-5k](../outputs/Nov02-1651-materials_chrome-staged-hdr-refine-position5x-5k/) — Matched logo geometry trial: same frozen 10k HDR parent, 5k continuation (15k total), Adam restart; change only position learning-rate scale x5. No test evaluation. Closest prior: Oct30-1733-materials_chrome-staged-hdr-refine-5k; learning_rates.position_final: 1e-06 → 5e-06, learning_rates.position_initial: 1e-05 → 5e-05. [completed; val]
+- [Nov02-2021-justChromeBall-frozen-hdr-10k](../outputs/Nov02-2021-justChromeBall-frozen-hdr-10k/) — Staged HDR: training-mask initializer, 10k frozen appearance, 5k geometry refinement. [completed; val]
+- [Nov02-2023-justChromeBall-staged-hdr-refine-5k](../outputs/Nov02-2023-justChromeBall-staged-hdr-refine-5k/) — Staged HDR: training-mask initializer, 10k frozen appearance, 5k geometry refinement. Closest prior: Nov02-2021-justChromeBall-frozen-hdr-10k; geometry_loss.mask_weight: 0.0 → 0.1, geometry_loss.normal_depth_weight: 0.0 → 0.01, geometry_loss.normal_ramp_iterations: 2000 → 1000, learning_rates.opacity: 0.05 → 0.005, +8 other settings (see config). [completed; val]
 
 ## Tuning
 
@@ -118,6 +120,9 @@ Updated 02 Nov 2026 (Singapore).
 - [Nov02-1257-protected-control-session](../outputs/Nov02-1257-protected-control-session/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [Nov02-1645-logo-diagnostic](../outputs/Nov02-1645-logo-diagnostic/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [Nov02-1651-logo-position5x-session](../outputs/Nov02-1651-logo-position5x-session/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
+- [Nov02-1718-logo-material-diagnostic](../outputs/Nov02-1718-logo-material-diagnostic/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
+- [Nov02-201718-justChromeBall-staged-hdr-pipeline](../outputs/Nov02-201718-justChromeBall-staged-hdr-pipeline/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
+- [Nov02-202000-justChromeBall-staged-hdr-pipeline](../outputs/Nov02-202000-justChromeBall-staged-hdr-pipeline/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [Oct30-1435-materials-chrome-audit](../outputs/Oct30-1435-materials-chrome-audit/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [Oct30-1446-materials-backbone-val](../outputs/Oct30-1446-materials-backbone-val/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [Oct30-1454-materials-surfel-contributions](../outputs/Oct30-1454-materials-surfel-contributions/) — unrecorded folder; purpose needs review (no run.json/sweep.json).

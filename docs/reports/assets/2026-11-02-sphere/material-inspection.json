@@ -1,0 +1,265 @@
+{
+  "scene": "C:\\Users\\e1355010\\3DGSresearch\\data\\blender\\justChromeBall.blend",
+  "scene_sha256": "b5b3b5eef50aecde5b353003199edf3e0312ac0862093af76d5972e0e4cd4f91",
+  "blender_version": "5.0.1",
+  "world": {
+    "name": "Shader Nodetree",
+    "nodes": [
+      {
+        "name": "World Output",
+        "type": "OUTPUT_WORLD",
+        "inputs": {
+          "Surface": {
+            "default": null,
+            "linked": true
+          },
+          "Volume": {
+            "default": null,
+            "linked": false
+          }
+        }
+      },
+      {
+        "name": "Background",
+        "type": "BACKGROUND",
+        "inputs": {
+          "Color": {
+            "default": [
+              0.05087608844041824,
+              0.05087608844041824,
+              0.05087608844041824,
+              1.0
+            ],
+            "linked": true
+          },
+          "Strength": {
+            "default": 1.0,
+            "linked": false
+          },
+          "Weight": {
+            "default": 0.0,
+            "linked": false
+          }
+        }
+      },
+      {
+        "name": "Environment Texture",
+        "type": "TEX_ENVIRONMENT",
+        "inputs": {
+          "Vector": {
+            "default": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "linked": false
+          }
+        },
+        "image": "forest.exr"
+      }
+    ],
+    "links": [
+      [
+        "Background",
+        "Background",
+        "World Output",
+        "Surface"
+      ],
+      [
+        "Environment Texture",
+        "Color",
+        "Background",
+        "Color"
+      ]
+    ]
+  },
+  "objects": [
+    {
+      "name": "Sphere",
+      "location": [
+        0.013104073703289032,
+        -0.008227284997701645,
+        0.008035548031330109
+      ],
+      "world_bounds": [
+        [
+          -0.6520189642906189,
+          -0.6733505725860596,
+          -0.6570881605148315
+        ],
+        [
+          -0.6520189642906189,
+          -0.6733505725860596,
+          0.6731592416763306
+        ],
+        [
+          -0.6520189642906189,
+          0.6568964123725891,
+          0.6731592416763306
+        ],
+        [
+          -0.6520189642906189,
+          0.6568964123725891,
+          -0.6570881605148315
+        ],
+        [
+          0.6782276034355164,
+          -0.6733505725860596,
+          -0.6570881605148315
+        ],
+        [
+          0.6782276034355164,
+          -0.6733505725860596,
+          0.6731592416763306
+        ],
+        [
+          0.6782276034355164,
+          0.6568964123725891,
+          0.6731592416763306
+        ],
+        [
+          0.6782276034355164,
+          0.6568964123725891,
+          -0.6570881605148315
+        ]
+      ],
+      "dimensions": [
+        1.3302465677261353,
+        1.330246925354004,
+        1.330247402191162
+      ],
+      "materials": [
+        {
+          "name": "Chrome",
+          "node_tree": {
+            "name": "Shader Nodetree",
+            "nodes": [
+              {
+                "name": "ColorRamp",
+                "type": "VALTORGB",
+                "inputs": {
+                  "Factor": {
+                    "default": 0.5,
+                    "linked": true
+                  }
+                }
+              },
+              {
+                "name": "Glossy BSDF.003",
+                "type": "BSDF_GLOSSY",
+                "inputs": {
+                  "Color": {
+                    "default": [
+                      0.7912279963493347,
+                      0.7912279963493347,
+                      0.7912279963493347,
+                      1.0
+                    ],
+                    "linked": true
+                  },
+                  "Roughness": {
+                    "default": 0.0,
+                    "linked": false
+                  },
+                  "Anisotropy": {
+                    "default": 0.0,
+                    "linked": false
+                  },
+                  "Rotation": {
+                    "default": 0.0,
+                    "linked": false
+                  },
+                  "Normal": {
+                    "default": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "linked": false
+                  },
+                  "Tangent": {
+                    "default": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "linked": false
+                  },
+                  "Weight": {
+                    "default": 0.0,
+                    "linked": false
+                  }
+                }
+              },
+              {
+                "name": "Material Output",
+                "type": "OUTPUT_MATERIAL",
+                "inputs": {
+                  "Surface": {
+                    "default": null,
+                    "linked": true
+                  },
+                  "Volume": {
+                    "default": null,
+                    "linked": false
+                  },
+                  "Displacement": {
+                    "default": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "linked": false
+                  },
+                  "Thickness": {
+                    "default": 0.0,
+                    "linked": false
+                  }
+                }
+              },
+              {
+                "name": "Layer Weight",
+                "type": "LAYER_WEIGHT",
+                "inputs": {
+                  "Blend": {
+                    "default": 0.7000000476837158,
+                    "linked": false
+                  },
+                  "Normal": {
+                    "default": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "linked": false
+                  }
+                }
+              }
+            ],
+            "links": [
+              [
+                "Glossy BSDF.003",
+                "BSDF",
+                "Material Output",
+                "Surface"
+              ],
+              [
+                "ColorRamp",
+                "Color",
+                "Glossy BSDF.003",
+                "Color"
+              ],
+              [
+                "Layer Weight",
+                "Facing",
+                "ColorRamp",
+                "Factor"
+              ]
+            ]
+          }
+        }
+      ],
+      "modifiers": []
+    }
+  ]
+}

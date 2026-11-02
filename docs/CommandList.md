@@ -2,6 +2,22 @@
 
 Use **Git Bash on Windows**, from the repository root.
 
+## New sphere: automated staged HDR (2 November)
+
+```bash
+source .venv/Scripts/activate
+python scripts/run_staged_hdr.py data/justChromeBall
+```
+
+Builds a fresh training-mask initializer, fits frozen HDR appearance for 10k
+steps, then runs 5k geometry refinement with automatic PLY/material handoff.
+Outputs use fresh timestamped folders. Add `--prepare-only` to inspect configs,
+or `--metrics psnr ssim lpips` to include LPIPS evaluation. The default measures
+PSNR/SSIM on validation, not test. Edit the source presets before launching;
+`configg/justChromeBall.yaml` is not used. [Results, pictures and exact presets](reports/2026-11-02-research-wrap-up.md).
+
+## Earlier Materials workflows
+
 Latest edited-scene workflow: [red/rose/silver capture and training](materials-red-rose-silver.md).
 That guide includes venv activation, Blender capture, resume instructions, and both
 normal-loss training commands. Earlier full-Materials commands remain below.

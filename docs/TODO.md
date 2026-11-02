@@ -8,14 +8,22 @@ follow-ups below. Historical checklists retain their dated context.
 - [x] Complete and preserve the original Materials protected SH-only control.
 - [x] Complete the matched Chrome position-rate trial; preserve its local failure.
 - [x] Close logo-specific geometry tuning and document the reflection objective.
-- [ ] Specify a plain chrome sphere without logo/base, retaining forest lighting
-  and matched cameras; prepare disjoint splits and comparison settings before capture.
+- [x] Create and capture `justChromeBall` without logo/base, retaining forest
+  lighting and Materials camera templates; verify the 100/100/200 split poses.
+- [x] Run training-mask initialization, 10k frozen HDR and 5k gentle refinement;
+  preserve [dataset views, stage comparisons and failures](reports/2026-11-02-research-wrap-up.md).
+- [ ] 3 November: evaluate both saved `justChromeBall` stage checkpoints with
+  LPIPS AlexNet on the same 100 validation views; add results to the closeout.
+  No retraining needed. Deferred at the user's request on 2 November.
+- [ ] Specify equal-budget sphere appearance controls before launching comparisons.
 - [ ] Compare SH3, LDR deferred and HDR/angular on identical fixed estimated geometry.
 - [ ] Keep joint geometry/appearance fitting as a separate matched experiment.
 - [ ] Complete fair SH references and final Materials evaluation with prior test-use
   disclosure; retain Materials as the primary benchmark.
 
-No new sphere scene or training run has been created by this documentation update.
+The earlier scope-only update created no scene or runs. By 20:25 Singapore,
+the new sphere capture and two HDR training stages were complete; the linked
+closeout records their results. Matched appearance controls remain unrun.
 
 Unchecked items are planned, not completed. Follow [researchStages.md](researchStages.md)
 for rationale and stage completion criteria. The final held-out comparison and

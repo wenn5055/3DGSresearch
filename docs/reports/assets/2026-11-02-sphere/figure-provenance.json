@@ -1,0 +1,206 @@
+{
+  "scene": "justChromeBall",
+  "split_counts": {
+    "train": 100,
+    "val": 100,
+    "test": 200
+  },
+  "camera_pose_overlaps_rounded_7dp": {
+    "train_val": 0,
+    "train_test": 0,
+    "val_test": 0
+  },
+  "capture_hashes_verified": 400,
+  "source_blend_hash_verified": true,
+  "warm_start_geometry_and_material_hashes_verified": true,
+  "metrics": {
+    "psnr_db": {
+      "stage_1": 22.4996449993545,
+      "stage_2": 24.125034334580917,
+      "delta": 1.6253893352264175,
+      "improved_views": 95
+    },
+    "ssim": {
+      "stage_1": 0.8422812002897263,
+      "stage_2": 0.874919770359993,
+      "delta": 0.03263857007026672,
+      "improved_views": 100
+    }
+  },
+  "psnr_regression_views": [
+    22,
+    51,
+    65,
+    75,
+    92
+  ],
+  "worst_psnr_change": {
+    "view": 51,
+    "delta_db": -0.5049598074967143
+  },
+  "metrics_source": "existing float-render CSVs; displayed images are saved 8-bit PNGs",
+  "illustration_views": [
+    0,
+    13,
+    73,
+    88
+  ],
+  "illustration_selection": "reused earlier reports camera indices, independent of sphere metric gains",
+  "failure_selection": "largest PSNR regression selected after reading all validation scores",
+  "crop_xyxy": {
+    "0": [
+      297,
+      294,
+      499,
+      496
+    ],
+    "13": [
+      303,
+      296,
+      505,
+      498
+    ],
+    "73": [
+      299,
+      293,
+      501,
+      495
+    ],
+    "88": [
+      297,
+      299,
+      499,
+      501
+    ],
+    "51": [
+      295,
+      301,
+      497,
+      503
+    ]
+  },
+  "crop_policy": "central square; half-size=0.24*minimum reference-alpha bbox side; identical between variants",
+  "display": "reference alpha composited onto white; full-view panels downsampled; crop panels enlarged uniformly; no retouching",
+  "sources": [
+    {
+      "path": "data/justChromeBall/capture.json",
+      "sha256": "44ba1a3e33bb09e94d428703e4948168b45ec89813a948781c39a35308c9c4ad"
+    },
+    {
+      "path": "data/blender/justChromeBall.blend",
+      "sha256": "b5b3b5eef50aecde5b353003199edf3e0312ac0862093af76d5972e0e4cd4f91"
+    },
+    {
+      "path": "outputs/Nov02-2021-justChromeBall-frozen-hdr-10k/run.json",
+      "sha256": "ef2800a6c7102a0638616b486416250da8bb1104df03ab5bc1dfe45ba16ba899"
+    },
+    {
+      "path": "outputs/Nov02-2023-justChromeBall-staged-hdr-refine-5k/run.json",
+      "sha256": "1fa5ae6158f628d071f697dd371a1483972e1443e7426e675683cec3557d7a65"
+    },
+    {
+      "path": "outputs/Nov02-2021-justChromeBall-frozen-hdr-10k/model.ply",
+      "sha256": "983a341a89bf15c2856a17ab46022c5652455a4963a25d1da0e821e0d3a31445"
+    },
+    {
+      "path": "outputs/Nov02-2021-justChromeBall-frozen-hdr-10k/model.surfel.npz",
+      "sha256": "28f3428fda288b9cee6782cc6b9a496f60e0d2ba0938da99fd8b31791b35ee2a"
+    },
+    {
+      "path": "data/justChromeBall/transforms_train.json",
+      "sha256": "18980135ed77b46c9f4a6ecc28fc29c7908d19a025a59416c11dcd2e71165f3a"
+    },
+    {
+      "path": "data/justChromeBall/transforms_val.json",
+      "sha256": "c4ab7891ac24e43c6aa2c0fb3234c3d2cf229c5d0db45d6785ad11f46e680f82"
+    },
+    {
+      "path": "data/justChromeBall/transforms_test.json",
+      "sha256": "c7180f910ffc668574c60b0e208ae314bb710f2be15d357f07f5471351fcd1ae"
+    },
+    {
+      "path": "outputs/Nov02-2021-justChromeBall-frozen-hdr-10k/test-metrics.csv",
+      "sha256": "57a19d0aec32edc9912f127cbd2e9467278059c265fee07146f2eb0f87ddedd6"
+    },
+    {
+      "path": "outputs/Nov02-2023-justChromeBall-staged-hdr-refine-5k/test-metrics.csv",
+      "sha256": "b13596114f7a3b26ab03802cc720e498c8afd6ddaebc49e170b4eba31db518b5"
+    },
+    {
+      "path": "data/justChromeBall/val/r_0.png",
+      "sha256": "113b7746463a6787647995aa9d60b060cc362731e6ce5214eadb0916209199d7"
+    },
+    {
+      "path": "data/justChromeBall/val/r_13.png",
+      "sha256": "109e857f21dd19d59bd53f06340be3108d864b2ff41a324c28c01013a4547e2e"
+    },
+    {
+      "path": "data/justChromeBall/val/r_73.png",
+      "sha256": "5c18d43729ba258dfcb82a2e4a58e6ec324dce99e8ade82c042e149239596266"
+    },
+    {
+      "path": "data/justChromeBall/val/r_88.png",
+      "sha256": "638cc791d92369901ecb87f953bcd48f319e87c7f41571861c531346f9a0bbec"
+    },
+    {
+      "path": "data/justChromeBall/val/r_51.png",
+      "sha256": "d3678ce652dc589718de9e97af43d5ec9590c65dbfeeabb41f1bc040e9fff0f7"
+    },
+    {
+      "path": "outputs/Nov02-2021-justChromeBall-frozen-hdr-10k/test-renders/r_0.png",
+      "sha256": "cb6591fadc19af62ff9262b5c9408448ad4d4c4dcad0f5766ee2c81136bf1e31"
+    },
+    {
+      "path": "outputs/Nov02-2023-justChromeBall-staged-hdr-refine-5k/test-renders/r_0.png",
+      "sha256": "954fe6d66041e823f324543249ef32ded08b1160760c7695d23025274cafcb11"
+    },
+    {
+      "path": "outputs/Nov02-2021-justChromeBall-frozen-hdr-10k/test-renders/r_13.png",
+      "sha256": "b32d22c70e5426bf1ef2e8e157f6e65563e60e947b0f14dd957ac9a4417d6285"
+    },
+    {
+      "path": "outputs/Nov02-2023-justChromeBall-staged-hdr-refine-5k/test-renders/r_13.png",
+      "sha256": "34169292fcf473c100ec806699f5f737d9e2b843014de1767e0f11c4d8c7f262"
+    },
+    {
+      "path": "outputs/Nov02-2021-justChromeBall-frozen-hdr-10k/test-renders/r_73.png",
+      "sha256": "3ed65dae40ddec6fd792854900464c8483a141355a7cc8eb04849fa99bb0909d"
+    },
+    {
+      "path": "outputs/Nov02-2023-justChromeBall-staged-hdr-refine-5k/test-renders/r_73.png",
+      "sha256": "1bbabdc0967f8aedda0d19085c3611206a803d07fca44e743b376540e6dfbfe5"
+    },
+    {
+      "path": "outputs/Nov02-2021-justChromeBall-frozen-hdr-10k/test-renders/r_88.png",
+      "sha256": "b755207772f64fc1faa4327998ea0f96236ec929788822f5db0e6d64278f18a2"
+    },
+    {
+      "path": "outputs/Nov02-2023-justChromeBall-staged-hdr-refine-5k/test-renders/r_88.png",
+      "sha256": "1535d34e26e42608ceaa7f5d99d0afb98eb557b49c3afb62846d84fe6435bf4f"
+    },
+    {
+      "path": "outputs/Nov02-2021-justChromeBall-frozen-hdr-10k/test-renders/r_51.png",
+      "sha256": "50246cadf1a56c2776dc85caa2603e96c6eed7567b7698f569c8fce4701281da"
+    },
+    {
+      "path": "outputs/Nov02-2023-justChromeBall-staged-hdr-refine-5k/test-renders/r_51.png",
+      "sha256": "900622dfb221748a843ef6f099a6070289b1bacac7cae954b0d8c8300da4e8c2"
+    },
+    {
+      "path": "outputs/Nov02-202000-justChromeBall-staged-hdr-pipeline/pipeline.json",
+      "sha256": "4704ff5b834a344b060f9e192ec8323d5ea374c736dc0e1e1d2c11cb05575087"
+    },
+    {
+      "path": "outputs/Nov02-202000-justChromeBall-staged-hdr-pipeline/material-inspection.json",
+      "sha256": "73951b69834e9672192925896e6bfb64c7be5bad324f851d055b191fedbe7486"
+    },
+    {
+      "path": "outputs/Nov02-202000-justChromeBall-staged-hdr-pipeline/initializer/initialization.json",
+      "sha256": "8e49b5600c012c1c7c833a0b39ee9d31f1c9d7bf4d9d317f5a61a488f926f040"
+    },
+    {
+      "path": "docs/reports/assets/2026-11-02-sphere/build_figures.py",
+      "sha256": "1f565c9cf7a6437c1966c44f91bef84f76193e6a88d6323b669093821e2fbcce"
+    }
+  ]
+}

@@ -71,10 +71,12 @@ G-buffer compositing, surfel normals, and geometry; both CPU and CUDA checks cov
 
 - Primary scene: materials, including a fixed chrome-sphere crop for focused
   reflection evaluation and full-image metrics.
-- Planned appearance diagnostic: a separate plain chrome sphere, without logo or
-  pedestal, under forest lighting and matched cameras. First compare appearance
-  models on identical fixed estimated geometry; record joint fitting separately.
-  Original Materials remains primary. The sphere scene/runs are not yet created.
+- Auxiliary appearance diagnostic: a separate plain chrome sphere, without logo
+  or pedestal, under forest lighting and matched cameras. On 2 November,
+  `justChromeBall` capture and 10k frozen HDR + 5k refinement completed;
+  [illustrated results](reports/2026-11-02-research-wrap-up.md). Equal-budget
+  appearance comparisons on identical fixed estimated geometry remain planned;
+  record joint fitting separately. Original Materials remains primary.
 - real-world NeRO evaluation. Its
   scope, scene selection, data access, and camera conversion remain to be confirmed.
 - Report held-out test-view PSNR, SSIM, and LPIPS, plus model size, rendering FPS,
