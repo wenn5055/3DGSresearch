@@ -1,5 +1,22 @@
 # Project todo list
 
+## Current priority - 2 November 2026
+
+[Scope decision](research-scope-2026-11-02.md) supersedes older logo/geometry
+follow-ups below. Historical checklists retain their dated context.
+
+- [x] Complete and preserve the original Materials protected SH-only control.
+- [x] Complete the matched Chrome position-rate trial; preserve its local failure.
+- [x] Close logo-specific geometry tuning and document the reflection objective.
+- [ ] Specify a plain chrome sphere without logo/base, retaining forest lighting
+  and matched cameras; prepare disjoint splits and comparison settings before capture.
+- [ ] Compare SH3, LDR deferred and HDR/angular on identical fixed estimated geometry.
+- [ ] Keep joint geometry/appearance fitting as a separate matched experiment.
+- [ ] Complete fair SH references and final Materials evaluation with prior test-use
+  disclosure; retain Materials as the primary benchmark.
+
+No new sphere scene or training run has been created by this documentation update.
+
 Unchecked items are planned, not completed. Follow [researchStages.md](researchStages.md)
 for rationale and stage completion criteria. The final held-out comparison and
 [ablation write-up](experiments/2026-10-29-normal-consistency-final.md) are complete;

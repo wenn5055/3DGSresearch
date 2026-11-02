@@ -1,7 +1,9 @@
 # Reflection research status
 
-**Updated 2 November 2026, 16:55 Singapore: matched Chrome position-rate trial
-completed. Image quality improves; the distorted logo remains unresolved.**
+**Updated 2 November 2026: focus on specular reflection reconstruction.
+Logo-specific geometry investigation closed by scope decision.**
+[Scope decision and proposed sphere diagnostic](research-scope-2026-11-02.md).
+The completed position-rate trial improves image quality; the logo remains unresolved.
 [Latest experiment](experiments/2026-11-02-logo-position-rate.md) and
 [original Materials protected control](experiments/2026-11-02-protected-control.md).
 The previous session stopped on request on 30 October at 17:55; its completed
@@ -26,7 +28,9 @@ evidence is in the [illustrated wrap-up report](reports/2026-10-30-research-wrap
   Early-SH Gaussian, Ship and new-method test/video runs
   were cancelled before starting.
 
-Next: address the missing local shape and complete fair SH controls before
-final selection/evaluation; disclose that historical Materials test scores have
-already been inspected. Full logs/checkpoints remain
+Next: specify a plain-sphere appearance diagnostic with matched SH3, LDR deferred
+and HDR/angular controls; complete fair SH controls for the primary Materials
+benchmark. The sphere scene and runs remain planned. Preserve the logo failure
+as a limitation and disclose prior inspection of historical Materials test scores.
+Full logs/checkpoints remain
 in `outputs/first-principles-2026-10-30/` and the timestamped run folders.

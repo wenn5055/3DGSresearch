@@ -6,13 +6,15 @@ Working documents: [research stages](researchStages.md), [todo list](TODO.md),
 Historical rationale and literature checks:
 [research design record](research-design-notes.md).
 Current measured evidence: [findings](findings.md).
-Latest design and implementation decisions: [29 October training update](#design-update-log).
+Latest scope decision: [2 November reflection focus](research-scope-2026-11-02.md).
+Current results: [research status](research-status.md). Dated decisions: [update log](#design-update-log).
 
 ## Purpose and status
 
 Extend the custom Python/NVIDIA Warp 3D Gaussian Splatting trainer in
 `3dgs_trainer.py` with oriented 2D surfels and deferred specular shading.
-**Updated 29 October 2026 (Singapore).** The RGB, staged D-SSIM, and degree-2/3 SH
+**Historical baseline summary, 29 October 2026 (Singapore).** The current scope
+and completed results are linked above. The RGB, staged D-SSIM, and degree-2/3 SH
 baselines are implemented and have recorded Materials results. The validation-only
 SH learning-rate sweep selected 0.00025 by validation PSNR (single seed). Consolidated evidence is in
 [findings.md](findings.md) and [the experiment archive](experiment-results-2026-10-28.csv).
@@ -69,6 +71,10 @@ G-buffer compositing, surfel normals, and geometry; both CPU and CUDA checks cov
 
 - Primary scene: materials, including a fixed chrome-sphere crop for focused
   reflection evaluation and full-image metrics.
+- Planned appearance diagnostic: a separate plain chrome sphere, without logo or
+  pedestal, under forest lighting and matched cameras. First compare appearance
+  models on identical fixed estimated geometry; record joint fitting separately.
+  Original Materials remains primary. The sphere scene/runs are not yet created.
 - real-world NeRO evaluation. Its
   scope, scene selection, data access, and camera conversion remain to be confirmed.
 - Report held-out test-view PSNR, SSIM, and LPIPS, plus model size, rendering FPS,
@@ -88,6 +94,23 @@ G-buffer compositing, surfel normals, and geometry; both CPU and CUDA checks cov
 - https://github.com/gapszju/3DGS-DR
 
 ## Design update log
+
+### 2026-11-02 - Refocus on reflection appearance; close the logo investigation
+
+**User decision:** the main objective is faithful reconstruction of specular
+reflections. Further recovery of the logo's recessed geometry is outside the
+current scope. Preserve its failed local reconstruction as a limitation, including
+the position-rate trial's overall quality gain and residual shape errors.
+
+The next proposed diagnostic is one smooth chrome sphere under the existing
+forest illumination, with matched SH3, LDR deferred and HDR/angular comparisons
+on fixed estimated geometry. Joint geometry fitting is a separate experiment.
+Original Materials remains the primary benchmark. Exact settings are to be fixed
+before capture/training; this update creates no new scene or quality result.
+
+The [scope decision](research-scope-2026-11-02.md) records the rationale, controls
+and report wording. Older geometry follow-ups below retain their historical context
+and do not reopen logo-specific tuning.
 
 ### 2026-10-29 — Stabilize optimization before tuning surface constraints
 

@@ -82,6 +82,12 @@ the reflection branch under this training policy, not a uniform perceptual win
 or solved sharp reflections. Geometry is optimized in both arms, so its resulting
 accuracy can differ; this is not a frozen-geometry appearance comparison.
 
+![Original Materials reference, protected SH3 and protected deferred plus SH3 Chrome crops](../reports/assets/2026-11-02/material-crops.png)
+
+*Original Materials, predefined validation views 0, 13, 73 and 88. Columns:
+reference, geometry-regularized SH3 control, geometry-regularized deferred + SH3.
+The same crops reveal the unresolved reflection detail alongside the metric gains.*
+
 Observed forward FPS was 68.19 for SH3 and 75.28 for deferred under the four-pose,
 ten-repeat procedure. These are measurements of the separately learned models,
 not isolated shader costs. Checkpoints total 238.63 versus 242.95 MB. Both training

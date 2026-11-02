@@ -100,3 +100,12 @@ training speedup. Forward timing was skipped for this quality diagnostic.
 and [portable evidence](../reports/assets/2026-11-02-logo-position5x/provenance.json).
 
 ![Fixed frame-18 reference, baseline and trial RGB/normals](../reports/assets/2026-11-02-logo-position5x/logo-comparison.png)
+
+## Subsequent scope decision - 2 November
+
+The user clarified that the project targets specular reflection reconstruction,
+and closed further logo-specific geometry work. Preserve this experiment as a
+limitation and a diagnostic result. The next proposed appearance diagnostic uses
+a plain sphere, with original Materials retained as the primary benchmark.
+See the [scope decision](../research-scope-2026-11-02.md); the earlier suggestion
+to pursue local shape recovery is deferred by this decision.
