@@ -1,0 +1,36 @@
+[
+  {
+    "model": "protected-surfel-SH3",
+    "median_ms_per_view": 14.6643500000323,
+    "fps": 68.1925895111476,
+    "timing_repeats": 10,
+    "timing_skipped": false,
+    "scope": "forward rendering + host tile preparation + MSE; no image download/file I/O/metrics",
+    "active_primitives": 1000000,
+    "checkpoint_bytes": 238631908,
+    "warp_pool_current_bytes": 2469601635,
+    "warp_pool_process_high_bytes": 2923406428,
+    "memory_scope": "evaluation process allocation pool; cumulative high watermark across models, not peak training VRAM",
+    "trainer_seconds": 1708.67,
+    "training_time_scope": "Observed training-process wall time; diagnostic jobs may overlap in this research session. Not a controlled training-speed comparison.",
+    "training_warp_pool_high_bytes": 2984846940,
+    "training_memory_scope": "Fresh training process Warp allocation peak; excludes driver/context and external allocations. Missing for older runs."
+  },
+  {
+    "model": "protected-deferred-SH3",
+    "median_ms_per_view": 13.284199999986868,
+    "fps": 75.27739720878853,
+    "timing_repeats": 10,
+    "timing_skipped": false,
+    "scope": "forward rendering + host tile preparation + MSE; no image download/file I/O/metrics",
+    "active_primitives": 1000000,
+    "checkpoint_bytes": 242951457,
+    "warp_pool_current_bytes": 2469994803,
+    "warp_pool_process_high_bytes": 2923861595,
+    "memory_scope": "evaluation process allocation pool; cumulative high watermark across models, not peak training VRAM",
+    "trainer_seconds": 2069.46,
+    "training_time_scope": "Observed training-process wall time; diagnostic jobs may overlap in this research session. Not a controlled training-speed comparison.",
+    "training_warp_pool_high_bytes": 2984846940,
+    "training_memory_scope": "Fresh training process Warp allocation peak; excludes driver/context and external allocations. Missing for older runs."
+  }
+]

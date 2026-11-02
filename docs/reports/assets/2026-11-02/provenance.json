@@ -1,0 +1,41 @@
+{
+  "scope": "Original Materials, all 100 validation views, single seed 7, 30k steps; figures use predefined views 0,13,73,88. No test evaluation.",
+  "records": [
+    {
+      "path": "outputs/Nov02-1257-protected-control-session/paired-validation/summary.csv",
+      "sha256": "539bca9d1dc10830029fede34cd8a4e36164acfd0fc1563857749904a59ab7ba"
+    },
+    {
+      "path": "outputs/Nov02-1257-protected-control-session/paired-validation/metrics.csv",
+      "sha256": "5890f0639ec4524674d8d4f5f6a5088b82a7827872c079c047e4f80d10fc9713"
+    },
+    {
+      "path": "outputs/Nov02-1257-protected-control-session/paired-validation/geometry-summary.csv",
+      "sha256": "9dedd632c4972d79a9dd8dd74bf178e611765618084a2c493bc514379a24b6df"
+    },
+    {
+      "path": "outputs/Nov02-1257-protected-control-session/paired-validation/performance.json",
+      "sha256": "5a850e976a972818a6a810a3510e7cd336ee18e3007a8c49e2e34d3532071262"
+    },
+    {
+      "path": "outputs/Nov02-1257-protected-control-session/paired-validation/material-crops.png",
+      "sha256": "033ab6548b3005b6765fda0ba2818815d7e93d105d2dfc4832f20f503385fe96"
+    },
+    {
+      "path": "outputs/Nov02-1257-protected-control-session/preflight.json",
+      "sha256": "38ed70ce50d3aa2f67345b8ff205066265756b7991f86353e16faa38401652bf"
+    },
+    {
+      "path": "outputs/Nov02-1257-protected-control-session/state.json",
+      "sha256": "5706a6c94c50af72a40c2f636759b452faed0ef0204e1f1e0a9830cc333edf0d"
+    },
+    {
+      "path": "outputs/Nov02-1257-protected-control-session/run_control.py",
+      "sha256": "1434be6546e8ed01960b4dd2fcb54cb21fd79d73abdeb84f95d21651879b5e85"
+    },
+    {
+      "path": "outputs/Nov02-1257-protected-control-session/paired-validation/protocol.json",
+      "sha256": "d2e5cc0dac332742bb04c96e86141e2113bbd96c6e253b2cb565491d8fb1c0f3"
+    }
+  ]
+}

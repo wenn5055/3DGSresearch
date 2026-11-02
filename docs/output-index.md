@@ -1,6 +1,6 @@
 # Output folders — quick guide
 
-Updated 30 Oct 2026 (Singapore).
+Updated 02 Nov 2026 (Singapore).
 
 - Each bullet says **what changed**; multiple changes are not isolated causal tests.
 - `prepared` = no training; `smoke` = tiny execution check, not a quality experiment.
@@ -93,6 +93,7 @@ Updated 30 Oct 2026 (Singapore).
 - [Oct30-1733-materials_chrome-staged-hdr-refine-5k](../outputs/Oct30-1733-materials_chrome-staged-hdr-refine-5k/) — Prespecified 5k continuation of 10k parent (15k cumulative), Adam restarts. See staged-refinement protocol. Geometry flags differ between matched HDR arms. Native time is last stage only; may overlap primary training. Closest prior: Oct30-1730-materials_chrome-staged-hdr-fixed-5k; surfel.freeze_geometry: True → False. [completed; val]
 - [Oct30-1736-materials_chrome-staged-sh3-fixed-5k](../outputs/Oct30-1736-materials_chrome-staged-sh3-fixed-5k/) — Prespecified 5k continuation of 10k parent (15k cumulative), Adam restarts. See staged-refinement protocol. Geometry flags differ between matched HDR arms. Native time is last stage only; may overlap primary training. Closest prior: Oct30-1730-materials_chrome-staged-hdr-fixed-5k; model.sh_degree: 0 → 3, paths.init_ply: C:\Users\e1355010\3DGSresearch\outputs\Oct30-1718-materials_chrome-frozen-hdr-10k\model.ply → C:\Users\e1355010\3DGSresearch\outputs\Oct30-1723-materials_chrome-frozen-sh3-10k\model.ply, surfel.mode: deferred → rgb, surfel.sh_start_iteration: None → 1000, +1 other settings (see config). [completed; val]
 - [Oct30-1753-materials-hull-protected-surfel-sh3](../outputs/Oct30-1753-materials-hull-protected-surfel-sh3/) — Original Materials protected hull: ray-plane depth, training-only normal-depth weight .01 from step 1/ramp 2k; reflection from step 1 for deferred mode. Matched 800px/1M/30k/late SH3 pair. Closest prior: Oct30-1717-materials-hull-protected-deferred-sh3; surfel.mode: deferred → rgb. [interrupted; val]
+- [Nov02-1257-materials-hull-protected-surfel-sh3](../outputs/Nov02-1257-materials-hull-protected-surfel-sh3/) — Nov 2: complete missing original Materials protected SH-only control. Fresh 30k, 800px, 1M, seed 7; matched to Oct30-1717 deferred except appearance mode. No test evaluation. Closest prior: Oct30-1717-materials-hull-protected-deferred-sh3; surfel.mode: deferred → rgb. [completed; val]
 
 ## Tuning
 
@@ -113,6 +114,7 @@ Updated 30 Oct 2026 (Singapore).
 - [first-principles-2026-10-30](../outputs/first-principles-2026-10-30/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [implementation-smoke-configs](../outputs/implementation-smoke-configs/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [materials-red-rose-silver-final-comparison-2026-10-29](../outputs/materials-red-rose-silver-final-comparison-2026-10-29/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
+- [Nov02-1257-protected-control-session](../outputs/Nov02-1257-protected-control-session/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [Oct30-1435-materials-chrome-audit](../outputs/Oct30-1435-materials-chrome-audit/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [Oct30-1446-materials-backbone-val](../outputs/Oct30-1446-materials-backbone-val/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [Oct30-1454-materials-surfel-contributions](../outputs/Oct30-1454-materials-surfel-contributions/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
@@ -135,6 +137,7 @@ Updated 30 Oct 2026 (Singapore).
 - [Oct30-1739-chrome-staged-refinement-val](../outputs/Oct30-1739-chrome-staged-refinement-val/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [Oct30-1753-materials-protected-deferred-wrapup-val](../outputs/Oct30-1753-materials-protected-deferred-wrapup-val/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [Oct30-1754-materials-pruning-wrapup-timing](../outputs/Oct30-1754-materials-pruning-wrapup-timing/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
+- [Oct30-1756-materials-pruning-wrapup-timing](../outputs/Oct30-1756-materials-pruning-wrapup-timing/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [paper-normal-smoke-64265072](../outputs/paper-normal-smoke-64265072/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [paper-workflow-i56mzrx7](../outputs/paper-workflow-i56mzrx7/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [pdf-reader](../outputs/pdf-reader/) — unrecorded folder; purpose needs review (no run.json/sweep.json).

@@ -1,0 +1,23 @@
+{
+  "status": "passed",
+  "checked_utc": "2026-11-02T04:57:48.260308+00:00",
+  "config_differences": {
+    "surfel.mode": [
+      "deferred",
+      "rgb"
+    ],
+    "paths.output": [
+      "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Oct30-1717-materials-hull-protected-deferred-sh3\\model.png",
+      "C:\\Users\\e1355010\\3DGSresearch\\outputs\\materials-hull-regularized-surfel\\model.png"
+    ]
+  },
+  "changed_python_since_deferred": [
+    "scripts/evaluate_reflection_suite.py",
+    "scripts/test_surfel_hdr.py"
+  ],
+  "identical_input_files": 203,
+  "package_differences": {},
+  "deferred_run": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Oct30-1717-materials-hull-protected-deferred-sh3",
+  "control_config": "C:\\Users\\e1355010\\3DGSresearch\\config\\materials_reflection_hull_regularized_surfel_sh3.yaml",
+  "controller_sha256": "1434be6546e8ed01960b4dd2fcb54cb21fd79d73abdeb84f95d21651879b5e85"
+}
