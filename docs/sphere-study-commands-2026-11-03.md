@@ -380,3 +380,14 @@ archived resolved configs with their recorded parents. Historical study/test
 results remain frozen; later exploratory runs are listed separately in the
 [output index](output-index.md). Previously inspected test scores are development
 context, not a fresh untouched benchmark for further tuning.
+
+## Reference-lighting swap: completed diagnostic
+
+The older 100k, size-0.75 checkpoint was rendered under the original forest
+lighting with geometry and materials fixed. On all 100 validation views,
+LPIPS improves **0.091814 -> 0.079982**, while PSNR falls
+**24.2308 -> 20.6415 dB** and SSIM falls **0.877177 -> 0.848285**.
+Finer texture returns, but reflections remain warped. Investigate normals
+next; the swap does not fully isolate them from fitted material compensation.
+
+[Illustrated results, repeat command and integrity checks](experiments/2026-11-03-reference-lighting-swap.md).

@@ -1,5 +1,11 @@
 # Reflection research status
 
+Latest diagnostic: [reference-lighting swap on the frozen 100k sphere](experiments/2026-11-03-reference-lighting-swap.md)
+restores finer texture but leaves warped reflections. All-100-view validation
+LPIPS improves 0.091814 -> 0.079982 while PSNR drops 24.2308 -> 20.6415 dB.
+Geometry and materials were fixed and checkpoints unchanged. Normal accuracy
+is the next diagnostic; material/light compensation remains a confound.
+
 Latest user direction: stop footprint sweeps, use multiplier 1 and the original
 10k + 5k schedule; fresh defaults now initialize up to 200k points. The completed
 100k study below remains archived separately. [Current commands and caveats](sphere-study-commands-2026-11-03.md#later-3-november-direction-close-footprint-tuning-use-200k-defaults).
