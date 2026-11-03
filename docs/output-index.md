@@ -107,6 +107,8 @@ Updated 03 Nov 2026 (Singapore).
 - [Nov03-1512-justChromeBall-staged-hdr-refine-10k](../outputs/Nov03-1512-justChromeBall-staged-hdr-refine-10k/) — Staged sphere: training-mask initializer, 10k frozen appearance, 10k geometry refinement; Adam restarts at handoff. Closest prior: Nov03-1453-justChromeBall-staged-hdr-refine-5k; learning_rates.position_max_steps: 5000 → 10000, paths.init_ply: C:\Users\e1355010\3DGSresearch\outputs\Nov03-1451-justChromeBall-frozen-hdr-10k\model.ply → C:\Users\e1355010\3DGSresearch\outputs\Nov03-1510-justChromeBall-frozen-hdr-10k\model.ply, training.iterations: 5000 → 10000. [completed; val]
 - [Nov03-1556-justChromeBall-frozen-hdr-10k](../outputs/Nov03-1556-justChromeBall-frozen-hdr-10k/) — Staged sphere: training-mask initializer, 10k frozen appearance, 5k geometry refinement; Adam restarts at handoff. Closest prior: Nov03-1510-justChromeBall-frozen-hdr-10k; model.capacity: 100000 → 200000, model.initial_splats: 100000 → 200000, paths.init_ply: C:\Users\e1355010\3DGSresearch\outputs\Nov03-150858-justChromeBall-staged-hdr-pipeline\initializer\initial.ply → C:\Users\e1355010\3DGSresearch\outputs\Nov03-155510-justChromeBall-staged-hdr-pipeline\initializer\initial.ply. [completed; val]
 - [Nov03-1559-justChromeBall-staged-hdr-refine-5k](../outputs/Nov03-1559-justChromeBall-staged-hdr-refine-5k/) — Staged sphere: training-mask initializer, 10k frozen appearance, 5k geometry refinement; Adam restarts at handoff. Closest prior: Nov03-1453-justChromeBall-staged-hdr-refine-5k; model.capacity: 100000 → 200000, model.initial_splats: 100000 → 200000, paths.init_ply: C:\Users\e1355010\3DGSresearch\outputs\Nov03-1451-justChromeBall-frozen-hdr-10k\model.ply → C:\Users\e1355010\3DGSresearch\outputs\Nov03-1556-justChromeBall-frozen-hdr-10k\model.ply. [completed; val]
+- [Nov03-1744-justChromeBall-normal003-100k-refine-5k-prepare](../outputs/Nov03-1744-justChromeBall-normal003-100k-refine-5k-prepare/) — surfel/deferred/SH0; 5000 steps; 100000 capacity. Closest prior: Nov02-2023-justChromeBall-staged-hdr-refine-5k; geometry_loss.normal_depth_weight: 0.01 → 0.03. [prepared; val]
+- [Nov03-1753-justChromeBall-normal003-100k](../outputs/Nov03-1753-justChromeBall-normal003-100k/) — surfel/deferred/SH0; 5000 steps; 100000 capacity. Closest prior: Nov02-2023-justChromeBall-staged-hdr-refine-5k; geometry_loss.normal_depth_weight: 0.01 → 0.03. [completed; val]
 
 ## Tuning
 
@@ -139,6 +141,13 @@ Updated 03 Nov 2026 (Singapore).
 - [Nov03-145016-justChromeBall-staged-hdr-scale0.5-pipeline](../outputs/Nov03-145016-justChromeBall-staged-hdr-scale0.5-pipeline/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [Nov03-150858-justChromeBall-staged-hdr-pipeline](../outputs/Nov03-150858-justChromeBall-staged-hdr-pipeline/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [Nov03-155510-justChromeBall-staged-hdr-pipeline](../outputs/Nov03-155510-justChromeBall-staged-hdr-pipeline/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
+- [Nov03-commit-backup](../outputs/Nov03-commit-backup/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
+- [Nov03-environment-comparison](../outputs/Nov03-environment-comparison/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
+- [Nov03-normal-depth-trial-preparation](../outputs/Nov03-normal-depth-trial-preparation/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
+- [Nov03-reference-lighting-swap](../outputs/Nov03-reference-lighting-swap/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
+- [Nov03-reference-lighting-swap-check](../outputs/Nov03-reference-lighting-swap-check/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
+- [Nov03-reference-lighting-swap-final](../outputs/Nov03-reference-lighting-swap-final/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
+- [Nov03-reference-normal-swap](../outputs/Nov03-reference-normal-swap/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [Nov03-sphere-final-test](../outputs/Nov03-sphere-final-test/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [Nov03-sphere-footprints](../outputs/Nov03-sphere-footprints/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [Nov03-sphere-footprints-size](../outputs/Nov03-sphere-footprints-size/) — unrecorded folder; purpose needs review (no run.json/sweep.json).

@@ -1,0 +1,26 @@
+{
+  "change": "Presentation only: column 2 explicitly names learned normals. No renders or metrics changed.",
+  "render_source_archive": {
+    "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-reference-normal-swap\\evaluate_reference_normals.render-source.py",
+    "bytes": 13039,
+    "sha256": "39179c65aed76887fa1545543a37edb4b9ac4cc155523ffd255925d08c4b2f75"
+  },
+  "current_script": {
+    "path": "C:\\Users\\e1355010\\3DGSresearch\\scripts\\evaluate_reference_normals.py",
+    "bytes": 13047,
+    "sha256": "baec2497a3ec998e7eb4bbc8fb23fe195ac6d29b14553829c71f2aa9e749f919"
+  },
+  "all_pixels_below_header_unchanged": true,
+  "figures": [
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\docs\\reports\\assets\\2026-11-03-reference-normal-swap\\rgb-comparison.png",
+      "bytes": 1180905,
+      "sha256": "65d7bc55e0244ac31fc249e5bd03e6ac29d10e72e29b9005be9f328638cbb4f5"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\docs\\reports\\assets\\2026-11-03-reference-normal-swap\\reflection-crops.png",
+      "bytes": 3599752,
+      "sha256": "8e92eba59b3ff1a9104043f0a699c3acced5beb89dfed6da6e6981f3b67f5ea7"
+    }
+  ]
+}

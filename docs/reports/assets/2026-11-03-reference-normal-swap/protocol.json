@@ -1,0 +1,346 @@
+{
+  "status": "completed",
+  "started_utc": "2026-11-03T09:11:36.470423+00:00",
+  "evaluation_only": true,
+  "views": [
+    0,
+    13,
+    73,
+    88,
+    51
+  ],
+  "split": "validation",
+  "resolution": [
+    800,
+    800
+  ],
+  "run": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1402-justChromeBall-staged-hdr-refine-5k",
+  "manifest": {
+    "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\transforms_val.json",
+    "bytes": 65184,
+    "sha256": "c4ab7891ac24e43c6aa2c0fb3234c3d2cf229c5d0db45d6785ad11f46e680f82"
+  },
+  "geometry_reference": {
+    "status": "completed",
+    "scene": "C:\\Users\\e1355010\\3DGSresearch\\data\\blender\\justChromeBall.blend",
+    "scene_sha256": "b5b3b5eef50aecde5b353003199edf3e0312ac0862093af76d5972e0e4cd4f91",
+    "manifest": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\transforms_val.json",
+    "manifest_sha256": "c4ab7891ac24e43c6aa2c0fb3234c3d2cf229c5d0db45d6785ad11f46e680f82",
+    "script_sha256": "b4dc4571d95adb907c55ce96f244e4ba49249ec546b6587f8e52df0a8ca03451",
+    "blender_version": "5.0.1",
+    "resolution": [
+      800,
+      800
+    ],
+    "focal": 1250.0000504168488,
+    "views": [
+      0,
+      13,
+      73,
+      88,
+      51
+    ],
+    "objects": [
+      {
+        "id": 1,
+        "name": "Sphere",
+        "materials": [
+          "Chrome"
+        ]
+      }
+    ],
+    "triangles": 960,
+    "normal_convention": "unit world-space, camera-facing interpolated evaluated-mesh corner normals; excludes shader bump",
+    "depth_convention": "positive camera-z distance, not Euclidean ray distance",
+    "pixel_convention": "top-left origin, half-integer centers, Blender c2w +X right +Y up -Z forward",
+    "usage": "diagnostic evaluation only; no reference geometry used by SH training"
+  },
+  "geometry_files": [
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-geometry-val\\r_0.npz",
+      "bytes": 1951212,
+      "sha256": "17516b91d7c699abe911e7bdd1ad1fe52cd9a4a78872d5d7cc88e23a5b623f78"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-geometry-val\\r_13.npz",
+      "bytes": 1913259,
+      "sha256": "259220858ceab8d4a032ae178ecba8b8a0cc04ebc5c45529ba32ceeea0032f5f"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-geometry-val\\r_73.npz",
+      "bytes": 1968135,
+      "sha256": "366c2e6eabe0169e8b26578a1c8dd373d32fd1a96188a7ed8152e6e0af5eebb9"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-geometry-val\\r_88.npz",
+      "bytes": 1971031,
+      "sha256": "eab4b3875cae4eabb396c60d6669f994dc5d1cf6042a0cd522300c9647dd3605"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-geometry-val\\r_51.npz",
+      "bytes": 1941285,
+      "sha256": "eaef4fb7e8e6b124d1af0238925da8d4e8d66054dc4838d776a797dbde12b0f1"
+    }
+  ],
+  "lighting_reference": {
+    "path": "C:\\Users\\e1355010\\3DGSresearch\\docs\\reports\\assets\\2026-11-03-environment-check\\aligned-linear.npz",
+    "bytes": 4430948,
+    "sha256": "b4f5ba305d7571c53050db72b585201f211f17a941ca24d7575cd7174966e7c6"
+  },
+  "previous_lighting_evaluation": {
+    "path": "C:\\Users\\e1355010\\3DGSresearch\\docs\\reports\\assets\\2026-11-03-reference-lighting-swap\\protocol.json",
+    "bytes": 9831,
+    "sha256": "bd40265ef59942341af160c70ac43e21bcdbb298b04637d60b3201c2fd7eee9a"
+  },
+  "checkpoints": [
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1402-justChromeBall-staged-hdr-refine-5k\\model.ply",
+      "bytes": 6800416,
+      "sha256": "8b7870f8711b79407c3c73a8044710272648709ffd1c4347223e763eaad15888"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1402-justChromeBall-staged-hdr-refine-5k\\model.surfel.npz",
+      "bytes": 1740440,
+      "sha256": "015d1047dabd78325050c47f02577db1683cacc96b6e488b2a9afced3963a258"
+    }
+  ],
+  "renderer_sources": [
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\3dgs_trainer.py",
+      "bytes": 111674,
+      "sha256": "edae963dfbc194978cb115f6d98458aa979b916412068ed8c2b649a7974568bc"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\3dgs_evaluator.py",
+      "bytes": 11669,
+      "sha256": "3ee01969233bbaa95e780957842cbbe6c455cf7bc2f75716d92d1e754bbbb893"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\gaussian_first_tile_workspace_gpu.py",
+      "bytes": 7974,
+      "sha256": "7027251f923c7a46697a3ed03666fa94e88075414d3761c62f9e25a6ca638488"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\image_metrics.py",
+      "bytes": 2080,
+      "sha256": "325f7728186c6d00ec05417b078016dd9af83a3a3876277b64a397fdfe420e56"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\scripts\\evaluate_surfels.py",
+      "bytes": 5344,
+      "sha256": "fdfb9b36a9326bc37ef354fa6aef5cac69aa701f8dc5e7f9d787393d153ec1af"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\camera.py",
+      "bytes": 1967,
+      "sha256": "a83ecfac890c81cb3a4b551a2d04d3d3509c296e54fb84c808f790d0b7b5da10"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\dssim_loss.py",
+      "bytes": 9820,
+      "sha256": "9b61757f75812aebabed683769df3903b09948f297ad62a0eb185430595b67e0"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\gaussian_set.py",
+      "bytes": 3066,
+      "sha256": "d970108a395d8d183c65d9ca850c946d572964f6bb8d2cc7a9d61ef01bd0f097"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\optimizer_state.py",
+      "bytes": 1760,
+      "sha256": "590c5e65c027c40c2a5d1081e1c05928391c7220c796c5c7e842715e3dcfcac7"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\profiling.py",
+      "bytes": 1430,
+      "sha256": "2d549a8a633ab148017e78fd386401cb4159df1147820f44fa4d633f05ab681a"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\projected_gaussians.py",
+      "bytes": 526,
+      "sha256": "c135384f7f16d99732c27cbf5c4433aefafd576c0a1654ca83d28bdf5c46a0d7"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\sh_appearance.py",
+      "bytes": 12083,
+      "sha256": "71680e335f482c806936a68d1891628165792028f826e21ba115ad8e50d6e05f"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\splat_math.py",
+      "bytes": 1857,
+      "sha256": "d11ae7ab2236bfff8deb6339716d4d4a3a0f49af756e442329cd8307f43f1861"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\tile_builder.py",
+      "bytes": 11456,
+      "sha256": "97fbfd8a3f6a15b98163b7e956b88afc84a091dc30ddba9816e1c47ddcdb79f7"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\trainable_gaussian.py",
+      "bytes": 5607,
+      "sha256": "4f5b7eea7c0bbb15f1cea0739897f088567f14319a780fa1f076ef2e9a5b9689"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\training_config.py",
+      "bytes": 18705,
+      "sha256": "7941b91770d997d0886ad8bcf6243e31f47bbc81a6055e28c8350cef77e614e7"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\__init__.py",
+      "bytes": 203,
+      "sha256": "793b3bbfe4dc1d062591a3738d99f2c773edb643e9b20e41445514e486c8a84d"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\checks.py",
+      "bytes": 6366,
+      "sha256": "c7388b063a2a7921c94ec666434319418d76143ad4da5ccff5f1a020163f0b4c"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\config.py",
+      "bytes": 11775,
+      "sha256": "c161ef768f62b1be9d9fb634aca61d1ee460f63c6eee1b7b09cba4b48d69b473"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\foreground_pruning.py",
+      "bytes": 5962,
+      "sha256": "770327ccca3975756de75cbcfce75a90a529f09848aecd6ba47bd8f0928504e1"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\geometry.py",
+      "bytes": 7383,
+      "sha256": "f9fcc74d5c94655b93daa86f6077a1731cc3b66742fecd23cdaff7e030768574"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\geometry_losses.py",
+      "bytes": 9611,
+      "sha256": "5f82ac294a38b13e59f7c45de5cf3023f911fa784491e0223e5c226ca6955b91"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\hdr_shader.py",
+      "bytes": 5177,
+      "sha256": "96b7a8b4ebe398210d6f9d9c0f82c93fafb0782f35d915ff500f37730b294fe8"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\kernels.py",
+      "bytes": 12773,
+      "sha256": "30b498c604dfda7bf12b97cf94a086781c1ef5b044e585b1728ea5bd69e32bac"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\normal_propagation.py",
+      "bytes": 1936,
+      "sha256": "c2709ee6edb9fd8d579d1a9d8082b13d389d6d8351bdf7015325cbf14551c87d"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\trainer.py",
+      "bytes": 35259,
+      "sha256": "dca9461898193cbf775ebb59363a1bacf6e51db65a20db3518134dc3d77e8743"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\workflow.py",
+      "bytes": 18480,
+      "sha256": "98a8b5221068885dd7675a11da948fd4b3dff8f393b58f52f9bdb43ca63f4fb6"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\__init__.py",
+      "bytes": 92,
+      "sha256": "c1e0983b13cb2427ffea13e192511b26917c1ae88a9e5a570ae286699aea10a6"
+    }
+  ],
+  "script": {
+    "path": "C:\\Users\\e1355010\\3DGSresearch\\scripts\\evaluate_reference_normals.py",
+    "bytes": 13039,
+    "sha256": "39179c65aed76887fa1545543a37edb4b9ac4cc155523ffd255925d08c4b2f75"
+  },
+  "helper_script": {
+    "path": "C:\\Users\\e1355010\\3DGSresearch\\scripts\\evaluate_reference_lighting.py",
+    "bytes": 9768,
+    "sha256": "812cd0cc8989ce99d6ee280f0a2866061f87b560915074ad7f4fbdcfc7a3dbf6"
+  },
+  "intervention": "Only normal-sum direction substituted after rasterization; magnitude preserved; fallback to original on no mesh hit or no model normal/coverage.",
+  "normal_effects": "The production shader uses the substituted normal for both reflection direction and angular response. Material parameters remain fixed.",
+  "lighting_preparation": "Original aligned 512x256 forest radiance, negatives clamped to zero, inverse-softplus encoding; no gain/rotation fitting.",
+  "finished_utc": "2026-11-03T09:11:47.825084+00:00",
+  "fixed_parameter_hashes": {
+    "means": "2521b43ef7888657d056d917bf6d2654dec7e46853e5532ccbe89d15ca815c3b",
+    "log_scales": "ec3aa59567e7e60ca35476eb0da758a1237abef3de299c04ad39f530d5344171",
+    "quaternions": "45a10315ae9e9307a2bdfab3370e24c1dd1c40e8222a17703c5ef39cf241d812",
+    "opacity": "d56979f956e6ab99e9564a3fe36d8eff0600463823d90d12add390b015520d2b",
+    "color": "6c2a82b9ba3eee32de1b5c808ed18fc2c9398ec79d2903f7d843d6199ed212df",
+    "reflection_logits": "810d4e4c3d7340ca6f2a4476f2ee5a5d76d35bf8ad80d043e2b1720b02d48a71",
+    "angular_gain": "c5c24703f2815cf748dcb30f84c89be7e2c3967dc0c742559de8d316cd370b0b"
+  },
+  "checkpoint_files_unchanged": true,
+  "non_normal_raster_fields_unchanged": true,
+  "original_environment_restored": true,
+  "baseline_metric_max_abs_difference": 0.0,
+  "crop_boxes_xyxy": {
+    "0": [
+      297,
+      294,
+      499,
+      496
+    ],
+    "13": [
+      303,
+      296,
+      505,
+      498
+    ],
+    "73": [
+      299,
+      293,
+      501,
+      495
+    ],
+    "88": [
+      297,
+      299,
+      499,
+      501
+    ],
+    "51": [
+      295,
+      301,
+      497,
+      503
+    ]
+  },
+  "summary": [
+    {
+      "lighting": "learned-light",
+      "normals": "learned-normal",
+      "psnr_db": 23.855378781029664,
+      "ssim": 0.8719136595726014,
+      "lpips_alex": 0.0962018147110939,
+      "foreground_psnr_db": 17.46292522065753,
+      "foreground_coverage_fraction": 1.0
+    },
+    {
+      "lighting": "reference-light",
+      "normals": "learned-normal",
+      "psnr_db": 20.401626815995495,
+      "ssim": 0.8445580959320068,
+      "lpips_alex": 0.08545240312814713,
+      "foreground_psnr_db": 13.797445713448294,
+      "foreground_coverage_fraction": 1.0
+    },
+    {
+      "lighting": "learned-light",
+      "normals": "reference-normal",
+      "psnr_db": 23.05362226949389,
+      "ssim": 0.8679427981376648,
+      "lpips_alex": 0.10198359042406083,
+      "foreground_psnr_db": 16.775506318537815,
+      "foreground_coverage_fraction": 1.0
+    },
+    {
+      "lighting": "reference-light",
+      "normals": "reference-normal",
+      "psnr_db": 22.70731577145607,
+      "ssim": 0.9436152577400208,
+      "lpips_alex": 0.05679565891623497,
+      "foreground_psnr_db": 16.380791327644562,
+      "foreground_coverage_fraction": 1.0
+    }
+  ]
+}

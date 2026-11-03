@@ -1,5 +1,13 @@
 # Reflection research status
 
+Latest follow-up: [five-view reference-normal intervention](experiments/2026-11-03-reference-normal-swap.md)
+recovers much more reflection structure when paired with reference lighting.
+At fixed reference lighting, normal substitution improves PSNR 20.4016 ->
+22.7073 dB, SSIM 0.844558 -> 0.943615 and LPIPS 0.085452 -> 0.056796.
+Learned normals have 1.47-degree mean error; correcting normals alone under
+learned lighting remains blurred. Normal/light interaction is supported;
+training changes remain untested. These are five-view diagnostic means.
+
 Latest diagnostic: [reference-lighting swap on the frozen 100k sphere](experiments/2026-11-03-reference-lighting-swap.md)
 restores finer texture but leaves warped reflections. All-100-view validation
 LPIPS improves 0.091814 -> 0.079982 while PSNR drops 24.2308 -> 20.6415 dB.

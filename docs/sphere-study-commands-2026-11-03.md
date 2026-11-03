@@ -391,3 +391,71 @@ Finer texture returns, but reflections remain warped. Investigate normals
 next; the swap does not fully isolate them from fitted material compensation.
 
 [Illustrated results, repeat command and integrity checks](experiments/2026-11-03-reference-lighting-swap.md).
+
+## Reference-normal follow-up: completed five-view diagnostic
+
+At fixed original forest lighting, replacing only the shading normal direction
+recovers much more recognizable reflection structure. Across the five existing
+diagnostic views, PSNR improves **20.4016 -> 22.7073 dB**, SSIM
+**0.844558 -> 0.943615**, LPIPS **0.085452 -> 0.056796**. Learned normal error
+averages 1.47 degrees. Reference normals with the learned map remain blurred,
+supporting an interaction between normal error and the learned lighting fit.
+These are five-view evaluation interventions, not retrained models or new test
+scores. No normal-consistency training change has run.
+
+[Four-combination pictures, normal maps, repeat command and checks](experiments/2026-11-03-reference-normal-swap.md).
+
+## Next normal-training trial: prepared, not run
+
+Use the primary **100k, initial-size multiplier 1.0** baseline from
+`Nov02-2023-justChromeBall-staged-hdr-refine-5k`. The separate trial config is
+`config/experiments/justChromeBall_normal003_100k.yaml`. It changes only
+`geometry_loss.normal_depth_weight` **0.01 -> 0.03** and the output destination.
+It retains the same `Nov02-2021-justChromeBall-frozen-hdr-10k/model.ply` parent
+and material sidecar, seed 7, 800px, 5k refinement and learning-rate schedules.
+This uses the size-1.0 baseline, rather than the size-0.75 diagnostic model.
+The current 200k defaults do not affect this archived-config trial.
+
+From the repository root with the project environment active:
+
+```powershell
+python scripts/run_experiment.py config/experiments/justChromeBall_normal003_100k.yaml `
+  --pipeline surfel --name normal003-100k-refine-5k `
+  --eval-manifest transforms_val.json --metrics psnr ssim lpips
+```
+
+Only refinement runs; the saved frozen 10k stage is reused. The runner creates
+a fresh timestamped output directory and prints its path. Optimizers restart,
+as in the baseline. The post-training evaluation covers all 100 validation
+views, even though its legacy output filenames say `test-metrics.csv` and
+`test-renders`. Training inputs remain RGB and masks, with self-consistency
+from rendered depth; no Blender reference normals or lighting enter training.
+
+After completion, compare the new run against the baseline (replace only the
+placeholder path with the directory printed by the runner):
+
+```powershell
+python scripts/evaluate_reflection_suite.py `
+  outputs/Nov02-2023-justChromeBall-staged-hdr-refine-5k `
+  outputs/NEW_NORMAL003_RUN `
+  --labels normal001 normal003 --output outputs/sphere-normal003-validation `
+  --manifest transforms_val.json --views 0 13 73 88 51 `
+  --metrics psnr ssim lpips --cpu-threads 2
+python scripts/diagnose_sphere_footprints.py `
+  outputs/Nov02-2023-justChromeBall-staged-hdr-refine-5k `
+  outputs/NEW_NORMAL003_RUN `
+  --labels normal001 normal003 --output outputs/sphere-normal003-normals `
+  --geometry-reference outputs/Nov03-sphere-geometry-val --views 0 13 73 88 51
+```
+
+Choose fresh diagnostic output names when repeating. Judge the trial by
+reference normal error and matched reflection crops alongside LPIPS and
+foreground PSNR; smoother-looking normals alone do not establish improvement.
+The prior oracle diagnostic illustrates what needs fixing:
+
+![Normal accuracy diagnostic motivating the planned training trial](reports/assets/2026-11-03-reference-normal-swap/normal-swap-highlight.png)
+
+*`justChromeBall`, validation view 0, actual size-0.75 checkpoint evaluation.
+Left: Blender target; middle: reference lighting with learned normals; right:
+reference lighting with reference mesh normals. This is prior diagnostic
+evidence, not a result of the proposed size-1.0 normal-weight trial.*

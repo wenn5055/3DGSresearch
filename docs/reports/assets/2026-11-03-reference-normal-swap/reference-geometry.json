@@ -1,0 +1,35 @@
+{
+  "status": "completed",
+  "scene": "C:\\Users\\e1355010\\3DGSresearch\\data\\blender\\justChromeBall.blend",
+  "scene_sha256": "b5b3b5eef50aecde5b353003199edf3e0312ac0862093af76d5972e0e4cd4f91",
+  "manifest": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\transforms_val.json",
+  "manifest_sha256": "c4ab7891ac24e43c6aa2c0fb3234c3d2cf229c5d0db45d6785ad11f46e680f82",
+  "script_sha256": "b4dc4571d95adb907c55ce96f244e4ba49249ec546b6587f8e52df0a8ca03451",
+  "blender_version": "5.0.1",
+  "resolution": [
+    800,
+    800
+  ],
+  "focal": 1250.0000504168488,
+  "views": [
+    0,
+    13,
+    73,
+    88,
+    51
+  ],
+  "objects": [
+    {
+      "id": 1,
+      "name": "Sphere",
+      "materials": [
+        "Chrome"
+      ]
+    }
+  ],
+  "triangles": 960,
+  "normal_convention": "unit world-space, camera-facing interpolated evaluated-mesh corner normals; excludes shader bump",
+  "depth_convention": "positive camera-z distance, not Euclidean ray distance",
+  "pixel_convention": "top-left origin, half-integer centers, Blender c2w +X right +Y up -Z forward",
+  "usage": "diagnostic evaluation only; no reference geometry used by SH training"
+}
