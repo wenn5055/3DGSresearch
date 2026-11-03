@@ -306,3 +306,42 @@ one selection-rule test). Report links and CSV row counts were checked.
 **Good commit point:** updated launcher/diagnostics, tests, this command guide,
 scope/status notes and the portable experiment evidence. Full checkpoints remain
 in ignored `outputs/` and should be retained separately from the Git commit.
+
+## Environment-map diagnostic (3 November)
+
+Compare a saved HDR map against the packed `forest.exr` without retraining:
+
+```bash
+python scripts/test_environment_comparison.py
+python scripts/compare_environment.py \
+  outputs/Nov03-1402-justChromeBall-staged-hdr-refine-5k \
+  --output outputs/Nov03-environment-comparison
+```
+
+That command was run successfully. Use a fresh output name when repeating it,
+or replace the run path to examine another completed HDR model. Open the
+resulting `comparison.png`. Blender is used only to read the packed scene-linear
+texture; the scene and checkpoints are never saved or modified.
+
+![Original forest and learned environment at matched resolution and exposures](reports/assets/2026-11-03-environment-check/comparison.png)
+
+*`justChromeBall` world versus the learned map from the 100k-point, initial-size
+0.75 HDR model after 10k + 5k training. Left: original 1024x512 forest texture
+resampled to the renderer's world-direction convention at 512x256. Right:
+learned HDR map decoded from its sidecar. Rows: identical 0 EV and -2 EV display
+transforms; no fitted rotation or brightness normalization. This is a lighting
+diagnostic, not another training result or a calibrated radiance-error metric.*
+
+The original retains substantially more branch, fence and ground structure at
+the same displayed resolution. The learned map's broad blur/warping remains at
+-2 EV, so highlight clipping alone does not explain the lost detail. This
+supports a learned-lighting-fit limitation, while leaving normal/light/material
+ambiguity unresolved; it does not establish that more splats cannot help.
+
+Reference direction mapping follows
+[Blender 5.0.1's projection implementation](https://github.com/blender/blender/blob/v5.0.1/intern/cycles/kernel/camera/projection.h).
+Three analytic direction/sampling tests pass. Source hashes, projection,
+sampling and exposure details are in the
+[comparison record](reports/assets/2026-11-03-environment-check/comparison.json);
+[aligned scene-linear arrays](reports/assets/2026-11-03-environment-check/aligned-linear.npz)
+are preserved alongside the figure. Reference lighting remains evaluation-only.

@@ -1,0 +1,35 @@
+{
+  "status": "completed",
+  "run": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1402-justChromeBall-staged-hdr-refine-5k",
+  "reference": {
+    "scene": "C:\\Users\\e1355010\\3DGSresearch\\data\\blender\\justChromeBall.blend",
+    "scene_sha256": "b5b3b5eef50aecde5b353003199edf3e0312ac0862093af76d5972e0e4cd4f91",
+    "image": "forest.exr",
+    "resolution": [
+      1024,
+      512
+    ],
+    "color_space": "Linear Rec.709",
+    "packed": true,
+    "pixel_order": "bottom-up, scene-linear float RGB",
+    "world_strength": 1.0,
+    "texture_interpolation": "Linear",
+    "blender_version": "5.0.1",
+    "usage": "evaluation only; reference lighting must not enter training",
+    "pixel_sha256": "64ab6067a1ddafa1afbd838169b15203e03a905b699a6a003206c648f1e9efa7"
+  },
+  "checkpoint_sha256": "015d1047dabd78325050c47f02577db1683cacc96b6e488b2a9afced3963a258",
+  "aligned_resolution": [
+    512,
+    256
+  ],
+  "exposures_ev": [
+    0,
+    -2
+  ],
+  "alignment": "same world directions; renderer Y-polar latlong reprojected to Blender Z-polar latlong; no fitted rotation or brightness scaling",
+  "reference_sampling": "bilinear point samples from original-resolution linear pixels; same target resolution, no supersampled area filtering",
+  "projection_source": "https://github.com/blender/blender/blob/v5.0.1/intern/cycles/kernel/camera/projection.h",
+  "interpretation": "structural diagnostic; albedo/reflection/light ambiguity means radiance disagreement alone is not a calibrated reconstruction error",
+  "script_sha256": "243b182d040fa3159b30cfdfe9dcfab3edbd8d6c5d6285d5cc3d960ee1fa8f6b"
+}
