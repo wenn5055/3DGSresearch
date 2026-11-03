@@ -34,6 +34,11 @@ below retain their dated context.
 
 The bounded sphere study is complete. No further experiments are queued.
 
+Later user-directed exploration: close footprint tuning and return multiplier
+to 1; revert the longer-refinement attempt to 10k + 5k. Fresh-run defaults now
+use 200k initial points/capacity. Keep these exploratory runs separate from the
+completed 100k comparison; [current commands](sphere-study-commands-2026-11-03.md#later-3-november-direction-close-footprint-tuning-use-200k-defaults).
+
 Deferred by the 3 November scope decision: LDR comparisons, Ship, NeRO, more
 Materials training, logo recovery and additional scene expansion.
 

@@ -1,4 +1,5 @@
-# Diagnostic: same training-mask-only fixed basis; 100k points, 10k MSE steps. Not a 30k joint-fit ablation.
+# Frozen appearance preset: up to 200k training-mask points, 10k MSE steps.
+# The staged launcher supplies the fresh initializer and dataset paths.
 adaptive:
   dssim_psnr_threshold: 21.0
 convergence:
@@ -16,10 +17,10 @@ loss:
   mode: mse
 model:
   background: white
-  capacity: 100000
+  capacity: 200000
   geometry: surfel
   height: 800
-  initial_splats: 100000
+  initial_splats: 200000
   sh_degree: 0
   width: 800
 paths:

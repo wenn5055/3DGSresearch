@@ -1,5 +1,9 @@
 # Reflection research status
 
+Latest user direction: stop footprint sweeps, use multiplier 1 and the original
+10k + 5k schedule; fresh defaults now initialize up to 200k points. The completed
+100k study below remains archived separately. [Current commands and caveats](sphere-study-commands-2026-11-03.md#later-3-november-direction-close-footprint-tuning-use-200k-defaults).
+
 **Updated 3 November 2026: focus on specular reflection reconstruction.
 Logo-specific geometry investigation closed; plain-sphere capture and staged HDR completed.**
 [Current primary sphere study and commands](sphere-study-commands-2026-11-03.md):

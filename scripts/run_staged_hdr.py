@@ -136,7 +136,7 @@ def main():
     state = {'status': 'prepared', 'data': str(data), 'cumulative_training_iterations': 15000,
              'initializer_command': [sys.executable, '-u', str(ROOT / 'scripts/initialize_from_training_masks.py'),
                  str(data), '--output', str(initial.parent), '--grid-resolution', '512',
-                 '--mask-resolution', '800', '--max-points', '100000', '--smoothing', '3', '--seed', '7',
+                 '--mask-resolution', '800', '--max-points', '200000', '--smoothing', '3', '--seed', '7',
                  '--scale-multiplier', str(args.scale_multiplier)],
              'appearance': args.appearance, 'initial_scale_multiplier': args.scale_multiplier}
     if args.init_ply:

@@ -4,6 +4,10 @@ Specified 3 November 2026, Singapore, before new SH3/size results. This is the
 bounded continuation of the [reduced project scope](reports/2026-11-02-research-wrap-up.md#current-scope-sphere-as-the-main-experiment-3-november).
 Run commands in **Git Bash from the repository root**.
 
+**Later defaults update:** new fresh runs use **200k points, multiplier 1, 10k +
+5k steps**. The completed study below used 100k; its archived configs/results
+are unchanged. See the final section before repeating historical commands.
+
 **Completed 3 November, 14:12 Singapore:** matched SH3/HDR training, the single
 size trial, validation-only selection and all 200 test views. Commands below
 reproduce completed work; reruns require fresh output names.
@@ -345,3 +349,34 @@ sampling and exposure details are in the
 [comparison record](reports/assets/2026-11-03-environment-check/comparison.json);
 [aligned scene-linear arrays](reports/assets/2026-11-03-environment-check/aligned-linear.npz)
 are preserved alongside the figure. Reference lighting remains evaluation-only.
+
+## Later 3 November direction: close footprint tuning; use 200k defaults
+
+The user reported that the visible blobs persisted after footprint changes and
+a longer refinement attempt. Stop further footprint sweeps and return the
+multiplier to **1**. Refinement was reverted to **5k** (position decay over 5k),
+with the frozen stage still 10k. This records the user's visual assessment,
+not a claim that every extended run's numerical score failed to improve.
+
+The two source presets now set `model.capacity` and `model.initial_splats` to
+**200000**. The launcher's fresh initializer uses `--max-points 200000`.
+For a fresh higher-density run:
+
+```bash
+python scripts/run_staged_hdr.py data/justChromeBall \
+  --appearance hdr --scale-multiplier 1 --metrics psnr ssim lpips
+```
+
+Omit `--init-ply` here: reusing a 100k PLY retains 100k actual primitives.
+The reuse helper currently accepts the historical 100k initializer only.
+Raising allocation capacity alone cannot create points while growth is disabled.
+The initializer also adjusts tangent sizes with sampling density: doubling
+points reduces initial scales by approximately sqrt(1/2), even at multiplier 1.
+This is a denser representation experiment, not an isolated size-fixed count test.
+
+For exact 100k replays of the earlier study, restore both presets' capacity/
+initial-count fields and the fresh initializer limit to 100000, or use the
+archived resolved configs with their recorded parents. Historical study/test
+results remain frozen; later exploratory runs are listed separately in the
+[output index](output-index.md). Previously inspected test scores are development
+context, not a fresh untouched benchmark for further tuning.
