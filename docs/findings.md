@@ -583,6 +583,29 @@ and missing fine detail remain.*
 Five views lose PSNR, with the largest drop -0.5050 dB at r_51, preserved in the
 closeout. Extra steps, released geometry and geometry losses change together;
 this is not an equal-budget SH/LDR/frozen-control comparison or evidence of
-accurate recovered normals. No test evaluation or LPIPS was performed here.
+accurate recovered normals. No test evaluation was performed; LPIPS was deferred
+at the 2 November closeout and completed on 3 November below.
 
 [Full daily closeout, dataset views, regressions and reproducible command](reports/2026-11-02-research-wrap-up.md).
+
+## 2026-11-03 - Complete sphere LPIPS on the saved checkpoints
+
+On all 100 validation views at 800px, LPIPS AlexNet decreases
+**0.119765 -> 0.093994** (-0.025771, **21.52% lower**); every view improves.
+Checkpoints, input images and training/evaluation source hashes were checked.
+PSNR reproduces within 0.000053 dB per view; SSIM matches exactly. There was no
+retraining or test evaluation. This supports the improvement after refinement,
+while the existing reflection crops still show blobs and lost fine detail.
+
+![Whole-image LPIPS on all sphere validation views](reports/assets/2026-11-03-sphere-lpips/lpips-validation.png)
+
+*`justChromeBall`, all 100 validation views. Frozen HDR at 10k versus refined HDR
+at 15k cumulative; lower LPIPS is better. Left: matched-view scatter. Right:
+refined-minus-frozen LPIPS per camera. Derived from float checkpoint evaluation.*
+
+The remaining size hypothesis is not yet tested. Stage 2 already optimizes its
+tangent scales; per-pixel reflection depends on blended normals and learned
+lighting as well as footprint overlap. Inspect these diagnostics before
+changing size, capacity or optimization schedules together.
+
+[LPIPS protocol, portable evidence and size-hypothesis discussion](experiments/2026-11-03-sphere-lpips.md).

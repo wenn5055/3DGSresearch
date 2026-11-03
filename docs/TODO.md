@@ -1,6 +1,6 @@
 # Project todo list
 
-## Current priority - 2 November 2026
+## Current priority - 3 November 2026
 
 [Scope decision](research-scope-2026-11-02.md) supersedes older logo/geometry
 follow-ups below. Historical checklists retain their dated context.
@@ -12,9 +12,13 @@ follow-ups below. Historical checklists retain their dated context.
   lighting and Materials camera templates; verify the 100/100/200 split poses.
 - [x] Run training-mask initialization, 10k frozen HDR and 5k gentle refinement;
   preserve [dataset views, stage comparisons and failures](reports/2026-11-02-research-wrap-up.md).
-- [ ] 3 November: evaluate both saved `justChromeBall` stage checkpoints with
+- [x] 3 November: evaluate both saved `justChromeBall` stage checkpoints with
   LPIPS AlexNet on the same 100 validation views; add results to the closeout.
-  No retraining needed. Deferred at the user's request on 2 November.
+  **0.119765 -> 0.093994; all 100 views improve.** No retraining.
+  [Evaluation and verification](experiments/2026-11-03-sphere-lpips.md).
+- [ ] Diagnose the sphere reflection blobs using projected splat footprints and
+  matched normal/lighting views before a controlled size trial. Size tuning is
+  a hypothesis, not an established remedy; no new training has been launched.
 - [ ] Specify equal-budget sphere appearance controls before launching comparisons.
 - [ ] Compare SH3, LDR deferred and HDR/angular on identical fixed estimated geometry.
 - [ ] Keep joint geometry/appearance fitting as a separate matched experiment.

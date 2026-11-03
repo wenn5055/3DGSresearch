@@ -3,6 +3,9 @@
 2 November 2026, Singapore. Both new training stages and their validation runs
 completed by 20:25. No further training is queued by this closeout.
 
+*3 November addendum: LPIPS was subsequently evaluated on the saved checkpoints;
+results and verification are linked below. The 2 November images are unchanged.*
+
 **We now have a captured plain-sphere dataset and a working one-command HDR
 workflow.** On the new scene, 10k steps of frozen-geometry appearance fitting
 followed by 5k refinement raised mean validation PSNR from **22.50 to 24.13 dB**.
@@ -83,6 +86,7 @@ from the existing float-render evaluation CSVs. PNGs are display copies.
 | --- | ---: | ---: | ---: |
 | Mean PSNR, dB | 22.4996 | **24.1250** | +1.6254 |
 | Mean SSIM | 0.842281 | **0.874920** | +0.032639 |
+| LPIPS AlexNet, lower better (3 November follow-up) | 0.119765 | **0.093994** | -0.025771 |
 | Cumulative training steps | 10,000 | 15,000 | +5,000 |
 | Surfels | 100,000 | 100,000 | No structural updates |
 
@@ -118,12 +122,26 @@ the largest PSNR regression; it is not an independently selected illustration.*
 This continuation adds training time, releases geometry and introduces geometry
 losses together. It does **not** isolate the benefit of staging or beat an
 equal-budget frozen, SH3, LDR or joint-from-start sphere control: those comparisons
-have not run. LPIPS and independent sphere normal/depth error were not measured.
+have not run. Independent sphere normal/depth error has not been measured.
+LPIPS was deferred at closeout and completed on 3 November, as recorded below.
 The 200 test images were captured, but these models were evaluated on validation
 only. New-scene scores should not be ranked against the older Chrome scene.
 
 Observed initializer time was 68.79s; trainer-reported times were 109.08s and
 63.84s for the two stages. These are session timings, not controlled speed claims.
+
+## 3 November follow-up: perceptual evaluation
+
+LPIPS AlexNet improves **0.119765 -> 0.093994**, a **21.52% decrease**, on the
+same 100 validation cameras. Every view improves. Checkpoints were unchanged;
+the re-rendered PSNR/SSIM reproduce the original results to reporting precision.
+[Full follow-up, verification and the splat-size hypothesis](../experiments/2026-11-03-sphere-lpips.md).
+
+![LPIPS on the saved frozen and refined sphere models across all validation views](assets/2026-11-03-sphere-lpips/lpips-validation.png)
+
+*Figure 6. `justChromeBall`, all 100 validation views, Stage 1 frozen 10k versus
+Stage 2 refined 15k total. Lower LPIPS is better; all 100 points lie below the
+identity line. This is additional evaluation of the existing models, not training.*
 
 ## Reproduce and find the evidence
 

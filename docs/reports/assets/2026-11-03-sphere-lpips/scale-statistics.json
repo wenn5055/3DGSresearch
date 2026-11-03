@@ -1,0 +1,18 @@
+{
+  "frozen": {
+    "tangent_sigma_scene_units_p5_p50_p95": [
+      0.00911867618560791,
+      0.00911867618560791,
+      0.00911867618560791
+    ],
+    "scope": "both tangent axes across all stored primitives; not screen footprint or visibility weighted"
+  },
+  "refine": {
+    "tangent_sigma_scene_units_p5_p50_p95": [
+      0.007527622324414551,
+      0.008756792638450861,
+      0.01095613669604063
+    ],
+    "scope": "both tangent axes across all stored primitives; not screen footprint or visibility weighted"
+  }
+}

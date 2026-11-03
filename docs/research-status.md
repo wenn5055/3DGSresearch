@@ -1,6 +1,6 @@
 # Reflection research status
 
-**Updated 2 November 2026: focus on specular reflection reconstruction.
+**Updated 3 November 2026: focus on specular reflection reconstruction.
 Logo-specific geometry investigation closed; plain-sphere capture and staged HDR completed.**
 [Today's illustrated closeout](reports/2026-11-02-research-wrap-up.md) includes
 the new dataset, both training stages and reflection crops.
@@ -30,12 +30,15 @@ evidence is in the [illustrated wrap-up report](reports/2026-10-30-research-wrap
   (100/100/200), training-mask initialization, 10k frozen HDR then 5k refinement.
   All-100-view validation PSNR improves **22.4996 -> 24.1250**, SSIM
   **0.842281 -> 0.874920**. PSNR improves on 95 views, SSIM on all 100;
-  fine reflections remain blurred. No SH/LDR sphere controls or test evaluation yet.
+  [3 November LPIPS follow-up](experiments/2026-11-03-sphere-lpips.md) improves
+  **0.119765 -> 0.093994** on all 100 views without retraining. Fine reflections
+  remain blurred. No SH/LDR sphere controls or test evaluation yet.
 - **Full 30k joint HDR/angular + alpha-mask presets remain untrained.**
   Early-SH Gaussian, Ship and new-method test/video runs
   were cancelled before starting.
 
-Next: specify equal-budget SH3, LDR deferred and HDR/angular sphere controls on
+Next: inspect projected footprint/normal/lighting diagnostics for the remaining
+sphere blobs before selecting a size experiment; specify equal-budget SH3, LDR deferred and HDR/angular sphere controls on
 the same fixed estimated geometry, with matched refinement studied separately.
 Today's sphere continuation is complete; those controlled comparisons remain
 planned. Preserve the logo failure

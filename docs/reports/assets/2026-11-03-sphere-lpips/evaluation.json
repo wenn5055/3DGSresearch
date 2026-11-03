@@ -1,0 +1,443 @@
+{
+  "status": "completed",
+  "started_utc": "2026-11-03T05:35:12.014524+00:00",
+  "evaluation_only": true,
+  "manifest": "transforms_val.json",
+  "resolution": [
+    800,
+    800
+  ],
+  "lpips": {
+    "network": "alex",
+    "version": "0.1",
+    "input": "float RGB, clipped to [0,1], mapped to [-1,1]",
+    "scope": "whole image, white background, no resize"
+  },
+  "packages": {
+    "torch": "2.14.1",
+    "torchvision": "0.29.1",
+    "lpips": "0.1.4",
+    "numpy": "2.5.4",
+    "warp-lang": "1.18.0"
+  },
+  "script": {
+    "path": "C:\\Users\\e1355010\\3DGSresearch\\docs\\reports\\assets\\2026-11-03-sphere-lpips\\evaluate.py",
+    "bytes": 5402,
+    "sha256": "1b47cc2b14d46c66b05c01c28dd4861bbbbec6f6fa98e06b4a53b534733ea4b2"
+  },
+  "stages": {
+    "frozen": {
+      "run": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov02-2021-justChromeBall-frozen-hdr-10k",
+      "artifacts": [
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov02-2021-justChromeBall-frozen-hdr-10k\\model.ply",
+          "bytes": 6800416,
+          "sha256": "983a341a89bf15c2856a17ab46022c5652455a4963a25d1da0e821e0d3a31445"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov02-2021-justChromeBall-frozen-hdr-10k\\model.surfel.npz",
+          "bytes": 1738486,
+          "sha256": "28f3428fda288b9cee6782cc6b9a496f60e0d2ba0938da99fd8b31791b35ee2a"
+        }
+      ],
+      "source_verification": [
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\3dgs_trainer.py",
+          "bytes": 111674,
+          "sha256": "edae963dfbc194978cb115f6d98458aa979b916412068ed8c2b649a7974568bc"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\3dgs_evaluator.py",
+          "bytes": 11669,
+          "sha256": "3ee01969233bbaa95e780957842cbbe6c455cf7bc2f75716d92d1e754bbbb893"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\gaussian_first_tile_workspace_gpu.py",
+          "bytes": 7974,
+          "sha256": "7027251f923c7a46697a3ed03666fa94e88075414d3761c62f9e25a6ca638488"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\image_metrics.py",
+          "bytes": 2080,
+          "sha256": "325f7728186c6d00ec05417b078016dd9af83a3a3876277b64a397fdfe420e56"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\scripts\\evaluate_surfels.py",
+          "bytes": 5344,
+          "sha256": "fdfb9b36a9326bc37ef354fa6aef5cac69aa701f8dc5e7f9d787393d153ec1af"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\camera.py",
+          "bytes": 1967,
+          "sha256": "a83ecfac890c81cb3a4b551a2d04d3d3509c296e54fb84c808f790d0b7b5da10"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\dssim_loss.py",
+          "bytes": 9820,
+          "sha256": "9b61757f75812aebabed683769df3903b09948f297ad62a0eb185430595b67e0"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\gaussian_set.py",
+          "bytes": 3066,
+          "sha256": "d970108a395d8d183c65d9ca850c946d572964f6bb8d2cc7a9d61ef01bd0f097"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\optimizer_state.py",
+          "bytes": 1760,
+          "sha256": "590c5e65c027c40c2a5d1081e1c05928391c7220c796c5c7e842715e3dcfcac7"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\profiling.py",
+          "bytes": 1430,
+          "sha256": "2d549a8a633ab148017e78fd386401cb4159df1147820f44fa4d633f05ab681a"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\projected_gaussians.py",
+          "bytes": 526,
+          "sha256": "c135384f7f16d99732c27cbf5c4433aefafd576c0a1654ca83d28bdf5c46a0d7"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\sh_appearance.py",
+          "bytes": 12083,
+          "sha256": "71680e335f482c806936a68d1891628165792028f826e21ba115ad8e50d6e05f"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\splat_math.py",
+          "bytes": 1857,
+          "sha256": "d11ae7ab2236bfff8deb6339716d4d4a3a0f49af756e442329cd8307f43f1861"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\tile_builder.py",
+          "bytes": 11456,
+          "sha256": "97fbfd8a3f6a15b98163b7e956b88afc84a091dc30ddba9816e1c47ddcdb79f7"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\trainable_gaussian.py",
+          "bytes": 5607,
+          "sha256": "4f5b7eea7c0bbb15f1cea0739897f088567f14319a780fa1f076ef2e9a5b9689"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\training_config.py",
+          "bytes": 18705,
+          "sha256": "7941b91770d997d0886ad8bcf6243e31f47bbc81a6055e28c8350cef77e614e7"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\__init__.py",
+          "bytes": 203,
+          "sha256": "793b3bbfe4dc1d062591a3738d99f2c773edb643e9b20e41445514e486c8a84d"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\checks.py",
+          "bytes": 6366,
+          "sha256": "c7388b063a2a7921c94ec666434319418d76143ad4da5ccff5f1a020163f0b4c"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\config.py",
+          "bytes": 11775,
+          "sha256": "c161ef768f62b1be9d9fb634aca61d1ee460f63c6eee1b7b09cba4b48d69b473"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\foreground_pruning.py",
+          "bytes": 5962,
+          "sha256": "770327ccca3975756de75cbcfce75a90a529f09848aecd6ba47bd8f0928504e1"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\geometry.py",
+          "bytes": 7383,
+          "sha256": "f9fcc74d5c94655b93daa86f6077a1731cc3b66742fecd23cdaff7e030768574"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\geometry_losses.py",
+          "bytes": 9611,
+          "sha256": "5f82ac294a38b13e59f7c45de5cf3023f911fa784491e0223e5c226ca6955b91"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\hdr_shader.py",
+          "bytes": 5177,
+          "sha256": "96b7a8b4ebe398210d6f9d9c0f82c93fafb0782f35d915ff500f37730b294fe8"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\kernels.py",
+          "bytes": 12773,
+          "sha256": "30b498c604dfda7bf12b97cf94a086781c1ef5b044e585b1728ea5bd69e32bac"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\normal_propagation.py",
+          "bytes": 1936,
+          "sha256": "c2709ee6edb9fd8d579d1a9d8082b13d389d6d8351bdf7015325cbf14551c87d"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\trainer.py",
+          "bytes": 35259,
+          "sha256": "dca9461898193cbf775ebb59363a1bacf6e51db65a20db3518134dc3d77e8743"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\workflow.py",
+          "bytes": 18480,
+          "sha256": "98a8b5221068885dd7675a11da948fd4b3dff8f393b58f52f9bdb43ca63f4fb6"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\__init__.py",
+          "bytes": 92,
+          "sha256": "c1e0983b13cb2427ffea13e192511b26917c1ae88a9e5a570ae286699aea10a6"
+        }
+      ],
+      "verified_training_input_files": 203,
+      "command": [
+        "C:\\Users\\e1355010\\3DGSresearch\\.venv\\Scripts\\python.exe",
+        "-u",
+        "C:\\Users\\e1355010\\3DGSresearch\\scripts\\evaluate_surfels.py",
+        "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov02-2021-justChromeBall-frozen-hdr-10k\\model.ply",
+        "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall",
+        "--manifest",
+        "transforms_val.json",
+        "--arch",
+        "gpu",
+        "--width",
+        "800",
+        "--height",
+        "800",
+        "--background",
+        "white",
+        "--sh-degree",
+        "0",
+        "--metrics",
+        "psnr",
+        "ssim",
+        "lpips",
+        "--lpips-net",
+        "alex",
+        "--output-dir",
+        "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-lpips-verified\\frozen\\renders",
+        "--csv",
+        "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-lpips-verified\\frozen.csv"
+      ],
+      "means": {
+        "psnr_db": 22.49964342586809,
+        "ssim": 0.8422812002897263,
+        "lpips": 0.1197651255875826
+      },
+      "max_absolute_change_from_original": {
+        "mse": 7.450580596923828e-08,
+        "psnr_db": 5.286579264662805e-05,
+        "ssim": 0.0
+      },
+      "csv": {
+        "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-lpips-verified\\frozen.csv",
+        "bytes": 9350,
+        "sha256": "8c8605eff3a266faf8c6463d687efb37cfb27adcbb87fd2cfe2a2311b36a5ca4"
+      }
+    },
+    "refine": {
+      "run": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov02-2023-justChromeBall-staged-hdr-refine-5k",
+      "artifacts": [
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov02-2023-justChromeBall-staged-hdr-refine-5k\\model.ply",
+          "bytes": 6800416,
+          "sha256": "76565e6e24a13c663b8d5b703e5e4d4f8eed784381a0410bec3353ac69f65e2f"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov02-2023-justChromeBall-staged-hdr-refine-5k\\model.surfel.npz",
+          "bytes": 1740038,
+          "sha256": "a1f67b5c29a30ee365c062f0d8dc9fdf83c0c5406f58330427ce0a024a7b83e4"
+        }
+      ],
+      "source_verification": [
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\3dgs_trainer.py",
+          "bytes": 111674,
+          "sha256": "edae963dfbc194978cb115f6d98458aa979b916412068ed8c2b649a7974568bc"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\3dgs_evaluator.py",
+          "bytes": 11669,
+          "sha256": "3ee01969233bbaa95e780957842cbbe6c455cf7bc2f75716d92d1e754bbbb893"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\gaussian_first_tile_workspace_gpu.py",
+          "bytes": 7974,
+          "sha256": "7027251f923c7a46697a3ed03666fa94e88075414d3761c62f9e25a6ca638488"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\image_metrics.py",
+          "bytes": 2080,
+          "sha256": "325f7728186c6d00ec05417b078016dd9af83a3a3876277b64a397fdfe420e56"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\scripts\\evaluate_surfels.py",
+          "bytes": 5344,
+          "sha256": "fdfb9b36a9326bc37ef354fa6aef5cac69aa701f8dc5e7f9d787393d153ec1af"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\camera.py",
+          "bytes": 1967,
+          "sha256": "a83ecfac890c81cb3a4b551a2d04d3d3509c296e54fb84c808f790d0b7b5da10"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\dssim_loss.py",
+          "bytes": 9820,
+          "sha256": "9b61757f75812aebabed683769df3903b09948f297ad62a0eb185430595b67e0"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\gaussian_set.py",
+          "bytes": 3066,
+          "sha256": "d970108a395d8d183c65d9ca850c946d572964f6bb8d2cc7a9d61ef01bd0f097"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\optimizer_state.py",
+          "bytes": 1760,
+          "sha256": "590c5e65c027c40c2a5d1081e1c05928391c7220c796c5c7e842715e3dcfcac7"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\profiling.py",
+          "bytes": 1430,
+          "sha256": "2d549a8a633ab148017e78fd386401cb4159df1147820f44fa4d633f05ab681a"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\projected_gaussians.py",
+          "bytes": 526,
+          "sha256": "c135384f7f16d99732c27cbf5c4433aefafd576c0a1654ca83d28bdf5c46a0d7"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\sh_appearance.py",
+          "bytes": 12083,
+          "sha256": "71680e335f482c806936a68d1891628165792028f826e21ba115ad8e50d6e05f"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\splat_math.py",
+          "bytes": 1857,
+          "sha256": "d11ae7ab2236bfff8deb6339716d4d4a3a0f49af756e442329cd8307f43f1861"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\tile_builder.py",
+          "bytes": 11456,
+          "sha256": "97fbfd8a3f6a15b98163b7e956b88afc84a091dc30ddba9816e1c47ddcdb79f7"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\trainable_gaussian.py",
+          "bytes": 5607,
+          "sha256": "4f5b7eea7c0bbb15f1cea0739897f088567f14319a780fa1f076ef2e9a5b9689"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\training_config.py",
+          "bytes": 18705,
+          "sha256": "7941b91770d997d0886ad8bcf6243e31f47bbc81a6055e28c8350cef77e614e7"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\__init__.py",
+          "bytes": 203,
+          "sha256": "793b3bbfe4dc1d062591a3738d99f2c773edb643e9b20e41445514e486c8a84d"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\checks.py",
+          "bytes": 6366,
+          "sha256": "c7388b063a2a7921c94ec666434319418d76143ad4da5ccff5f1a020163f0b4c"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\config.py",
+          "bytes": 11775,
+          "sha256": "c161ef768f62b1be9d9fb634aca61d1ee460f63c6eee1b7b09cba4b48d69b473"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\foreground_pruning.py",
+          "bytes": 5962,
+          "sha256": "770327ccca3975756de75cbcfce75a90a529f09848aecd6ba47bd8f0928504e1"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\geometry.py",
+          "bytes": 7383,
+          "sha256": "f9fcc74d5c94655b93daa86f6077a1731cc3b66742fecd23cdaff7e030768574"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\geometry_losses.py",
+          "bytes": 9611,
+          "sha256": "5f82ac294a38b13e59f7c45de5cf3023f911fa784491e0223e5c226ca6955b91"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\hdr_shader.py",
+          "bytes": 5177,
+          "sha256": "96b7a8b4ebe398210d6f9d9c0f82c93fafb0782f35d915ff500f37730b294fe8"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\kernels.py",
+          "bytes": 12773,
+          "sha256": "30b498c604dfda7bf12b97cf94a086781c1ef5b044e585b1728ea5bd69e32bac"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\normal_propagation.py",
+          "bytes": 1936,
+          "sha256": "c2709ee6edb9fd8d579d1a9d8082b13d389d6d8351bdf7015325cbf14551c87d"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\trainer.py",
+          "bytes": 35259,
+          "sha256": "dca9461898193cbf775ebb59363a1bacf6e51db65a20db3518134dc3d77e8743"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\workflow.py",
+          "bytes": 18480,
+          "sha256": "98a8b5221068885dd7675a11da948fd4b3dff8f393b58f52f9bdb43ca63f4fb6"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\__init__.py",
+          "bytes": 92,
+          "sha256": "c1e0983b13cb2427ffea13e192511b26917c1ae88a9e5a570ae286699aea10a6"
+        }
+      ],
+      "verified_training_input_files": 204,
+      "command": [
+        "C:\\Users\\e1355010\\3DGSresearch\\.venv\\Scripts\\python.exe",
+        "-u",
+        "C:\\Users\\e1355010\\3DGSresearch\\scripts\\evaluate_surfels.py",
+        "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov02-2023-justChromeBall-staged-hdr-refine-5k\\model.ply",
+        "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall",
+        "--manifest",
+        "transforms_val.json",
+        "--arch",
+        "gpu",
+        "--width",
+        "800",
+        "--height",
+        "800",
+        "--background",
+        "white",
+        "--sh-degree",
+        "0",
+        "--metrics",
+        "psnr",
+        "ssim",
+        "lpips",
+        "--lpips-net",
+        "alex",
+        "--output-dir",
+        "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-lpips-verified\\refine\\renders",
+        "--csv",
+        "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-lpips-verified\\refine.csv"
+      ],
+      "means": {
+        "psnr_db": 24.125033873872166,
+        "ssim": 0.874919770359993,
+        "lpips": 0.0939941669255495
+      },
+      "max_absolute_change_from_original": {
+        "mse": 4.889443516731262e-08,
+        "psnr_db": 5.054758008071758e-05,
+        "ssim": 0.0
+      },
+      "csv": {
+        "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-lpips-verified\\refine.csv",
+        "bytes": 9391,
+        "sha256": "54c9d13f0ad19a4b0cc7a6858cb89caa9bd42bfd2c459484d2c2f6090b2c9bdf"
+      }
+    }
+  },
+  "original_metric_absolute_tolerances": {
+    "mse": 1e-06,
+    "psnr_db": 0.001,
+    "ssim": 1e-05
+  },
+  "finished_utc": "2026-11-03T05:36:13.788828+00:00",
+  "lpips_delta_refine_minus_frozen": -0.02577095866203308,
+  "lpips_improved_views": 100,
+  "lpips_worse_views": 0
+}
