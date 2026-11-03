@@ -221,7 +221,11 @@ def evaluate(args):
             row = {'model': label, 'view': view, 'file': frames[view], 'mse': float(error.mean()),
                    'psnr_db': psnr(error.mean()), 'ssim': ssim_rgb(image, targets[view]),
                    'foreground_psnr_db': psnr(error[masks[view]].mean()) if masks[view].any() else None,
+                   'foreground_coverage_fraction': None,
                    'lpips_alex': lpips(image, targets[view]) if lpips is not None else None}
+            if is_surfel and masks[view].any():
+                coverage = trainer.buffers.numpy().reshape(height, width, 9)[:, :, 7]
+                row['foreground_coverage_fraction'] = float((coverage[masks[view]] >= .5).mean())
             rows.append(row)
             model_rows.append(row)
             if geometry_metadata:
@@ -318,7 +322,7 @@ def evaluate(args):
             timing['training_time_scope'] = 'Parent training cost; pruning/export time is separate in run.json.'
         timings.append(timing)
         summary = {'model': label}
-        for field in ('psnr_db', 'ssim', 'foreground_psnr_db', 'lpips_alex',
+        for field in ('psnr_db', 'ssim', 'foreground_psnr_db', 'foreground_coverage_fraction', 'lpips_alex',
                       *(f'{material}_psnr_db' for material in material_ids)):
             values = [row[field] for row in model_rows if row[field] is not None]
             summary[field] = float(np.mean(values)) if values else None

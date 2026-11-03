@@ -7,11 +7,52 @@ import unittest
 from unittest.mock import patch
 
 import yaml
+import numpy as np
+from plyfile import PlyData
 
 import run_staged_hdr as pipeline
 
 
 class StagedHDRTests(unittest.TestCase):
+    def test_size_variant_preserves_every_other_stored_field(self):
+        from gaussian_set import GaussianSet
+        with tempfile.TemporaryDirectory() as temporary:
+            source = Path(temporary) / 'source.ply'
+            rng = np.random.default_rng(7)
+            count = 100000
+            GaussianSet(rng.normal(size=(count, 3)).astype(np.float32),
+                        np.full((count, 3), .01, np.float32),
+                        np.tile([1., 0., 0., 0.], (count, 1)).astype(np.float32),
+                        np.full(count, .8, np.float32),
+                        rng.random((count, 3)).astype(np.float32)).to_ply(source)
+            destination = Path(temporary) / 'initial.ply'
+            pipeline.copy_initializer(source, destination, .75)
+            old, new = (PlyData.read(path, mmap=False)['vertex'].data for path in (source, destination))
+            for name in old.dtype.names:
+                if name in ('scale_0', 'scale_1'):
+                    np.testing.assert_allclose(new[name]-old[name], np.log(.75), atol=3e-7)
+                else:
+                    np.testing.assert_array_equal(new[name], old[name])
+
+    def test_sh3_control_changes_only_appearance_and_paths(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            work = Path(temporary)
+            for template in ('materials_chrome_frozen_hdr.yaml', 'materials_chrome_staged_hdr_refine.yaml'):
+                paths = []
+                for appearance in ('hdr', 'sh3'):
+                    path = work / f'{appearance}.yaml'
+                    pipeline.write_config(pipeline.ROOT / 'config' / template, path,
+                                          work / 'data', work / 'initial.ply', work / 'model.png', appearance)
+                    paths.append(pipeline.SurfelTrainingConfig.load(path).printable())
+                hdr, sh3 = paths
+                self.assertEqual(sh3['model']['sh_degree'], 3)
+                self.assertEqual(sh3['surfel']['sh_start_iteration'], 1000)
+                self.assertEqual(sh3['surfel']['sh_band_interval'], 1000)
+                sh3['model']['sh_degree'] = hdr['model']['sh_degree']
+                for key in ('mode', 'shading_model', 'sh_start_iteration', 'sh_band_interval'):
+                    sh3['surfel'][key] = hdr['surfel'][key]
+                self.assertEqual(hdr, sh3)
+
     def test_new_scene_replaces_all_old_scene_paths(self):
         with tempfile.TemporaryDirectory() as temporary:
             work = Path(temporary)
