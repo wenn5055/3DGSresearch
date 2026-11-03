@@ -6,7 +6,8 @@ Working documents: [research stages](researchStages.md), [todo list](TODO.md),
 Historical rationale and literature checks:
 [research design record](research-design-notes.md).
 Current measured evidence: [findings](findings.md).
-Latest scope decision: [2 November reflection focus](research-scope-2026-11-02.md).
+Latest scope and runnable protocol: [3 November sphere study](sphere-study-commands-2026-11-03.md).
+Earlier scope history: [2 November reflection focus](research-scope-2026-11-02.md).
 Current results: [research status](research-status.md). Dated decisions: [update log](#design-update-log).
 
 ## Purpose and status
@@ -33,9 +34,11 @@ with the Gaussian baseline; archived runs retain their original source snapshots
 
 ## Research question and baseline
 
-Does deferred specular shading using explicit 2D surfel normals improve held-out
-image reconstruction on the NeRF-synthetic materials and ship scenes relative to
-the existing Unit 9 trainer, and what training-time and VRAM costs does it add?
+How well does deferred surfel shading reconstruct sharp reflections compared
+with SH appearance on the controlled `justChromeBall` scene, and what storage
+and rendering costs accompany it? The 3 November scope reduction makes the
+sphere primary and retains completed Materials results as supporting evidence.
+Materials/Ship/NeRO expansion and further logo recovery are deferred.
 
 The repository now supports fixed RGB and SH through degree 3. On the matched
 200-view Materials test set, fixed-RGB D-SSIM, SH2, and SH3 reached 24.9365,
@@ -69,21 +72,19 @@ G-buffer compositing, surfel normals, and geometry; both CPU and CUDA checks cov
 
 ## Datasets and evaluation
 
-- Primary scene: materials, including a fixed chrome-sphere crop for focused
-  reflection evaluation and full-image metrics.
-- Auxiliary appearance diagnostic: a separate plain chrome sphere, without logo
-  or pedestal, under forest lighting and matched cameras. On 2 November,
-  `justChromeBall` capture and 10k frozen HDR + 5k refinement completed;
-  [illustrated results](reports/2026-11-02-research-wrap-up.md). Equal-budget
-  appearance comparisons on identical fixed estimated geometry remain planned;
-  record joint fitting separately. Original Materials remains primary.
-- real-world NeRO evaluation. Its
-  scope, scene selection, data access, and camera conversion remain to be confirmed.
+- Primary scene: `justChromeBall`, one Chrome sphere without logo/pedestal under
+  forest lighting. Compare SH3 and HDR/angular with the same estimated initializer,
+  geometry policy, 10k + 5k schedule, 800px images, 100k points and seed 7.
+- One focused initial-size trial: HDR at 0.75x versus 1.0x tangent size, retaining
+  the same-size SH3/HDR contrast as the primary comparison.
+- Completed Materials experiments are supporting evidence. Further Materials,
+  Ship and real-world NeRO runs are outside the reduced scope.
 - Report held-out test-view PSNR, SSIM, and LPIPS, plus model size, rendering FPS,
   GPU VRAM usage, and training wall-clock time.
-- Use matched train/validation/test splits, image resolution, training budget
-  (30,000 iterations in the proposal), and shared optimization settings. Document
-  settings introduced by the new model and any departures from this protocol.
+- Use matched train/validation/test splits, resolution, total training budget
+  and shared geometry optimization settings. The reduced sphere protocol uses
+  15k cumulative steps, an explicit departure from the proposal's 30k budget;
+  model-specific appearance settings are recorded in the comparison.
 - Record baseline results before changes. Published results from other systems
   require matched evaluation conditions before being treated as direct comparisons.
 
@@ -96,6 +97,14 @@ G-buffer compositing, surfel normals, and geometry; both CPU and CUDA checks cov
 - https://github.com/gapszju/3DGS-DR
 
 ## Design update log
+
+### 2026-11-03 - Sphere primary; bound remaining work
+
+**User decision:** reduce scope to the chrome sphere as the main experimental
+scene, preserving existing Materials results separately. Complete one matched
+SH3/HDR comparison and one footprint investigation, then freeze validation
+choices before test evaluation. Defer LDR, Ship, NeRO, logo recovery and further
+scene expansion. [Commands, fixed protocol and measured results](sphere-study-commands-2026-11-03.md).
 
 ### 2026-11-02 - Refocus on reflection appearance; close the logo investigation
 

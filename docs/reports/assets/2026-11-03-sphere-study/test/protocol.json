@@ -1,0 +1,1334 @@
+{
+  "status": "completed",
+  "created_utc": "2026-11-03T06:08:45.412875+00:00",
+  "runs": [
+    "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1357-justChromeBall-staged-sh3-refine-5k",
+    "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov02-2023-justChromeBall-staged-hdr-refine-5k",
+    "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1402-justChromeBall-staged-hdr-refine-5k"
+  ],
+  "labels": [
+    "SH3",
+    "HDR-1.0",
+    "HDR-0.75"
+  ],
+  "manifest": "transforms_test.json",
+  "derivations": [
+    null,
+    null,
+    null
+  ],
+  "resolution": [
+    800,
+    800
+  ],
+  "selected_views": [
+    0,
+    13,
+    73,
+    88
+  ],
+  "save_all_renders": false,
+  "crop_boxes_xyxy_half_open": [
+    {
+      "view": 0,
+      "region": "component-1",
+      "bounds": [
+        182,
+        182,
+        610,
+        611
+      ]
+    },
+    {
+      "view": 13,
+      "region": "component-1",
+      "bounds": [
+        185,
+        180,
+        612,
+        609
+      ]
+    },
+    {
+      "view": 73,
+      "region": "component-1",
+      "bounds": [
+        182,
+        183,
+        613,
+        614
+      ]
+    },
+    {
+      "view": 88,
+      "region": "component-1",
+      "bounds": [
+        180,
+        182,
+        610,
+        612
+      ]
+    }
+  ],
+  "material_box_definition": "Projected mesh bounding boxes include background, pedestals and possible occlusion; not a visible-material segmentation.",
+  "reflection_blend_definition": "Mean per-pixel blended scalar reflection strength on reference foreground; zero when deferred shading is inactive. Not physical reflectance.",
+  "normal_coherence_definition": "Length of weighted normal sum divided by coverage, on valid normal pixels; one means aligned contributors.",
+  "config_differences": {
+    "model.sh_degree": [
+      3,
+      0,
+      0
+    ],
+    "paths.init_ply": [
+      "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1354-justChromeBall-frozen-sh3-10k\\model.ply",
+      "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov02-2021-justChromeBall-frozen-hdr-10k\\model.ply",
+      "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1400-justChromeBall-frozen-hdr-10k\\model.ply"
+    ],
+    "paths.output": [
+      "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1357-justChromeBall-staged-sh3-refine-5k\\model.png",
+      "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov02-2023-justChromeBall-staged-hdr-refine-5k\\model.png",
+      "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1402-justChromeBall-staged-hdr-refine-5k\\model.png"
+    ],
+    "surfel.mode": [
+      "rgb",
+      "deferred",
+      "deferred"
+    ],
+    "surfel.sh_start_iteration": [
+      1000,
+      null,
+      null
+    ],
+    "surfel.shading_model": [
+      "ldr",
+      "hdr_angular",
+      "hdr_angular"
+    ]
+  },
+  "inputs": [
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\transforms_test.json",
+      "bytes": 130256,
+      "sha256": "c7180f910ffc668574c60b0e208ae314bb710f2be15d357f07f5471351fcd1ae"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_0.png",
+      "bytes": 348363,
+      "sha256": "b2be79872b41c2180cf378074eda852cf07c84c66937d672e7ad676b594ba647"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_1.png",
+      "bytes": 348907,
+      "sha256": "9f27d02ef57786b86979337bd8f99c322618ebef6b206f979b1e2991e0bcfc0a"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_2.png",
+      "bytes": 349254,
+      "sha256": "e4d34559fdb36a550aefc1f21e95ab65e4b19229f72ac70ce7ed91b0b12e9287"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_3.png",
+      "bytes": 349233,
+      "sha256": "5bb35060ccf701d1334ceb16fb70ff880f17b011b3d4f8d287e8da9f1f547413"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_4.png",
+      "bytes": 348569,
+      "sha256": "eb95769a6fb572769e394e670cf2955bdbc165b43d89a94d833d25ec85df001b"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_5.png",
+      "bytes": 349211,
+      "sha256": "e1d00b19930faace75a1ceb56b35f50099c8c7c2153843759e00058d22185948"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_6.png",
+      "bytes": 349143,
+      "sha256": "484e685ced97fb4196a6ab2eb5d9f77e8c93d0580dbcf5bdd0abfd4ded0e5d7b"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_7.png",
+      "bytes": 348486,
+      "sha256": "a1217cf206caa287204f943ce24a2e7cbfae49edf42691d55c429c3562da55da"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_8.png",
+      "bytes": 348923,
+      "sha256": "ed655ff1b1d614cddfee35286857310f36ef8c7393b9a33334da79a663f89e35"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_9.png",
+      "bytes": 349015,
+      "sha256": "122907ae4c9cfaef644babdbc59914f4f0c48d0e825ab722dc1c119ade1efdb6"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_10.png",
+      "bytes": 349530,
+      "sha256": "f1708e34f68f66f61de9ec1428c34d0cb85adf9b42ff3db8413ac4772acb77f6"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_11.png",
+      "bytes": 349826,
+      "sha256": "715d2a6c164ecfb2fe1ec2487280e6ca1a7cb1df69d3cbca9c5fda637a94f2ba"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_12.png",
+      "bytes": 349819,
+      "sha256": "0a23453ae1de49c8fa001ebbceedbc39bf18cca5b92d908621a8c266b9d1403a"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_13.png",
+      "bytes": 350268,
+      "sha256": "9c7feff80b428e47fad74b0528f39d88cd364b80f2b75b22c60cd898e11d5cda"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_14.png",
+      "bytes": 350345,
+      "sha256": "da885c06fc399ec208075330f7bc791448e07f4cb0b1e0ef334c14afb7e49d62"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_15.png",
+      "bytes": 350271,
+      "sha256": "c5cd92a5669b6bed03bc8a9aaf88f2561841c4eb58c610cd743e2758ccea6653"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_16.png",
+      "bytes": 350828,
+      "sha256": "50a9db6b537faf307948ec233e8a18b8ad17870c02f7797a17b634f5b1212f01"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_17.png",
+      "bytes": 350702,
+      "sha256": "50b7b653945c74a7615b53e0d7e2ec3c1362d6d4eeb931a15a72d2ac5c1ae2f2"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_18.png",
+      "bytes": 351145,
+      "sha256": "aff72ff74bf4b40331917594733f2c1c5ef10abb2afc7cefe0be0b42c5256ca8"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_19.png",
+      "bytes": 351341,
+      "sha256": "1252fee4a4c4ff646d7958263ce3f83de0972fc9409024c75c9fda37fb1e208d"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_20.png",
+      "bytes": 351870,
+      "sha256": "cc2f6372e95deec0a228eb2545b7dba942101047a5c5de5678969401297b74a9"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_21.png",
+      "bytes": 351312,
+      "sha256": "60283f4e5fb55209d2435bd956f787b495b299128fcfef8793233f811d11663e"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_22.png",
+      "bytes": 351079,
+      "sha256": "6c2613813bfafd4bcf38df0257d35ef85a564ba7a5e3cfcbf32e64f85c7ac9b1"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_23.png",
+      "bytes": 351374,
+      "sha256": "5706b488282be79bf8b259b3e6ae723854f342f12421baf784f86d66c85a4b65"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_24.png",
+      "bytes": 351225,
+      "sha256": "af436babc54e5f69a407a8f3b91b67070ea518d0fcfa9cd1c6d9a93560de2ed9"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_25.png",
+      "bytes": 351770,
+      "sha256": "44a488d6e10bfd17ba92342412db962ec5f33100b45846271f72a1f9b6def852"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_26.png",
+      "bytes": 351391,
+      "sha256": "d991031ea513f32cb70e5adf8edbec9685153969a4dce3cdf503065656d54e25"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_27.png",
+      "bytes": 351479,
+      "sha256": "a2b628100bb066089d7532814ab1a27a9ebd84fc367943916e1da4459b4beffa"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_28.png",
+      "bytes": 351378,
+      "sha256": "0c5c5acd00857e53d93fd3811a8fa5b2d2917d73d7b2fd89519397752eb6c4a1"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_29.png",
+      "bytes": 350985,
+      "sha256": "f3f715db04ebc38bf7300d1dc697566591a07e8c61c3b281e61c6e186b0e415a"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_30.png",
+      "bytes": 350534,
+      "sha256": "6591427f7c6672187428c328072d1afd1feac764642b94f5ce93fcd29baaf13f"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_31.png",
+      "bytes": 350430,
+      "sha256": "10e3d5f6c0facf75d76dd489cf38be8ecf698afacc56699a9a8f98b5d3e92804"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_32.png",
+      "bytes": 350219,
+      "sha256": "142e940dc6af6af9bb285c2088116f184e5c0da70ddb835d2386821cfc0204af"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_33.png",
+      "bytes": 349670,
+      "sha256": "cc03b51dd9ad1923ad0d85ce5293f399ec2bf7a24fba6910382e6d9753076929"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_34.png",
+      "bytes": 349121,
+      "sha256": "88585dd520cb387c600503d37746bb923cf573db8b6921d9d01880b82eeabfdd"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_35.png",
+      "bytes": 349460,
+      "sha256": "f469da26e3258e2cc85d3a184141d12d0c0225950845328099ebfa1d7ff80c8e"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_36.png",
+      "bytes": 348701,
+      "sha256": "c6bef269e22351ec2cf590232a1cd63eae4e933cba8087e5096c2e45fd8fb5d8"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_37.png",
+      "bytes": 348369,
+      "sha256": "51dce93b569ea83d75bcb435732fd6e871390768da4621ee327245baa2ed07de"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_38.png",
+      "bytes": 348284,
+      "sha256": "126658ffe57758ee34b66dca17197dd46ffc351d4d18fcb04acacd2c58ed2e7f"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_39.png",
+      "bytes": 348016,
+      "sha256": "a1b71c98e49ac6d568f07fd686dc98209c54bf02e2c5f71df187449071d70c65"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_40.png",
+      "bytes": 347763,
+      "sha256": "a0ace0a8038754aabe6d88829e572102cf6e38c8e0cc81a86e964163c895a79f"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_41.png",
+      "bytes": 347714,
+      "sha256": "d3e267a64a71b7b7f8bbacc8e031350cb5d82552d51acbaad386edf465fd129c"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_42.png",
+      "bytes": 347011,
+      "sha256": "a0e3368cb5c7ba815009794bb41dd5ed06b5f947d64f8b872e65b2b3420eaaea"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_43.png",
+      "bytes": 346579,
+      "sha256": "099b3a8338305be35ff20afc50307b927c21fc67182f82bb4f5b56d6691627bd"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_44.png",
+      "bytes": 346366,
+      "sha256": "e02d9c638143e4aeee4355e475cc58064eb7c20c122bf533aa8e1f88563ac21d"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_45.png",
+      "bytes": 346165,
+      "sha256": "c4e453ccf2179b7a56d3f637c78c6c26bc5ab40e6bc07afa7262092eefeef7ed"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_46.png",
+      "bytes": 345857,
+      "sha256": "9846a07eef0dbca9d778f2c2a8b6669111b58dda3721908f640ffd199cc95bd1"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_47.png",
+      "bytes": 346172,
+      "sha256": "987a4dc03a6490f97658d853a3e087ff9644556cf4e6ebaf9eb317b6f33cf974"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_48.png",
+      "bytes": 345916,
+      "sha256": "2e477e9eb03f21d60641fcaa667e98b7a4e0992716da04cda11d2ff3074f78d8"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_49.png",
+      "bytes": 345825,
+      "sha256": "bff9bea092476f93126c9172bef41bcb129c2eaca946e74eba8995d75440a56e"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_50.png",
+      "bytes": 346353,
+      "sha256": "f067697d4bcb049941cf5b792bd935eef14d9e6b5e5aa36e12443d9bbc46714a"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_51.png",
+      "bytes": 345921,
+      "sha256": "7bfdb712297941dbcfa78298946428daea477b1175c728804008c3a56d944c05"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_52.png",
+      "bytes": 346249,
+      "sha256": "cba766bb72b91a1def063d844f976999af62e72f9cd66a1a00533809627f6f46"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_53.png",
+      "bytes": 346183,
+      "sha256": "8dcb56da21cf71cea91680d35dd6e3a83a258f6628afb5e5b5cdc392c92681c2"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_54.png",
+      "bytes": 345928,
+      "sha256": "37e81548344b8ad68ce588f3840a7f2734bdf7ec17fdf1da57b23ead07cbef65"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_55.png",
+      "bytes": 346430,
+      "sha256": "31094292a3756a67ea3cfec8878612425a7475c6e5ad15ed11dc0e929ab2de1b"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_56.png",
+      "bytes": 345899,
+      "sha256": "a818576851347e74d43db0c9d14262af3589cdb5293513b368d5e198c17e1f53"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_57.png",
+      "bytes": 345742,
+      "sha256": "cffe7b351ae796aa771e53f0b92ac3da83a81fd94a7f123205dcdedba7fd8621"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_58.png",
+      "bytes": 346052,
+      "sha256": "4829d77557c34207941c377183bf8e0da2039f6687232da3e8803e1dfe0a3401"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_59.png",
+      "bytes": 345910,
+      "sha256": "08eda65eae576022a5fcf04c17f17191e8c9c337f7ee8a3197492ab4b664bd43"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_60.png",
+      "bytes": 345727,
+      "sha256": "a23ecc0a1a7e00a36094d9f89955cd451c6ae56ddfba2baf66cd334675cb0aba"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_61.png",
+      "bytes": 345441,
+      "sha256": "60e233f2014a068c8979b344c23bfe28e4b6b563b7d140e9f63aad4c178a56b8"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_62.png",
+      "bytes": 345402,
+      "sha256": "0f37cf0436673add791561c3b90a9dd30ef5f03b70e9909b2bf874e4d33e657d"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_63.png",
+      "bytes": 345079,
+      "sha256": "efb845e6997b70e89e90b40f994b2f150047964b7242a78a26854ce026994bd8"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_64.png",
+      "bytes": 344489,
+      "sha256": "bd3f6d5b5c6df19393a09d1854bcfc7b34549c742306068f7e332c02fa7e79ed"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_65.png",
+      "bytes": 344044,
+      "sha256": "4003ec4745798e6a7419de42c8e9e5e4f84136b7820614eeb988a43381b110b8"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_66.png",
+      "bytes": 343442,
+      "sha256": "21d0cf9dbe56139700a09863c0b954c526f9decc19978db27f96586f60e76bd3"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_67.png",
+      "bytes": 344020,
+      "sha256": "841fc5c3b1b452944416ff4172d58ba1586fd5d9227b287f277d188aa6d50e4d"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_68.png",
+      "bytes": 344043,
+      "sha256": "c9a861379bf4a5a75bbba5a5980ce4c3cda16be7e226fc3a43b93984fae86130"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_69.png",
+      "bytes": 343669,
+      "sha256": "39d0149a520013eef63439583670a7c110c686de271557d6a7e0c770525571ca"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_70.png",
+      "bytes": 343988,
+      "sha256": "41a688b04d3e61d82956e383d99f443c6fd665c234081a88efada6b4ea1dd93f"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_71.png",
+      "bytes": 344102,
+      "sha256": "19ebce4409d0e1d4cba45665f6ed5ecee41ced14b17a3427aec15bc6d5d40254"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_72.png",
+      "bytes": 344743,
+      "sha256": "58a3362c0f26d740eecdbf90495cd7879f4b1c01b7b42075da8e2f10c7066a1e"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_73.png",
+      "bytes": 344703,
+      "sha256": "f15eaf5ed29875875cfe821f5adb6fe3fcae639c3509464857f30033c1a0464f"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_74.png",
+      "bytes": 344449,
+      "sha256": "7a41f1583d47c195eb504baddfce11baae2ae63c57bc4cc88642f5152dcffe10"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_75.png",
+      "bytes": 345014,
+      "sha256": "86ce2753887d7327571cff7c72ed4d14cbcfb31142dbf16a9d0384b8b25c120c"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_76.png",
+      "bytes": 345474,
+      "sha256": "cd0d80db1caf15d928f3b7d207bbda8800ca540a31450b696f464efd63bfce88"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_77.png",
+      "bytes": 346113,
+      "sha256": "0e9141e7cdb77a1de3e39957ab153bffba669206c4c2b55754427245f2b46658"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_78.png",
+      "bytes": 346655,
+      "sha256": "76f376935466d95aee47c1dc7832fd2a784f951f3bad9db0859c75058f495240"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_79.png",
+      "bytes": 347252,
+      "sha256": "963e2554188f357d5d47b60b3edd5c57796670dacbb1597e8ba8733542c81b7d"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_80.png",
+      "bytes": 347703,
+      "sha256": "ef3c18155075730f73e9a98556735cc50b77f78669acf1ace034d6d5e47e772a"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_81.png",
+      "bytes": 348387,
+      "sha256": "1802a7fbb7c84525aa48b726f203fc1d1bd08634e6dea3b93142e1a6efe69e12"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_82.png",
+      "bytes": 349076,
+      "sha256": "9f054cb601ac330b0fa0a3ebf2c2e5bf326b5ad95b55106842ceb74418b726a9"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_83.png",
+      "bytes": 349775,
+      "sha256": "761291d0faae3eadc15046537ade8bc7008973c4158ee9e2b82f267e2d26850b"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_84.png",
+      "bytes": 349926,
+      "sha256": "fa392434a2ba0f5faf619c4c1a96196b160f5deab20bf3fd4aba191687462637"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_85.png",
+      "bytes": 350752,
+      "sha256": "f4e100b87d23f83fe0c5e9b1523ba48a3f6eace1005071c32d88cd294fca55f6"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_86.png",
+      "bytes": 350474,
+      "sha256": "95e0d6a74c5280b7056395e4e3ba1c50b0b6d92f64cd0ab3337ef14434194fa5"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_87.png",
+      "bytes": 350697,
+      "sha256": "ed47c95ab599278d468d8327673ee53902a3baa474daacc25dfe77fb2ef39e7e"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_88.png",
+      "bytes": 351137,
+      "sha256": "f2f15056c2c116c4b51d671a8c02711ec3f2809bb619b32d70a1efe000e0aac5"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_89.png",
+      "bytes": 351491,
+      "sha256": "7c3b1535f575438f19144cc13e5b33fad34c7b4185eb7c086050c824a83e69db"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_90.png",
+      "bytes": 351885,
+      "sha256": "d5a857980de53f252c879d3f77f091b159d7ef1cd2f3978dc506c81a99d1152c"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_91.png",
+      "bytes": 351322,
+      "sha256": "0af236ae2c829625f324c7b9ae73710ee21c0bf2d98718f28353e8079d0c14a2"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_92.png",
+      "bytes": 351731,
+      "sha256": "15a6d99b85f81bd0cf94fdfe62fb8cd90fb5a6f82b65ff83125a817e0c7dc816"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_93.png",
+      "bytes": 351695,
+      "sha256": "f59fd063f65a2f2b24b0cdaae980c424f96ccb40305708ad9b9ea04589bf9334"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_94.png",
+      "bytes": 351481,
+      "sha256": "325558b35cdcd4360ac6e645d05828352abd561d3a1ee61e3524bc860c668811"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_95.png",
+      "bytes": 351647,
+      "sha256": "b5984b5d2d9328022d1708019251a9bae672b8c31e1ff9a589b41dc84fb486a6"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_96.png",
+      "bytes": 351655,
+      "sha256": "085744315d9ea72c0a99a3580a8d227cff760aea92552646135061d4b1dbdea2"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_97.png",
+      "bytes": 352279,
+      "sha256": "98450923cbb680c146911ca9fa24e40d14dc2cd766d5828fb136ae658cdcf0bd"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_98.png",
+      "bytes": 352326,
+      "sha256": "89f29cfe5c6fdb50933ba6a413048c313c9b5d024de332aadc3e26ccd47a79b8"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_99.png",
+      "bytes": 352565,
+      "sha256": "63b0ef7731b47c1ce60ece033ea3a7e1e3facba05e7a383e1b44fea586c46a43"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_100.png",
+      "bytes": 352831,
+      "sha256": "f7d8caf1cbb29b7698c9c0e73984e8b2240a5edc314f540962cd9236ebb209ef"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_101.png",
+      "bytes": 353624,
+      "sha256": "17fe2a665a666f0e23501bc6926150457f15912c907c83b99729c56653b546d6"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_102.png",
+      "bytes": 353924,
+      "sha256": "89ef4eb9320a93dd07049252fa70f86bd99b6f91000eab198203b88e03c5f21b"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_103.png",
+      "bytes": 353434,
+      "sha256": "a0b122ead42c53c0ad6bdc58af9f23132cdd2de3036e5cd016fce1a1c6846bc4"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_104.png",
+      "bytes": 352718,
+      "sha256": "daf472c8cd49c656474230b49e644800ccd2611b6f894d8327d510328a85393b"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_105.png",
+      "bytes": 352699,
+      "sha256": "6bd34492d38a17d33223ff9028ebc62c520c2f13480ce87d002ac1d4488384e5"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_106.png",
+      "bytes": 352444,
+      "sha256": "7990c3950649f2cd98960bf008546df6ea89933a40fcde21f9fdcd1434d417af"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_107.png",
+      "bytes": 352532,
+      "sha256": "b6665103158793ca36aa227d000da29058e13ba0dbbeb3e783c808e020f5fc35"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_108.png",
+      "bytes": 352532,
+      "sha256": "3bfb1b4b53f48640a372d00f3105252fcb93d617ce816eace9611953e30f01e5"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_109.png",
+      "bytes": 351604,
+      "sha256": "7e96126ac0057bbdec3ffca691cbf4d4f5ac1c6084fed94424b3b007b2597d0b"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_110.png",
+      "bytes": 351983,
+      "sha256": "e25f12c93a8fd35e0b29e7f94e1762e765f439846e6241707c2ff167f042e377"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_111.png",
+      "bytes": 351168,
+      "sha256": "15e245fb1a5b80b1063624bd2b824f24669acf9f816552c49ca65272bb7fcb36"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_112.png",
+      "bytes": 350822,
+      "sha256": "33f8e41cac554dd25e4667528a0f26848f9c999512eef30c1c9764d8a276def0"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_113.png",
+      "bytes": 350475,
+      "sha256": "e29ea8b7c89ec96eccde1634e7f30e3ac12a8626563b3ed44aa3536e86e27509"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_114.png",
+      "bytes": 350255,
+      "sha256": "048f4c089f1e09895000303b53bbb0eaf49f1d2740d5cd8216e871518c5a8bf4"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_115.png",
+      "bytes": 350028,
+      "sha256": "2fdcff6c0f93392218a1e725834493416eebc61424cd7bdf6c67bd06cdd543cf"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_116.png",
+      "bytes": 349332,
+      "sha256": "be73a5957702df6430d2a127717ad4a118c5440e965c2dd6a9626400ef0f118a"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_117.png",
+      "bytes": 349673,
+      "sha256": "8fc0356d4a8bcc5ce9f5f9639dd748f6e08fc4459a5c2cfaf6831432f4e96a0c"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_118.png",
+      "bytes": 349974,
+      "sha256": "fc171ce7a80b3c425173313f0b9231c282d9b5354b2c93f14d91a4b102ad525a"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_119.png",
+      "bytes": 349729,
+      "sha256": "f403a5b6ad3c2bded6c570d3d9235809869dc30ec306856fb7fde9998c877c1a"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_120.png",
+      "bytes": 349981,
+      "sha256": "26caf263d9a4137eb42a84c5561bf38adafd5db2360b7963759a933538d84de9"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_121.png",
+      "bytes": 349921,
+      "sha256": "3e1c166a09d25b7f4ad47fc2fce93b7435ad9bc3c50ac73f40680d19aa402ba2"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_122.png",
+      "bytes": 349752,
+      "sha256": "2dea9097fb22ab6d29c86d156b0005b40ab996cfd0abc50be7a8922514191de0"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_123.png",
+      "bytes": 349717,
+      "sha256": "2139f51a1a2a177a20aa153b64dfef79c4b39f06b45123ecfeb100c7ab32c825"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_124.png",
+      "bytes": 349462,
+      "sha256": "584b6a9289c3677a3b92c1284cabe6b1d525cc952c3c0f67aa4175ab72e104b1"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_125.png",
+      "bytes": 349509,
+      "sha256": "5bb711e3dc64d3d5b3e35aeacf123b8481eb3d7e69d6dc7aa66b3ee5af19af5e"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_126.png",
+      "bytes": 349362,
+      "sha256": "d30c1fcb7843f81de9b3b9a7fbb21ba7882438a97ab6a3227194b8990b53cb81"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_127.png",
+      "bytes": 349221,
+      "sha256": "3bd37b14e011589a33916ed0b801c8df88c35929a29ca1e83441ca1b1e5d3332"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_128.png",
+      "bytes": 348788,
+      "sha256": "162e67ec51479cff4ae19629332fe777285d07fe8f8b43b7ae9b0d8a95c4136d"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_129.png",
+      "bytes": 348549,
+      "sha256": "3dbb55f1321c2172a514f584b572352853d9827ea7e535feac4647d742b0c859"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_130.png",
+      "bytes": 348239,
+      "sha256": "d5f7c083bac6ae2e7141dd762737e973a19cf24fd00f465aa04c9988160da3f6"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_131.png",
+      "bytes": 348184,
+      "sha256": "edc077ab857d64230d96439ec7064adab735816f4de9e53a0b7f820ba16872f4"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_132.png",
+      "bytes": 347922,
+      "sha256": "353a26aea46a6def66a62335f5d3d9836e1bb16c3b9dae2243807511c5f2ddd3"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_133.png",
+      "bytes": 347288,
+      "sha256": "a487a01d5644c604ddf17fade3605e3f24813b7ffb38bd7185ad4b22c7ddd71f"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_134.png",
+      "bytes": 347133,
+      "sha256": "4b1e96cf3cd0bb651bf2a4806a09814065e8db44648ae603f2c972b975a04a6b"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_135.png",
+      "bytes": 346890,
+      "sha256": "e09a1aff308b7c3cc9907174c08023f00e71d8a53e1fe1c79a20aee153742b32"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_136.png",
+      "bytes": 346745,
+      "sha256": "2a025da71509306ffd10adb2e42ca40d9c95879a3f7d3912736b7b766ffc7959"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_137.png",
+      "bytes": 346401,
+      "sha256": "7a67813f20b0e1683dc9c029364c7b99216160867e12e971c6ca9841fea3c9a5"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_138.png",
+      "bytes": 346294,
+      "sha256": "0052f37c4146faa714b3aba648c9e4514eb627ab2d9144e81dcbb22282628f44"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_139.png",
+      "bytes": 346342,
+      "sha256": "d89c8949a043393a805f855724f05b0bc113d287ad7a1bdfe51ab971a9d5057d"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_140.png",
+      "bytes": 346261,
+      "sha256": "74287f3750f4a87ad33ff3dd1fe470d444797586b9c6265c72b529bebaee4086"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_141.png",
+      "bytes": 346385,
+      "sha256": "76d83f9017c7d149dcaeebd5da02512f85ad878789340af851c4039bdb204d90"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_142.png",
+      "bytes": 346220,
+      "sha256": "b922112f7a6cc247357896662f827537367018fc5d103e6e6f6e071a11d24a9c"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_143.png",
+      "bytes": 346282,
+      "sha256": "644acc44573dbb762f45728f5581563e30a07b4b0169fa1879d53c6cd49e8d77"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_144.png",
+      "bytes": 345606,
+      "sha256": "4d029c65605797f0d4d292db633bdf161c2dc302076dbdfa720400e6e36db0bd"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_145.png",
+      "bytes": 345716,
+      "sha256": "88d5b9860b5d97cf3cceced2990b05e6f3327c16db0e7bc400eb0ea405a9fc53"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_146.png",
+      "bytes": 346117,
+      "sha256": "b10aa5683e5bcf0a9569c2bd401a81d749d482cc34886f19f6df8e86ddf11c65"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_147.png",
+      "bytes": 346170,
+      "sha256": "5ad98790d97ed428a5952b4ce8c2f11f040f16c9fd25f6107adcc3cb8bc11282"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_148.png",
+      "bytes": 346018,
+      "sha256": "0c552333912ddf0b8a6abf092f5d4f99164a160b1c29f13151a16be4cf4fc97f"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_149.png",
+      "bytes": 345670,
+      "sha256": "0af68c9b31e77a4786d05fd9af51bccf486834746a8ffe39bc9b90a156282885"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_150.png",
+      "bytes": 345867,
+      "sha256": "7b8d3094e3307dc6bad91c8959af4464481d226ccd0ac4d5636241f461129f45"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_151.png",
+      "bytes": 345936,
+      "sha256": "6761c8a868f99f9de77c684576ab697086e8a46f46d5af6848c005cbcc07ef5f"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_152.png",
+      "bytes": 346297,
+      "sha256": "01f9aed0791f86f4547047c8901de8757546cca1ac766582b980286ef38faaad"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_153.png",
+      "bytes": 346458,
+      "sha256": "fe02947ae3c7193468032cb7346f1b1d7bc98193b2a371f2de0184f306f41500"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_154.png",
+      "bytes": 346202,
+      "sha256": "f9e0215e23c3e0e8d59d978d2b87fca149f7930c3953c270edce39f89368516c"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_155.png",
+      "bytes": 346454,
+      "sha256": "c13f5d337af98673cce5f63f079901b4e524b1393ea00eb4a9250c56b68181d3"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_156.png",
+      "bytes": 346709,
+      "sha256": "2836b92d732307e54d5605b654d795249c7904d77a4a6ac11a5c068613d4205e"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_157.png",
+      "bytes": 346856,
+      "sha256": "ad69fbb40463cfe19c7948947d77886f8b6963133a4412bcb9ad1cd718fa37c7"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_158.png",
+      "bytes": 346945,
+      "sha256": "9de6ee5c5f6e4ac077bb6282df875c1d2f3c6d2b175298833cae65bc1f3fd912"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_159.png",
+      "bytes": 347143,
+      "sha256": "2f5d3800a7c0a57361eacc9ae7d944c96c2c636f86fdae3fdd23fc75de2caf5e"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_160.png",
+      "bytes": 347356,
+      "sha256": "71ab74ac36f08860322d6d04ee3289b9c848f2c82eb7f47bb3e9fd4d9c7f6658"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_161.png",
+      "bytes": 347175,
+      "sha256": "65c952098695293cadfcb720451bd9b8ee5e61ef9ee34cef5ef9c14008d0b821"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_162.png",
+      "bytes": 346750,
+      "sha256": "5faee026db5f7dbff0676c22c4e476602f26ee6c97fca82255f20f7305acf90d"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_163.png",
+      "bytes": 346784,
+      "sha256": "8d9900b63b62cf673334244934458e973ee4e357de372938754316b45af95b26"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_164.png",
+      "bytes": 346482,
+      "sha256": "928d5beb2412390ad665901df627c8f5af81ec0b419f8c72beddd8f306aaf0de"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_165.png",
+      "bytes": 346762,
+      "sha256": "5b367dada9ecca02988d403dc481a07b9e3fd0b4ea882f94c6c3b2869c85a4c7"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_166.png",
+      "bytes": 346239,
+      "sha256": "7bbc6323f2b73eb099eb0e30fab2cd57a72780d287a3242ae1ce216796b21a2b"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_167.png",
+      "bytes": 346141,
+      "sha256": "987262335b3d19c3cf4280dc59424266f0c0b6bc5aedb1e00b846a4be71df7db"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_168.png",
+      "bytes": 346634,
+      "sha256": "6f0b42eac8fe1c1e37b2d209b3f39dcbb6c0884a76ff53f14fda9de5b950faed"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_169.png",
+      "bytes": 346407,
+      "sha256": "8cac455ceeedb031da7c74238abf5ec21fbaace2e67d0fd79898d648999e9695"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_170.png",
+      "bytes": 346802,
+      "sha256": "0faea94caade8c0d5df0b5e8444f62e202913d9aba48fc18aafb6a935266c5a3"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_171.png",
+      "bytes": 346906,
+      "sha256": "553f4f165a8c3fd376a11b5df66ab13b72a0285656fee8d5c11fc3fe14a423b8"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_172.png",
+      "bytes": 347116,
+      "sha256": "18019ca63aae47d97c3bf877acd8a91ab6878c660a109d5fb39bc9fc9a36281f"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_173.png",
+      "bytes": 346980,
+      "sha256": "8dbef6e983f5ff9e33fb12d7c4b571ff19d22e45da5e18cf4e99174abcab753c"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_174.png",
+      "bytes": 347305,
+      "sha256": "71a3a6149a7989ae3c00d1964409e50cad5e8254b2f3cfa47824752fb7fd94ea"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_175.png",
+      "bytes": 347299,
+      "sha256": "4114bdaeb1f91d77dfeaa3597ab3d4f905481849e9f20f6f4553ab161ff5285a"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_176.png",
+      "bytes": 347429,
+      "sha256": "a03e07dca7b103b6d9b93ae5b5f334453085f698a3fb8cfa593f5839c61e43f4"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_177.png",
+      "bytes": 347264,
+      "sha256": "083e1cf8bcd4d3e239082d58e4296dd4bdcb860a03e3f0f2594fa2bb557520f4"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_178.png",
+      "bytes": 347248,
+      "sha256": "92c57fbee94f1f0f6b9548938eec9fa94e5581c39e44fbb005bc83f5c0ada1c9"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_179.png",
+      "bytes": 347255,
+      "sha256": "6d1504f001eb1e1dba52829ebf826bca4c2399776c608060ba30bfe5a1e170d4"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_180.png",
+      "bytes": 347280,
+      "sha256": "c43c0ef8f12b1bba0b1f4690b06b085e517e44b7e58275851ff36e90e32a2cb2"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_181.png",
+      "bytes": 347095,
+      "sha256": "4639acd4e56b102db7c3324f8165c64542179127b5e0102c58764ccd6910d5b0"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_182.png",
+      "bytes": 347339,
+      "sha256": "4801c87782fc8b98bb3f6ec330eb2b038e2925403a16b9a0d5babe7ca96770c7"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_183.png",
+      "bytes": 347354,
+      "sha256": "8cbdb8034bc31b79349998a2cbb6e0e93bac34f90b47becfece93c06b3f01d67"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_184.png",
+      "bytes": 347583,
+      "sha256": "385121d4233f7e21c7542b7fc0dbbf40e4001e66fe75112fe25ccd8cb1c819f6"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_185.png",
+      "bytes": 347411,
+      "sha256": "0c221b8024e9c6fd7e4d8afc3a4829e3f463c9c0f491df24759110dd5d2c80e2"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_186.png",
+      "bytes": 347434,
+      "sha256": "6d88e7bdc2ffffc8ffe9a0a74d7e7cee5a0e2abd2b206df7403c4346c754a62b"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_187.png",
+      "bytes": 347258,
+      "sha256": "304d94fa8d05947df58a54b190217298646b51ba0c10e68c1bdf3798886424d3"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_188.png",
+      "bytes": 347698,
+      "sha256": "acaf67df58594ec6b473091308245af22c2385872c2d581a36766edf26f2be1f"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_189.png",
+      "bytes": 347293,
+      "sha256": "7ec7804b383baccd3e1093a15f08d85a0f6da43716c3a363444470f6f46fac74"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_190.png",
+      "bytes": 347733,
+      "sha256": "64ed88b58ae0d898cbfc35ba10f69cc9041f449b458c5f0771da99da48258d77"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_191.png",
+      "bytes": 348018,
+      "sha256": "e078918b1e136cea0c218b22552e19f874569f4474a2c0597362f5fb3e1038a8"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_192.png",
+      "bytes": 347913,
+      "sha256": "9d785de3423ad1a07f15426815fd71fda06e1e414b8c2bacad5d5180f8470d1a"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_193.png",
+      "bytes": 347909,
+      "sha256": "8f054cbbc71e3861c63baba72d471e91ffd324af91add55808cc080b8e919061"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_194.png",
+      "bytes": 348411,
+      "sha256": "ba3aed2eb837a44a18cdbb8af8953a0d5e01dea8454eeb38452c977aefe69fc4"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_195.png",
+      "bytes": 348517,
+      "sha256": "8a71a2f4cb1893aedc35b9881b019fd73e431c2520d72191dc18d71b21e384ae"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_196.png",
+      "bytes": 348827,
+      "sha256": "9aaeb63743057796bc426a2dacdd8c75d096f718bc51ee142c133f4eaa925f5a"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_197.png",
+      "bytes": 348609,
+      "sha256": "1415fafd0e8a71ba430b9edcc74c4df1e799cb13a1fa14499e1f2a9ee47a7e4d"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_198.png",
+      "bytes": 348766,
+      "sha256": "273fd33cc8ca2e4371d2dd34a830f17fdfd30517ce7121dd7fc45cc393a50836"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\test\\r_199.png",
+      "bytes": 348824,
+      "sha256": "21547bd0cf01d506b90e1a4bad049468c2b52bfb9ad1cffc76c3ff3ab884bc48"
+    }
+  ],
+  "evaluation_sources": [
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\scripts\\evaluate_reflection_suite.py",
+      "bytes": 27293,
+      "sha256": "8eebec8f689f4b4a30e9382e96ed6d479a8042593654e31bef339ac7abb72f35"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\scripts\\evaluate_surfels.py",
+      "bytes": 5344,
+      "sha256": "fdfb9b36a9326bc37ef354fa6aef5cac69aa701f8dc5e7f9d787393d153ec1af"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\scripts\\compare_surfel_runs.py",
+      "bytes": 16031,
+      "sha256": "3ea8152e5b9b521ee861cc2df6c9bc21761976587e1877d5f8dc97b4e8811d05"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\3dgs_trainer.py",
+      "bytes": 111674,
+      "sha256": "edae963dfbc194978cb115f6d98458aa979b916412068ed8c2b649a7974568bc"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\3dgs_evaluator.py",
+      "bytes": 11669,
+      "sha256": "3ee01969233bbaa95e780957842cbbe6c455cf7bc2f75716d92d1e754bbbb893"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\image_metrics.py",
+      "bytes": 2080,
+      "sha256": "325f7728186c6d00ec05417b078016dd9af83a3a3876277b64a397fdfe420e56"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\camera.py",
+      "bytes": 1967,
+      "sha256": "a83ecfac890c81cb3a4b551a2d04d3d3509c296e54fb84c808f790d0b7b5da10"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\dssim_loss.py",
+      "bytes": 9820,
+      "sha256": "9b61757f75812aebabed683769df3903b09948f297ad62a0eb185430595b67e0"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\gaussian_set.py",
+      "bytes": 3066,
+      "sha256": "d970108a395d8d183c65d9ca850c946d572964f6bb8d2cc7a9d61ef01bd0f097"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\optimizer_state.py",
+      "bytes": 1760,
+      "sha256": "590c5e65c027c40c2a5d1081e1c05928391c7220c796c5c7e842715e3dcfcac7"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\profiling.py",
+      "bytes": 1430,
+      "sha256": "2d549a8a633ab148017e78fd386401cb4159df1147820f44fa4d633f05ab681a"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\projected_gaussians.py",
+      "bytes": 526,
+      "sha256": "c135384f7f16d99732c27cbf5c4433aefafd576c0a1654ca83d28bdf5c46a0d7"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\sh_appearance.py",
+      "bytes": 12083,
+      "sha256": "71680e335f482c806936a68d1891628165792028f826e21ba115ad8e50d6e05f"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\splat_math.py",
+      "bytes": 1857,
+      "sha256": "d11ae7ab2236bfff8deb6339716d4d4a3a0f49af756e442329cd8307f43f1861"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\tile_builder.py",
+      "bytes": 11456,
+      "sha256": "97fbfd8a3f6a15b98163b7e956b88afc84a091dc30ddba9816e1c47ddcdb79f7"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\trainable_gaussian.py",
+      "bytes": 5607,
+      "sha256": "4f5b7eea7c0bbb15f1cea0739897f088567f14319a780fa1f076ef2e9a5b9689"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\shared\\training_config.py",
+      "bytes": 18705,
+      "sha256": "7941b91770d997d0886ad8bcf6243e31f47bbc81a6055e28c8350cef77e614e7"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\__init__.py",
+      "bytes": 203,
+      "sha256": "793b3bbfe4dc1d062591a3738d99f2c773edb643e9b20e41445514e486c8a84d"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\checks.py",
+      "bytes": 6366,
+      "sha256": "c7388b063a2a7921c94ec666434319418d76143ad4da5ccff5f1a020163f0b4c"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\config.py",
+      "bytes": 11775,
+      "sha256": "c161ef768f62b1be9d9fb634aca61d1ee460f63c6eee1b7b09cba4b48d69b473"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\foreground_pruning.py",
+      "bytes": 5962,
+      "sha256": "770327ccca3975756de75cbcfce75a90a529f09848aecd6ba47bd8f0928504e1"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\geometry.py",
+      "bytes": 7383,
+      "sha256": "f9fcc74d5c94655b93daa86f6077a1731cc3b66742fecd23cdaff7e030768574"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\geometry_losses.py",
+      "bytes": 9611,
+      "sha256": "5f82ac294a38b13e59f7c45de5cf3023f911fa784491e0223e5c226ca6955b91"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\hdr_shader.py",
+      "bytes": 5177,
+      "sha256": "96b7a8b4ebe398210d6f9d9c0f82c93fafb0782f35d915ff500f37730b294fe8"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\kernels.py",
+      "bytes": 12773,
+      "sha256": "30b498c604dfda7bf12b97cf94a086781c1ef5b044e585b1728ea5bd69e32bac"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\normal_propagation.py",
+      "bytes": 1936,
+      "sha256": "c2709ee6edb9fd8d579d1a9d8082b13d389d6d8351bdf7015325cbf14551c87d"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\trainer.py",
+      "bytes": 35259,
+      "sha256": "dca9461898193cbf775ebb59363a1bacf6e51db65a20db3518134dc3d77e8743"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\workflow.py",
+      "bytes": 18480,
+      "sha256": "98a8b5221068885dd7675a11da948fd4b3dff8f393b58f52f9bdb43ca63f4fb6"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\src\\cp4282_gs\\surfels\\__init__.py",
+      "bytes": 92,
+      "sha256": "c1e0983b13cb2427ffea13e192511b26917c1ae88a9e5a570ae286699aea10a6"
+    }
+  ],
+  "training_sources": [
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1357-justChromeBall-staged-sh3-refine-5k\\source-files.json",
+      "bytes": 20615,
+      "sha256": "c061d3e0f76afcc7f76850d176d467cfba197269d559ddbfbb480dec5d457a9f"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov02-2023-justChromeBall-staged-hdr-refine-5k\\source-files.json",
+      "bytes": 20615,
+      "sha256": "cb675ca7f0621fb3e4622f6e11472094870f2eff9d35ee50d2e6ef89f385e9c2"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1402-justChromeBall-staged-hdr-refine-5k\\source-files.json",
+      "bytes": 20945,
+      "sha256": "2da088d00a161bd56c19252be95390b0c077f26f8d56a72f54ffc1bf1a11e1a0"
+    }
+  ],
+  "training_vs_evaluation_source_differences": [
+    [],
+    [],
+    []
+  ],
+  "checkpoints": [
+    [
+      {
+        "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1357-justChromeBall-staged-sh3-refine-5k\\model.ply",
+        "bytes": 6800416,
+        "sha256": "81f3b8db5533e7e01f3c7184d3c4020d42a91fe9f3c34700bd600f06f3504f97"
+      },
+      {
+        "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1357-justChromeBall-staged-sh3-refine-5k\\model.surfel.npz",
+        "bytes": 2893,
+        "sha256": "d0f62221b0d537bc5cb08d81d2e88836bee329f2fe75890220063e54903a8314"
+      },
+      {
+        "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1357-justChromeBall-staged-sh3-refine-5k\\model.sh.npz",
+        "bytes": 16699431,
+        "sha256": "179f603058fa1b4f324982d2ec8b4bdc7c9eda4c69fb0019d36dc23198aca29e"
+      }
+    ],
+    [
+      {
+        "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov02-2023-justChromeBall-staged-hdr-refine-5k\\model.ply",
+        "bytes": 6800416,
+        "sha256": "76565e6e24a13c663b8d5b703e5e4d4f8eed784381a0410bec3353ac69f65e2f"
+      },
+      {
+        "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov02-2023-justChromeBall-staged-hdr-refine-5k\\model.surfel.npz",
+        "bytes": 1740038,
+        "sha256": "a1f67b5c29a30ee365c062f0d8dc9fdf83c0c5406f58330427ce0a024a7b83e4"
+      }
+    ],
+    [
+      {
+        "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1402-justChromeBall-staged-hdr-refine-5k\\model.ply",
+        "bytes": 6800416,
+        "sha256": "8b7870f8711b79407c3c73a8044710272648709ffd1c4347223e763eaad15888"
+      },
+      {
+        "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1402-justChromeBall-staged-hdr-refine-5k\\model.surfel.npz",
+        "bytes": 1740440,
+        "sha256": "015d1047dabd78325050c47f02577db1683cacc96b6e488b2a9afced3963a258"
+      }
+    ]
+  ],
+  "evaluation_runtime": {
+    "device": "cuda:0",
+    "device_name": "NVIDIA RTX PRO 5000 Blackwell",
+    "warp_version": "1.18.0",
+    "python_version": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]"
+  },
+  "finished_utc": "2026-11-03T06:11:58.862997+00:00"
+}

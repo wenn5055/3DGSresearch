@@ -3,15 +3,51 @@
 2 November 2026, Singapore. Both new training stages and their validation runs
 completed by 20:25. No further training is queued by this closeout.
 
-*3 November addendum: LPIPS was subsequently evaluated on the saved checkpoints;
-results and verification are linked below. The 2 November images are unchanged.*
+*3 November addendum: LPIPS was evaluated on the saved checkpoints, and the
+project scope was narrowed to make the sphere the main experimental scene.
+Both updates are recorded below; the 2 November images and results are preserved.*
 
 **We now have a captured plain-sphere dataset and a working one-command HDR
 workflow.** On the new scene, 10k steps of frozen-geometry appearance fitting
 followed by 5k refinement raised mean validation PSNR from **22.50 to 24.13 dB**.
 The images improve, while fine forest reflections remain unresolved.
 
-## What changed today
+## Current scope: sphere as the main experiment (3 November)
+
+**Continuation completed:** the [3 November command/results guide](../sphere-study-commands-2026-11-03.md)
+records the matched SH3/HDR runs, single size trial, validation selection and
+200-view final test. The scope list below records the bounded work that was
+authorized; it is now complete, with no additional experiments queued.
+
+**`justChromeBall` is now the main experimental scene.** Existing Materials
+results provide supporting evidence; further Materials runs are outside the
+reduced scope. This supersedes the 2 November choice to treat the sphere as
+auxiliary and explicitly narrows the original Materials/Ship proposal.
+
+The focused research question is:
+
+> How well does deferred surfel shading reconstruct sharp reflections compared
+> with SH appearance on a chrome sphere?
+
+The remaining work is bounded to:
+
+1. **Main comparison:** SH3 versus HDR/angular on `justChromeBall`, using the
+   same estimated initializer, geometry policy, seed, resolution, point budget
+   and total training budget. The existing warm-up/refinement results are not
+   yet this matched comparison.
+2. **One focused investigation:** inspect projected splat footprints and matched
+   normal/lighting diagnostics, then test a smaller initial tangent size if the
+   evidence supports it. Preserve the current model as the reference; size is
+   a hypothesis, not an established explanation for the blobs.
+3. **Evaluation:** PSNR, SSIM, LPIPS and matched reflection crops. Select settings
+   on validation, then evaluate frozen choices on the held-out sphere test views.
+
+LDR comparisons, Ship, NeRO, further logo recovery and additional scene expansion
+are deferred. Conclusions will concern this controlled chrome-sphere setting;
+the existing Materials evidence remains separately identified and does not
+establish generalization of a newly tuned sphere model.
+
+## What changed on 2 November
 
 - Completed the [original Materials protected SH3 control](../experiments/2026-11-02-protected-control.md).
   Deferred + SH3 gains 1.1147 validation dB over its matched SH3 control, but
@@ -21,8 +57,9 @@ The images improve, while fine forest reflections remain unresolved.
   the recessed logo. That failure is preserved; logo-specific tuning is closed.
 - Followed the [reflection scope decision](../research-scope-2026-11-02.md):
   created a simpler scene, captured it, and transferred the preferred Oct30 HDR
-  schedule to it using a fresh initializer. Original Materials stays the primary
-  benchmark; the sphere is an auxiliary diagnostic.
+  schedule to it using a fresh initializer. At that closeout, Materials was the
+  primary benchmark and the sphere was auxiliary; the 3 November scope decision
+  above replaces those roles.
 
 ## New dataset: `justChromeBall`
 
@@ -179,7 +216,9 @@ capture hashes, split separation, matched CSV order and the geometry/material
 handoff without retraining. The [figure script](assets/2026-11-02-sphere/build_figures.py)
 can rebuild all five figures from the saved source outputs.
 
-Today's stopping point is a reproducible sphere dataset and a completed staged
-HDR reconstruction. Next research work is an equal-budget appearance comparison
-on the same fixed estimated geometry, followed separately by matched refinement.
-No further tuning or test evaluation is started here.
+The 2 November stopping point was a reproducible sphere dataset and a completed
+staged HDR reconstruction; LPIPS evaluation was completed on 3 November.
+Next work follows the reduced scope above: a matched sphere SH3/HDR comparison
+and one focused footprint investigation. Existing Materials results and failures
+are retained as supporting evidence. No training or test evaluation is launched
+by this scope update.

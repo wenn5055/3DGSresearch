@@ -1,0 +1,443 @@
+{
+  "selection": {
+    "status": "frozen-before-test",
+    "created_utc": "2026-11-03T06:08:37.619311+00:00",
+    "validation_protocol": {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-validation\\protocol.json",
+      "bytes": 33460,
+      "sha256": "2f39f75152aadf97e61362cdb4dae1284f47c72f52e2f7ca1840c1e32035a692"
+    },
+    "validation_summary": {
+      "SH3": {
+        "model": "SH3",
+        "psnr_db": "20.652988705421798",
+        "ssim": "0.824707818031311",
+        "foreground_psnr_db": "14.036167482266432",
+        "foreground_coverage_fraction": "1.0",
+        "lpips_alex": "0.12752401247620582"
+      },
+      "HDR-1.0": {
+        "model": "HDR-1.0",
+        "psnr_db": "24.124930968913844",
+        "ssim": "0.874919770359993",
+        "foreground_psnr_db": "17.75196307293164",
+        "foreground_coverage_fraction": "1.0",
+        "lpips_alex": "0.0939941669255495"
+      },
+      "HDR-0.75": {
+        "model": "HDR-0.75",
+        "psnr_db": "24.230757528880762",
+        "ssim": "0.8771771031618119",
+        "foreground_psnr_db": "17.869308511345203",
+        "foreground_coverage_fraction": "1.0",
+        "lpips_alex": "0.09181392155587673"
+      }
+    },
+    "chosen_hdr_label": "HDR-0.75",
+    "checks": {
+      "lpips_improves": true,
+      "foreground_psnr_not_lower": true,
+      "foreground_coverage_at_least_99_percent": true
+    },
+    "selection_rule": "smaller size must improve mean validation LPIPS, not lower foreground PSNR, and retain mean foreground coverage >=0.99",
+    "all_validation_runs": [
+      "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1357-justChromeBall-staged-sh3-refine-5k",
+      "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov02-2023-justChromeBall-staged-hdr-refine-5k",
+      "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1402-justChromeBall-staged-hdr-refine-5k"
+    ],
+    "selected_labels": [
+      "SH3",
+      "HDR-1.0",
+      "HDR-0.75"
+    ],
+    "primary_matched_comparison": [
+      "SH3",
+      "HDR-1.0"
+    ],
+    "selected_checkpoints": [
+      [
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1357-justChromeBall-staged-sh3-refine-5k\\model.ply",
+          "bytes": 6800416,
+          "sha256": "81f3b8db5533e7e01f3c7184d3c4020d42a91fe9f3c34700bd600f06f3504f97"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1357-justChromeBall-staged-sh3-refine-5k\\model.surfel.npz",
+          "bytes": 2893,
+          "sha256": "d0f62221b0d537bc5cb08d81d2e88836bee329f2fe75890220063e54903a8314"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1357-justChromeBall-staged-sh3-refine-5k\\model.sh.npz",
+          "bytes": 16699431,
+          "sha256": "179f603058fa1b4f324982d2ec8b4bdc7c9eda4c69fb0019d36dc23198aca29e"
+        }
+      ],
+      [
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov02-2023-justChromeBall-staged-hdr-refine-5k\\model.ply",
+          "bytes": 6800416,
+          "sha256": "76565e6e24a13c663b8d5b703e5e4d4f8eed784381a0410bec3353ac69f65e2f"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov02-2023-justChromeBall-staged-hdr-refine-5k\\model.surfel.npz",
+          "bytes": 1740038,
+          "sha256": "a1f67b5c29a30ee365c062f0d8dc9fdf83c0c5406f58330427ce0a024a7b83e4"
+        }
+      ],
+      [
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1402-justChromeBall-staged-hdr-refine-5k\\model.ply",
+          "bytes": 6800416,
+          "sha256": "8b7870f8711b79407c3c73a8044710272648709ffd1c4347223e763eaad15888"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1402-justChromeBall-staged-hdr-refine-5k\\model.surfel.npz",
+          "bytes": 1740440,
+          "sha256": "015d1047dabd78325050c47f02577db1683cacc96b6e488b2a9afced3963a258"
+        }
+      ]
+    ],
+    "test_command": [
+      "C:\\Users\\e1355010\\3DGSresearch\\.venv\\Scripts\\python.exe",
+      "-u",
+      "C:\\Users\\e1355010\\3DGSresearch\\scripts\\evaluate_reflection_suite.py",
+      "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1357-justChromeBall-staged-sh3-refine-5k",
+      "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov02-2023-justChromeBall-staged-hdr-refine-5k",
+      "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1402-justChromeBall-staged-hdr-refine-5k",
+      "--labels",
+      "SH3",
+      "HDR-1.0",
+      "HDR-0.75",
+      "--output",
+      "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-final-test",
+      "--manifest",
+      "transforms_test.json",
+      "--views",
+      "0",
+      "13",
+      "73",
+      "88",
+      "--metrics",
+      "psnr",
+      "ssim",
+      "lpips",
+      "--cpu-threads",
+      "2"
+    ],
+    "script": {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\scripts\\finalize_sphere_study.py",
+      "bytes": 3939,
+      "sha256": "bdd93b3f2a0620a95f1400469ddb1017bfd81cc95a91360f802338a2ca487274"
+    }
+  },
+  "figures": {
+    "validation": {
+      "bounds_xyxy": {
+        "0": [
+          297,
+          294,
+          499,
+          496
+        ],
+        "13": [
+          303,
+          296,
+          505,
+          498
+        ],
+        "73": [
+          299,
+          293,
+          501,
+          495
+        ],
+        "88": [
+          297,
+          299,
+          499,
+          501
+        ]
+      },
+      "sources": [
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-validation\\reference-0.png",
+          "bytes": 284144,
+          "sha256": "eab953bba147237c60a0b74eb7b943b3a028c7cb2b5ce3dff4eba20f222d9bdc"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-validation\\model-0-0.png",
+          "bytes": 248893,
+          "sha256": "28eb2f2c6dfedbd1cff71f0d95131da223fafbc3ce7e169157d7a070c85bb0bd"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-validation\\model-1-0.png",
+          "bytes": 267670,
+          "sha256": "954fe6d66041e823f324543249ef32ded08b1160760c7695d23025274cafcb11"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-validation\\model-2-0.png",
+          "bytes": 272387,
+          "sha256": "7fb22cb68109e7e0115dac63ff9305ec44cf779861cb9dfb4cbf2ccb90dd7653"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-validation\\reference-13.png",
+          "bytes": 282125,
+          "sha256": "fada050a0a2490015da8050ead679c0ce966049b7c0a79a6f5cc6057da4bbb7e"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-validation\\model-0-13.png",
+          "bytes": 240206,
+          "sha256": "f510aea9924be09375df3a894933615d076fd34cce24761ea2f93ec246907059"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-validation\\model-1-13.png",
+          "bytes": 264347,
+          "sha256": "34169292fcf473c100ec806699f5f737d9e2b843014de1767e0f11c4d8c7f262"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-validation\\model-2-13.png",
+          "bytes": 266812,
+          "sha256": "854da28e3f9bf49cad91d2cd39e07017fddfbcc1d7adda366285cdb2a474874b"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-validation\\reference-73.png",
+          "bytes": 291463,
+          "sha256": "b0e86a248acb21b320e7121608fa16abab142487b13c1440bd2eb4fdcf8660cb"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-validation\\model-0-73.png",
+          "bytes": 233490,
+          "sha256": "e42137206ef8ea964ceb55a48e4b66256a2a6036a484c35f86f6d14ec8bbf6ad"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-validation\\model-1-73.png",
+          "bytes": 253198,
+          "sha256": "1bbabdc0967f8aedda0d19085c3611206a803d07fca44e743b376540e6dfbfe5"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-validation\\model-2-73.png",
+          "bytes": 258063,
+          "sha256": "1f135a28aaf579f2af815dd7b6f948526d39c6870180ec3ce8061ce4e79880a6"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-validation\\reference-88.png",
+          "bytes": 284691,
+          "sha256": "6fc754d01d1705414460bb6b8591acdf78eecac73df0ce27d3a03c59c53f0984"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-validation\\model-0-88.png",
+          "bytes": 244362,
+          "sha256": "8b87844bd50eda168ed5c2d43674c774274bdf57b3b445c8a8568c18f65e74a0"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-validation\\model-1-88.png",
+          "bytes": 266981,
+          "sha256": "1535d34e26e42608ceaa7f5d99d0afb98eb557b49c3afb62846d84fe6435bf4f"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-validation\\model-2-88.png",
+          "bytes": 270308,
+          "sha256": "96ada6dc1094a7f9a53468ee2a65b9596497f2f4e434d0c3cba3a76f7dc67948"
+        }
+      ]
+    },
+    "test": {
+      "bounds_xyxy": {
+        "0": [
+          295,
+          295,
+          497,
+          497
+        ],
+        "13": [
+          297,
+          294,
+          499,
+          496
+        ],
+        "73": [
+          295,
+          296,
+          499,
+          500
+        ],
+        "88": [
+          294,
+          296,
+          496,
+          498
+        ]
+      },
+      "sources": [
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-final-test\\reference-0.png",
+          "bytes": 284552,
+          "sha256": "00bee63f1ca1a46e6db57dc32ec72dc4e9e1c279fc99fffe2986a767d2765c86"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-final-test\\model-0-0.png",
+          "bytes": 249247,
+          "sha256": "8dd83720888744209ec4b8825c369f4483661762a2c2e5249ac6deecb5803a60"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-final-test\\model-1-0.png",
+          "bytes": 268223,
+          "sha256": "ad6b98540bf7014688715154d90b7610250f83fdb4b51614db47746de72d4f1c"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-final-test\\model-2-0.png",
+          "bytes": 273133,
+          "sha256": "3707c9863e81b1983440c4a09e9b74623db74bf64d7b0ff845d5957dd5505ebc"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-final-test\\reference-13.png",
+          "bytes": 284553,
+          "sha256": "1b5ec1b20791201bcc4892b8464adb89985053dd0e7c16ec52b442d64053ef5b"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-final-test\\model-0-13.png",
+          "bytes": 248925,
+          "sha256": "c0edf5d7214af6abe8e38118b79c66ad8f8110aa5c92b1e581a3d452d0340f26"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-final-test\\model-1-13.png",
+          "bytes": 267452,
+          "sha256": "17c623a9696acef4fb24cfde7475fb37d28f9e49438c9d5db963f2523f0330de"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-final-test\\model-2-13.png",
+          "bytes": 271729,
+          "sha256": "c2bce4380fc29ea121ad433cb30176fdf3d0081fe56e80565ab918f42256fb8d"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-final-test\\reference-73.png",
+          "bytes": 283059,
+          "sha256": "daf4484b86b6689f9080cf07ffbd2238504b5b6e2b709d184ee522dcf0da6664"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-final-test\\model-0-73.png",
+          "bytes": 243807,
+          "sha256": "1a0c749419cc8443531fa3b21b091c7cdf2e04da97e8190b608e6dcfefe42002"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-final-test\\model-1-73.png",
+          "bytes": 265544,
+          "sha256": "8ef29fc4409528239d21c4592632d043ed38668f2eb48f07610ef399cfad7459"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-final-test\\model-2-73.png",
+          "bytes": 267695,
+          "sha256": "b44585ad65f492ebfa41de8102676cb36525ca3300b6bd601a91ef3f9053ab22"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-final-test\\reference-88.png",
+          "bytes": 287550,
+          "sha256": "9c8e0fa45a23e7ba8b3b793f8f3dc05272dc0b634988de9dc3569a4e01193592"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-final-test\\model-0-88.png",
+          "bytes": 239642,
+          "sha256": "5d132fb0eb6c772fb21b273588be452dd6edeca7459748156c8c2a3256f2a595"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-final-test\\model-1-88.png",
+          "bytes": 262601,
+          "sha256": "489a168b1a793fb65a04966b091907d66136273303e354444ca817bd32ba1195"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-final-test\\model-2-88.png",
+          "bytes": 266468,
+          "sha256": "b13edcedaeaff7578c3650ebdb33fb0bdcce99596c3b6aa6f680339372e5a244"
+        }
+      ]
+    }
+  },
+  "sources": [
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-validation\\summary.csv",
+      "bytes": 342,
+      "sha256": "7e3a7b919c694dcd92120778975df11748feb7c2e6343e50edfd8d79c7ebbb7c"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-validation\\metrics.csv",
+      "bytes": 36951,
+      "sha256": "53218ad550a6976131ccfbe1cb3139a343de116ae492c9f1cd224a57a09500bb"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-validation\\crop-metrics.csv",
+      "bytes": 933,
+      "sha256": "edf2ee6270ca1e78d96c6d1c5c3f1770e5557f48a024b334b453f1f1a5d3a32f"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-validation\\protocol.json",
+      "bytes": 33460,
+      "sha256": "2f39f75152aadf97e61362cdb4dae1284f47c72f52e2f7ca1840c1e32035a692"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-validation\\performance.json",
+      "bytes": 2864,
+      "sha256": "fc44a2ac84e8c445b5c2514200e45d2ae02e771c6b390a91c5428c86cf28e955"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-final-test\\summary.csv",
+      "bytes": 342,
+      "sha256": "4409ac7801967296650650e1604ff0b28de0710cbdeba01ff551349a60ba8365"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-final-test\\metrics.csv",
+      "bytes": 75174,
+      "sha256": "31fbbd0a621db40e8891645fb35ca366b40fc1ef7b91120f9d51f834db348522"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-final-test\\crop-metrics.csv",
+      "bytes": 756,
+      "sha256": "2d06eb466823c0d40f6f32aa49cc1489f80aadf54de2a42233331a7a4d0c65de"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-final-test\\protocol.json",
+      "bytes": 54805,
+      "sha256": "d233da880077a8c991055e4f585fda50bbd6ca2c7e0ad5b33cf561322167d2d6"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-final-test\\performance.json",
+      "bytes": 2867,
+      "sha256": "bcee1e8f64366991a3d52a308e607c16e276f1e212a5cf2c2c2076bbb3fac764"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-footprints-size\\diagnostics.csv",
+      "bytes": 3106,
+      "sha256": "7d5b750f102837d293b2d8681c9aa4f99d2516aecb6d2a3e069e55696645dd80"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-footprints-size\\protocol.json",
+      "bytes": 4036,
+      "sha256": "0dc4fac8c8f46c3fb388c23b0518dc3982e73fc6cee6f4511d859475ce201519"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-footprints-size\\normal-comparison.png",
+      "bytes": 805755,
+      "sha256": "ca4ae762801877597f00c99619f79482bf5ceb13959a248c8a0646f8f1555d90"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-footprints-size\\normal-errors.png",
+      "bytes": 863981,
+      "sha256": "fab6b7e8aaa903c10a1c778d022b517a82a3faa3d5e9d87fa0f11b3c90020b05"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-footprints-size\\learned-environments.png",
+      "bytes": 314418,
+      "sha256": "eb5b5ea35bfb673cbac16a2ed3da6d8bb3bf0ee379f898548c764fea6d5e6cc2"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-footprints-size\\footprints.png",
+      "bytes": 46636,
+      "sha256": "0d6755bcc8ffdc64026032d41ec2c211612b2545e070f93ccdbf359e5673c618"
+    }
+  ],
+  "script": {
+    "path": "C:\\Users\\e1355010\\3DGSresearch\\docs\\reports\\assets\\2026-11-03-sphere-study\\archive.py",
+    "bytes": 5413,
+    "sha256": "f02188e4a606c8bd91e0ea0ba1378952756d803bc2b72863245509b45546ef25"
+  },
+  "note": "All figures use saved actual experiment images/scalars. Central crops are identical across variants. No retouching."
+}

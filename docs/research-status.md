@@ -2,6 +2,10 @@
 
 **Updated 3 November 2026: focus on specular reflection reconstruction.
 Logo-specific geometry investigation closed; plain-sphere capture and staged HDR completed.**
+[Current primary sphere study and commands](sphere-study-commands-2026-11-03.md):
+matched SH3/HDR and the single size trial have completed validation. The
+validation-selected models have completed all 200 test views; no more
+experiments are queued. Existing Materials results are supporting evidence.
 [Today's illustrated closeout](reports/2026-11-02-research-wrap-up.md) includes
 the new dataset, both training stages and reflection crops.
 [Scope decision and proposed sphere diagnostic](research-scope-2026-11-02.md).
@@ -37,11 +41,18 @@ evidence is in the [illustrated wrap-up report](reports/2026-10-30-research-wrap
   Early-SH Gaussian, Ship and new-method test/video runs
   were cancelled before starting.
 
-Next: inspect projected footprint/normal/lighting diagnostics for the remaining
-sphere blobs before selecting a size experiment; specify equal-budget SH3, LDR deferred and HDR/angular sphere controls on
-the same fixed estimated geometry, with matched refinement studied separately.
-Today's sphere continuation is complete; those controlled comparisons remain
-planned. Preserve the logo failure
-as a limitation and disclose prior inspection of historical Materials test scores.
+Latest sphere validation: SH3 **20.6530 dB / 0.127524 LPIPS**;
+HDR-1.0 **24.1249 / 0.093994**; HDR-0.75 **24.2308 / 0.091814**.
+All use 15k cumulative steps and 100k points. The size trial retains 100%
+foreground coverage and yields a modest gain; reflection blobs remain.
+
+Final sphere test: SH3 **20.2655 dB / 0.128760 LPIPS**; matched HDR-1.0
+**24.5732 / 0.083517**; selected HDR-0.75 **24.7453 / 0.080988**.
+All retain 100% foreground coverage. Same-size HDR improves all 200 views;
+the selected size variant adds a modest gain while reflection blobs remain.
+
+The bounded sphere study and illustrated command/results guide are complete. LDR, Ship,
+NeRO, further Materials training and logo tuning are deferred. Preserve the
+logo failure and disclose prior inspection of historical Materials test scores.
 Full logs/checkpoints remain
 in `outputs/first-principles-2026-10-30/` and the timestamped run folders.

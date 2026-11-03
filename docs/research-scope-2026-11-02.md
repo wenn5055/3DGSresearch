@@ -2,6 +2,12 @@
 
 Recorded 2 November 2026 (Singapore), following the user's scope clarification.
 
+**Superseded on 3 November:** the user made `justChromeBall` the main experimental
+scene and existing Materials runs supporting evidence, with a matched SH3/HDR
+comparison and one bounded size investigation. See the current
+[scope, commands and results](sphere-study-commands-2026-11-03.md). Primary/auxiliary
+roles below record the earlier decision and do not reopen deferred studies.
+
 **Evening update:** the sphere was subsequently created as `justChromeBall`,
 captured and trained with 10k frozen HDR + 5k refinement. See the
 [illustrated closeout](reports/2026-11-02-research-wrap-up.md). The equal-budget

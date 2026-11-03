@@ -609,3 +609,33 @@ lighting as well as footprint overlap. Inspect these diagnostics before
 changing size, capacity or optimization schedules together.
 
 [LPIPS protocol, portable evidence and size-hypothesis discussion](experiments/2026-11-03-sphere-lpips.md).
+
+## 2026-11-03 - Complete the reduced sphere study
+
+Sphere is now primary; existing Materials results are supporting evidence.
+Matched SH3 and HDR use the same training-mask initializer, seed 7, 800px,
+100k points and 10k frozen + 5k gentle-refinement policy. Initial-size 0.75 is
+the single additional HDR trial; all other stored initializer fields match.
+
+On **200 test views**, the same-size primary contrast is SH3 **20.2655 dB /
+0.821398 SSIM / 0.128760 LPIPS** versus HDR **24.5732 / 0.880892 / 0.083517**.
+HDR improves all 200 views on these three metrics. The validation-selected
+size-0.75 model reaches **24.7453 / 0.884031 / 0.080988**, with 100% foreground
+coverage. Selection and hashes were frozen before test evaluation; no retuning.
+
+![Sphere test reference, matched SH3/HDR and selected smaller-size HDR crops](reports/assets/2026-11-03-sphere-study/test-reflection-crops.png)
+
+*`justChromeBall`, predefined test r_0, r_13, r_73, r_88, top to bottom. Columns:
+reference, SH3-1.0, HDR-1.0, HDR-0.75. Identical central crops from actual
+experimental images. Finer branches and ground texture remain unresolved.*
+
+The size variant gives a modest test gain (+0.1721 dB, LPIPS -0.002529), not
+a solution to reflection blobs. Five-view geometry diagnostics show normal
+error 2.0914 degrees for SH3, 1.5728 for HDR-1.0 and 1.4678 for HDR-0.75;
+these are not full-test geometry means. View-0 median projected support diameter
+falls 12.61 -> 11.14px; statistics include occluded primitives. Retain the
+same-size primary contrast to avoid attributing the size treatment to shading.
+
+[Full commands, predeclared selection rule, costs, failures and portable evidence](sphere-study-commands-2026-11-03.md).
+This completes the bounded one-scene, one-seed study. No further experiments
+are queued; LDR, Ship, NeRO and further logo/Materials tuning remain deferred.

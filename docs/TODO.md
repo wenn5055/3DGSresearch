@@ -2,8 +2,9 @@
 
 ## Current priority - 3 November 2026
 
-[Scope decision](research-scope-2026-11-02.md) supersedes older logo/geometry
-follow-ups below. Historical checklists retain their dated context.
+[Current sphere scope and commands](sphere-study-commands-2026-11-03.md)
+supersede earlier Materials/Ship and logo follow-ups. Historical checklists
+below retain their dated context.
 
 - [x] Complete and preserve the original Materials protected SH-only control.
 - [x] Complete the matched Chrome position-rate trial; preserve its local failure.
@@ -16,18 +17,30 @@ follow-ups below. Historical checklists retain their dated context.
   LPIPS AlexNet on the same 100 validation views; add results to the closeout.
   **0.119765 -> 0.093994; all 100 views improve.** No retraining.
   [Evaluation and verification](experiments/2026-11-03-sphere-lpips.md).
-- [ ] Diagnose the sphere reflection blobs using projected splat footprints and
-  matched normal/lighting views before a controlled size trial. Size tuning is
-  a hypothesis, not an established remedy; no new training has been launched.
-- [ ] Specify equal-budget sphere appearance controls before launching comparisons.
-- [ ] Compare SH3, LDR deferred and HDR/angular on identical fixed estimated geometry.
-- [ ] Keep joint geometry/appearance fitting as a separate matched experiment.
-- [ ] Complete fair SH references and final Materials evaluation with prior test-use
-  disclosure; retain Materials as the primary benchmark.
+- [x] Make the sphere primary; retain existing Materials runs as supporting evidence.
+- [x] Specify and run matched SH3/HDR with the same 100k initializer, 800px,
+  seed 7 and 10k frozen + 5k refinement geometry policy. Same-size validation:
+  SH3 20.6530 dB / 0.127524 LPIPS; HDR 24.1249 dB / 0.093994 LPIPS.
+- [x] Diagnose projected footprints, normal maps and learned lighting; export
+  reference geometry for five validation views strictly for evaluation.
+- [x] Run the single initial-tangent-size trial (0.75x); verify all other PLY
+  fields and settings unchanged. Validation: 24.2308 dB / 0.091814 LPIPS;
+  foreground PSNR improves and coverage stays 100%.
+- [x] Freeze the validation-only size selection and checkpoint hashes before test;
+  retain SH3/HDR-1.0 as the matched primary contrast, with HDR-0.75 additional.
+- [x] Complete the frozen 200-view test report and portable evidence archive.
+  SH3: 20.2655 dB / 0.128760 LPIPS; matched HDR-1.0: 24.5732 / 0.083517;
+  selected HDR-0.75: 24.7453 / 0.080988. No more tuning after test.
+
+The bounded sphere study is complete. No further experiments are queued.
+
+Deferred by the 3 November scope decision: LDR comparisons, Ship, NeRO, more
+Materials training, logo recovery and additional scene expansion.
 
 The earlier scope-only update created no scene or runs. By 20:25 Singapore,
 the new sphere capture and two HDR training stages were complete; the linked
-closeout records their results. Matched appearance controls remain unrun.
+closeout records their results. The matched appearance comparison and bounded
+size trial were subsequently completed on 3 November, as recorded above.
 
 Unchecked items are planned, not completed. Follow [researchStages.md](researchStages.md)
 for rationale and stage completion criteria. The final held-out comparison and

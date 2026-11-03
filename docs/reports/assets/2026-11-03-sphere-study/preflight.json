@@ -1,0 +1,64 @@
+{
+  "status": "passed",
+  "comparison": "SH3 vs HDR, same initializer and two-stage geometry policy",
+  "stages": {
+    "frozen": {
+      "paths.output": [
+        "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov02-202000-justChromeBall-staged-hdr-pipeline\\frozen\\model.png",
+        "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-135445-justChromeBall-staged-sh3-pipeline\\frozen\\model.png"
+      ],
+      "surfel.mode": [
+        "deferred",
+        "rgb"
+      ],
+      "model.sh_degree": [
+        0,
+        3
+      ],
+      "paths.init_ply": [
+        "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov02-202000-justChromeBall-staged-hdr-pipeline\\initializer\\initial.ply",
+        "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-135445-justChromeBall-staged-sh3-pipeline\\initializer\\initial.ply"
+      ],
+      "surfel.sh_start_iteration": [
+        null,
+        1000
+      ],
+      "surfel.shading_model": [
+        "hdr_angular",
+        "ldr"
+      ]
+    },
+    "refine": {
+      "paths.output": [
+        "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov02-202000-justChromeBall-staged-hdr-pipeline\\refine\\model.png",
+        "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-135445-justChromeBall-staged-sh3-pipeline\\refine\\model.png"
+      ],
+      "surfel.mode": [
+        "deferred",
+        "rgb"
+      ],
+      "model.sh_degree": [
+        0,
+        3
+      ],
+      "paths.init_ply": [
+        "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov02-2021-justChromeBall-frozen-hdr-10k\\model.ply",
+        "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1354-justChromeBall-frozen-sh3-10k\\model.ply"
+      ],
+      "surfel.sh_start_iteration": [
+        null,
+        1000
+      ],
+      "surfel.shading_model": [
+        "hdr_angular",
+        "ldr"
+      ]
+    }
+  },
+  "shared_initializer": {
+    "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov02-202000-justChromeBall-staged-hdr-pipeline\\initializer\\initial.ply",
+    "bytes": 6800416,
+    "sha256": "a56b853c56becb0a31edeacada1be93032fa296eb491a003557b1124e5769ba6"
+  },
+  "renderer_sources_match": true
+}

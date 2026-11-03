@@ -1,0 +1,102 @@
+{
+  "status": "completed",
+  "runs": [
+    {
+      "run": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1357-justChromeBall-staged-sh3-refine-5k",
+      "label": "SH3",
+      "checkpoints": [
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1357-justChromeBall-staged-sh3-refine-5k\\model.ply",
+          "bytes": 6800416,
+          "sha256": "81f3b8db5533e7e01f3c7184d3c4020d42a91fe9f3c34700bd600f06f3504f97"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1357-justChromeBall-staged-sh3-refine-5k\\model.surfel.npz",
+          "bytes": 2893,
+          "sha256": "d0f62221b0d537bc5cb08d81d2e88836bee329f2fe75890220063e54903a8314"
+        }
+      ]
+    },
+    {
+      "run": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov02-2023-justChromeBall-staged-hdr-refine-5k",
+      "label": "HDR-1.0",
+      "checkpoints": [
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov02-2023-justChromeBall-staged-hdr-refine-5k\\model.ply",
+          "bytes": 6800416,
+          "sha256": "76565e6e24a13c663b8d5b703e5e4d4f8eed784381a0410bec3353ac69f65e2f"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov02-2023-justChromeBall-staged-hdr-refine-5k\\model.surfel.npz",
+          "bytes": 1740038,
+          "sha256": "a1f67b5c29a30ee365c062f0d8dc9fdf83c0c5406f58330427ce0a024a7b83e4"
+        }
+      ]
+    },
+    {
+      "run": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1402-justChromeBall-staged-hdr-refine-5k",
+      "label": "HDR-0.75",
+      "checkpoints": [
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1402-justChromeBall-staged-hdr-refine-5k\\model.ply",
+          "bytes": 6800416,
+          "sha256": "8b7870f8711b79407c3c73a8044710272648709ffd1c4347223e763eaad15888"
+        },
+        {
+          "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1402-justChromeBall-staged-hdr-refine-5k\\model.surfel.npz",
+          "bytes": 1740440,
+          "sha256": "015d1047dabd78325050c47f02577db1683cacc96b6e488b2a9afced3963a258"
+        }
+      ]
+    }
+  ],
+  "views": [
+    0,
+    13,
+    73,
+    88,
+    51
+  ],
+  "footprint_scope": "positive-depth primitives whose projected centers are inside the image; includes occluded/back-side primitives; not contribution weighted",
+  "normal_error": "reference mesh normals; valid reference foreground with coverage>=0.5; heatmap clipped at 30 degrees",
+  "geometry_reference": {
+    "status": "completed",
+    "scene": "C:\\Users\\e1355010\\3DGSresearch\\data\\blender\\justChromeBall.blend",
+    "scene_sha256": "b5b3b5eef50aecde5b353003199edf3e0312ac0862093af76d5972e0e4cd4f91",
+    "manifest": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\transforms_val.json",
+    "manifest_sha256": "c4ab7891ac24e43c6aa2c0fb3234c3d2cf229c5d0db45d6785ad11f46e680f82",
+    "script_sha256": "b4dc4571d95adb907c55ce96f244e4ba49249ec546b6587f8e52df0a8ca03451",
+    "blender_version": "5.0.1",
+    "resolution": [
+      800,
+      800
+    ],
+    "focal": 1250.0000504168488,
+    "views": [
+      0,
+      13,
+      73,
+      88,
+      51
+    ],
+    "objects": [
+      {
+        "id": 1,
+        "name": "Sphere",
+        "materials": [
+          "Chrome"
+        ]
+      }
+    ],
+    "triangles": 960,
+    "normal_convention": "unit world-space, camera-facing interpolated evaluated-mesh corner normals; excludes shader bump",
+    "depth_convention": "positive camera-z distance, not Euclidean ray distance",
+    "pixel_convention": "top-left origin, half-integer centers, Blender c2w +X right +Y up -Z forward",
+    "usage": "diagnostic evaluation only; no reference geometry used by SH training"
+  },
+  "script": {
+    "path": "C:\\Users\\e1355010\\3DGSresearch\\scripts\\diagnose_sphere_footprints.py",
+    "bytes": 9491,
+    "sha256": "f3cce2fa6cf4613333e457b8536f8e66ee7cca81b6ac010d36ee72e9dd076975"
+  }
+}

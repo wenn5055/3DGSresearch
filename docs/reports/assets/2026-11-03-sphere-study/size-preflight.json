@@ -1,0 +1,40 @@
+{
+  "status": "passed",
+  "scale_multiplier": 0.75,
+  "changed_ply_fields": [
+    "scale_0",
+    "scale_1"
+  ],
+  "initializer_source": {
+    "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov02-202000-justChromeBall-staged-hdr-pipeline\\initializer\\initial.ply",
+    "bytes": 6800416,
+    "sha256": "a56b853c56becb0a31edeacada1be93032fa296eb491a003557b1124e5769ba6"
+  },
+  "initializer_variant": {
+    "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-140008-justChromeBall-staged-hdr-scale0.75-pipeline\\initializer\\initial.ply",
+    "bytes": 6800416,
+    "sha256": "85fd6128641640f6cba7dbde25d251401146313d2351eba93dac85c3d4b68ebe"
+  },
+  "stages": {
+    "frozen": {
+      "paths.output": [
+        "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov02-202000-justChromeBall-staged-hdr-pipeline\\frozen\\model.png",
+        "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-140008-justChromeBall-staged-hdr-scale0.75-pipeline\\frozen\\model.png"
+      ],
+      "paths.init_ply": [
+        "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov02-202000-justChromeBall-staged-hdr-pipeline\\initializer\\initial.ply",
+        "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-140008-justChromeBall-staged-hdr-scale0.75-pipeline\\initializer\\initial.ply"
+      ]
+    },
+    "refine": {
+      "paths.output": [
+        "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov02-202000-justChromeBall-staged-hdr-pipeline\\refine\\model.png",
+        "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-140008-justChromeBall-staged-hdr-scale0.75-pipeline\\refine\\model.png"
+      ],
+      "paths.init_ply": [
+        "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov02-2021-justChromeBall-frozen-hdr-10k\\model.ply",
+        "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1400-justChromeBall-frozen-hdr-10k\\model.ply"
+      ]
+    }
+  }
+}

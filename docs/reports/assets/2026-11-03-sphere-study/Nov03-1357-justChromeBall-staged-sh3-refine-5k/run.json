@@ -1,0 +1,612 @@
+{
+  "run_id": "Nov03-1357-justChromeBall-staged-sh3-refine-5k",
+  "status": "completed",
+  "started_utc": "2026-11-03T05:57:14.859104+00:00",
+  "pipeline": "surfel",
+  "note": "Staged sphere: training-mask initializer, 10k frozen appearance, 5k geometry refinement; Adam restarts at handoff.",
+  "source_config": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-135445-justChromeBall-staged-sh3-pipeline\\refine.yaml",
+  "original_output": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-135445-justChromeBall-staged-sh3-pipeline\\refine\\model.png",
+  "runner_command": [
+    "scripts/run_staged_hdr.py",
+    "data/justChromeBall",
+    "--appearance",
+    "sh3",
+    "--init-ply",
+    "outputs/Nov02-202000-justChromeBall-staged-hdr-pipeline/initializer/initial.ply",
+    "--metrics",
+    "psnr",
+    "ssim",
+    "lpips"
+  ],
+  "config": {
+    "paths": {
+      "data": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall",
+      "output": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1357-justChromeBall-staged-sh3-refine-5k\\model.png",
+      "init_ply": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1354-justChromeBall-frozen-sh3-10k\\model.ply"
+    },
+    "runtime": {
+      "arch": "gpu",
+      "seed": 7
+    },
+    "model": {
+      "resolution": 256,
+      "width": 800,
+      "height": 800,
+      "capacity": 100000,
+      "initial_splats": 100000,
+      "tile_pair_capacity": null,
+      "scene_radius": null,
+      "background": "white",
+      "sh_degree": 3,
+      "geometry": "surfel"
+    },
+    "training": {
+      "iterations": 5000
+    },
+    "loss": {
+      "mode": "mse",
+      "dssim_weight": 0.2,
+      "dssim_window": 11
+    },
+    "learning_rates": {
+      "position_initial": 1e-05,
+      "position_final": 1e-06,
+      "position_max_steps": 5000,
+      "position_delay_steps": 0,
+      "position_delay_multiplier": 0.01,
+      "feature_dc": 0.0025,
+      "feature_rest": 0.000125,
+      "opacity": 0.005,
+      "scale": 0.0005,
+      "rotation": 0.0001
+    },
+    "densification": {
+      "interval": 0,
+      "child_optimizer_state": "fresh_children",
+      "fraction": 0.2,
+      "percent_dense": 0.01,
+      "opacity_reset_interval": 0
+    },
+    "compact_box": {
+      "enabled": true,
+      "beta": 0.5,
+      "alpha_min": 0.00392156862745098
+    },
+    "multiview_adc": {
+      "enabled": false,
+      "views": 10,
+      "loss_threshold": 0.1,
+      "densify_score_threshold": 5.0,
+      "prune_score_threshold": 0.9,
+      "late_prune_interval": 400,
+      "opacity_cutoff": 0.02,
+      "candidate_limit": 20000
+    },
+    "sparse": {
+      "enabled": false,
+      "samples_per_tile": 256
+    },
+    "adaptive": {
+      "dssim_psnr_threshold": 21.0,
+      "sh1_psnr_threshold": 26.5,
+      "sh2_psnr_threshold": 27.5,
+      "sh3_psnr_threshold": 28.0,
+      "late_prune_growth_window": 3,
+      "late_prune_growth_percent": 2.0
+    },
+    "convergence": {
+      "enabled": false,
+      "min_iterations": 1200,
+      "patience": 5,
+      "min_delta": 1e-05
+    },
+    "reporting": {
+      "log_every": 20,
+      "eval_every": 100,
+      "eval_manifest": "transforms_val.json",
+      "eval_views": 8,
+      "eval_view_ids": null,
+      "loss_ema_decay": 0.95,
+      "snapshot_every": 2500,
+      "save_ply": true
+    },
+    "geometry_loss": {
+      "mask_weight": 0.1,
+      "normal_depth_weight": 0.01,
+      "normal_start_iteration": 1,
+      "normal_ramp_iterations": 1000,
+      "min_coverage": 0.1,
+      "foreground_threshold": 0.95,
+      "max_relative_depth_jump": 0.05
+    },
+    "surfel": {
+      "mode": "rgb",
+      "shading_model": "ldr",
+      "angular_lr": 0.001,
+      "freeze_geometry": false,
+      "depth_mode": "ray_plane",
+      "specular_start_iteration": 0,
+      "initial_reflection": 0.5,
+      "reflection_lr": 0.01,
+      "environment_lr": 0.01,
+      "environment_width": 512,
+      "environment_height": 256,
+      "save_debug": true,
+      "sh_start_iteration": 1000,
+      "sh_band_interval": 1000,
+      "foreground_pruning": {
+        "enabled": false,
+        "start_iteration": 2000,
+        "interval": 500,
+        "views": 16,
+        "min_background_views": 3,
+        "persistence": 2,
+        "background_alpha_threshold": 0.01,
+        "margin_pixels": 2
+      },
+      "photometric_loss": "inherit",
+      "refinement": {
+        "start_iteration": null,
+        "prune_interval": 500
+      },
+      "normal_propagation": {
+        "enabled": false,
+        "interval": 1000,
+        "until_iteration": 24000,
+        "scale_factor": 1.5,
+        "scale_reflection_threshold": 0.02,
+        "color_reflection_threshold": 0.1,
+        "color_noise": 0.1,
+        "opacity_floor": 0.9,
+        "reflection_floor": 0.001,
+        "opacity_freeze_iterations": 200,
+        "densification_interval": 500
+      }
+    }
+  },
+  "stages": [
+    {
+      "name": "train",
+      "command": [
+        "C:\\Users\\e1355010\\3DGSresearch\\.venv\\Scripts\\python.exe",
+        "-u",
+        "C:\\Users\\e1355010\\3DGSresearch\\scripts\\train_surfels.py",
+        "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1357-justChromeBall-staged-sh3-refine-5k\\config.yaml"
+      ],
+      "cwd": "C:\\Users\\e1355010\\3DGSresearch",
+      "status": "completed",
+      "started_utc": "2026-11-03T05:57:16.060298+00:00",
+      "exit_code": 0,
+      "wall_seconds": 68.82892549999815,
+      "finished_utc": "2026-11-03T05:58:25.119247+00:00"
+    },
+    {
+      "name": "eval",
+      "command": [
+        "C:\\Users\\e1355010\\3DGSresearch\\.venv\\Scripts\\python.exe",
+        "-u",
+        "C:\\Users\\e1355010\\3DGSresearch\\scripts\\evaluate_surfels.py",
+        "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1357-justChromeBall-staged-sh3-refine-5k\\model.ply",
+        "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall",
+        "--manifest",
+        "transforms_val.json",
+        "--arch",
+        "gpu",
+        "--width",
+        "800",
+        "--height",
+        "800",
+        "--background",
+        "white",
+        "--lpips-net",
+        "alex",
+        "--output-dir",
+        "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1357-justChromeBall-staged-sh3-refine-5k\\test-renders",
+        "--csv",
+        "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1357-justChromeBall-staged-sh3-refine-5k\\test-metrics.csv",
+        "--metrics",
+        "psnr",
+        "ssim",
+        "lpips"
+      ],
+      "cwd": "C:\\Users\\e1355010\\3DGSresearch",
+      "status": "completed",
+      "started_utc": "2026-11-03T05:58:25.368519+00:00",
+      "exit_code": 0,
+      "wall_seconds": 31.426295500001288,
+      "finished_utc": "2026-11-03T05:58:56.994645+00:00"
+    }
+  ],
+  "evaluation": {
+    "manifest": "transforms_val.json",
+    "metrics": [
+      "psnr",
+      "ssim",
+      "lpips"
+    ],
+    "lpips_net": "alex",
+    "aggregation": "arithmetic mean of per-view metric values",
+    "views": 100
+  },
+  "source_config_fingerprint": {
+    "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-135445-justChromeBall-staged-sh3-pipeline\\refine.yaml",
+    "bytes": 3043,
+    "sha256": "04d485b0c19e2dc7cb6e66190f93292e2158b596e3000fded95fcf1303330ca0"
+  },
+  "inputs": {
+    "directory": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall",
+    "manifests": {
+      "transforms_train.json": {
+        "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\transforms_train.json",
+        "bytes": 65419,
+        "sha256": "18980135ed77b46c9f4a6ecc28fc29c7908d19a025a59416c11dcd2e71165f3a",
+        "frames": 100,
+        "frame_paths": [
+          "./train/r_0",
+          "./train/r_1",
+          "./train/r_2",
+          "./train/r_3",
+          "./train/r_4",
+          "./train/r_5",
+          "./train/r_6",
+          "./train/r_7",
+          "./train/r_8",
+          "./train/r_9",
+          "./train/r_10",
+          "./train/r_11",
+          "./train/r_12",
+          "./train/r_13",
+          "./train/r_14",
+          "./train/r_15",
+          "./train/r_16",
+          "./train/r_17",
+          "./train/r_18",
+          "./train/r_19",
+          "./train/r_20",
+          "./train/r_21",
+          "./train/r_22",
+          "./train/r_23",
+          "./train/r_24",
+          "./train/r_25",
+          "./train/r_26",
+          "./train/r_27",
+          "./train/r_28",
+          "./train/r_29",
+          "./train/r_30",
+          "./train/r_31",
+          "./train/r_32",
+          "./train/r_33",
+          "./train/r_34",
+          "./train/r_35",
+          "./train/r_36",
+          "./train/r_37",
+          "./train/r_38",
+          "./train/r_39",
+          "./train/r_40",
+          "./train/r_41",
+          "./train/r_42",
+          "./train/r_43",
+          "./train/r_44",
+          "./train/r_45",
+          "./train/r_46",
+          "./train/r_47",
+          "./train/r_48",
+          "./train/r_49",
+          "./train/r_50",
+          "./train/r_51",
+          "./train/r_52",
+          "./train/r_53",
+          "./train/r_54",
+          "./train/r_55",
+          "./train/r_56",
+          "./train/r_57",
+          "./train/r_58",
+          "./train/r_59",
+          "./train/r_60",
+          "./train/r_61",
+          "./train/r_62",
+          "./train/r_63",
+          "./train/r_64",
+          "./train/r_65",
+          "./train/r_66",
+          "./train/r_67",
+          "./train/r_68",
+          "./train/r_69",
+          "./train/r_70",
+          "./train/r_71",
+          "./train/r_72",
+          "./train/r_73",
+          "./train/r_74",
+          "./train/r_75",
+          "./train/r_76",
+          "./train/r_77",
+          "./train/r_78",
+          "./train/r_79",
+          "./train/r_80",
+          "./train/r_81",
+          "./train/r_82",
+          "./train/r_83",
+          "./train/r_84",
+          "./train/r_85",
+          "./train/r_86",
+          "./train/r_87",
+          "./train/r_88",
+          "./train/r_89",
+          "./train/r_90",
+          "./train/r_91",
+          "./train/r_92",
+          "./train/r_93",
+          "./train/r_94",
+          "./train/r_95",
+          "./train/r_96",
+          "./train/r_97",
+          "./train/r_98",
+          "./train/r_99"
+        ]
+      },
+      "transforms_val.json": {
+        "path": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\transforms_val.json",
+        "bytes": 65184,
+        "sha256": "c4ab7891ac24e43c6aa2c0fb3234c3d2cf229c5d0db45d6785ad11f46e680f82",
+        "frames": 100,
+        "frame_paths": [
+          "./val/r_0",
+          "./val/r_1",
+          "./val/r_2",
+          "./val/r_3",
+          "./val/r_4",
+          "./val/r_5",
+          "./val/r_6",
+          "./val/r_7",
+          "./val/r_8",
+          "./val/r_9",
+          "./val/r_10",
+          "./val/r_11",
+          "./val/r_12",
+          "./val/r_13",
+          "./val/r_14",
+          "./val/r_15",
+          "./val/r_16",
+          "./val/r_17",
+          "./val/r_18",
+          "./val/r_19",
+          "./val/r_20",
+          "./val/r_21",
+          "./val/r_22",
+          "./val/r_23",
+          "./val/r_24",
+          "./val/r_25",
+          "./val/r_26",
+          "./val/r_27",
+          "./val/r_28",
+          "./val/r_29",
+          "./val/r_30",
+          "./val/r_31",
+          "./val/r_32",
+          "./val/r_33",
+          "./val/r_34",
+          "./val/r_35",
+          "./val/r_36",
+          "./val/r_37",
+          "./val/r_38",
+          "./val/r_39",
+          "./val/r_40",
+          "./val/r_41",
+          "./val/r_42",
+          "./val/r_43",
+          "./val/r_44",
+          "./val/r_45",
+          "./val/r_46",
+          "./val/r_47",
+          "./val/r_48",
+          "./val/r_49",
+          "./val/r_50",
+          "./val/r_51",
+          "./val/r_52",
+          "./val/r_53",
+          "./val/r_54",
+          "./val/r_55",
+          "./val/r_56",
+          "./val/r_57",
+          "./val/r_58",
+          "./val/r_59",
+          "./val/r_60",
+          "./val/r_61",
+          "./val/r_62",
+          "./val/r_63",
+          "./val/r_64",
+          "./val/r_65",
+          "./val/r_66",
+          "./val/r_67",
+          "./val/r_68",
+          "./val/r_69",
+          "./val/r_70",
+          "./val/r_71",
+          "./val/r_72",
+          "./val/r_73",
+          "./val/r_74",
+          "./val/r_75",
+          "./val/r_76",
+          "./val/r_77",
+          "./val/r_78",
+          "./val/r_79",
+          "./val/r_80",
+          "./val/r_81",
+          "./val/r_82",
+          "./val/r_83",
+          "./val/r_84",
+          "./val/r_85",
+          "./val/r_86",
+          "./val/r_87",
+          "./val/r_88",
+          "./val/r_89",
+          "./val/r_90",
+          "./val/r_91",
+          "./val/r_92",
+          "./val/r_93",
+          "./val/r_94",
+          "./val/r_95",
+          "./val/r_96",
+          "./val/r_97",
+          "./val/r_98",
+          "./val/r_99"
+        ]
+      }
+    },
+    "initial_materials": {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1354-justChromeBall-frozen-sh3-10k\\model.surfel.npz",
+      "bytes": 2893,
+      "sha256": "d0f62221b0d537bc5cb08d81d2e88836bee329f2fe75890220063e54903a8314"
+    },
+    "initialization": {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1354-justChromeBall-frozen-sh3-10k\\model.ply",
+      "bytes": 6800416,
+      "sha256": "d3ca2ff4ded636af5eb66daef18e34007e8f759c055015ce462221cd5499b50c"
+    }
+  },
+  "environment": {
+    "git": {
+      "commit": {
+        "command": [
+          "git",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit_code": 0,
+        "stdout": "13230de7910c33b4f361829a312c6c0017d9a7db\n",
+        "stderr": ""
+      },
+      "status": {
+        "command": [
+          "git",
+          "status",
+          "--short"
+        ],
+        "exit_code": 0,
+        "stdout": "M  docs/TODO.md\nA  docs/experiments/2026-11-03-sphere-lpips.md\nM  docs/findings.md\n M docs/output-index.md\nMM docs/reports/2026-11-02-research-wrap-up.md\nA  docs/reports/assets/2026-11-03-sphere-lpips/evaluate.py\nA  docs/reports/assets/2026-11-03-sphere-lpips/evaluation.json\nA  docs/reports/assets/2026-11-03-sphere-lpips/frozen.csv\nA  docs/reports/assets/2026-11-03-sphere-lpips/lpips-validation.png\nA  docs/reports/assets/2026-11-03-sphere-lpips/refine.csv\nA  docs/reports/assets/2026-11-03-sphere-lpips/scale-statistics.json\nA  docs/reports/assets/2026-11-03-sphere-lpips/summarize.py\nA  docs/reports/assets/2026-11-03-sphere-lpips/summary.csv\nM  docs/research-status.md\n M scripts/run_staged_hdr.py\n M scripts/test_staged_hdr_pipeline.py\n?? docs/sphere-study-commands-2026-11-03.md\n",
+        "stderr": ""
+      },
+      "remotes": {
+        "command": [
+          "git",
+          "remote",
+          "-v"
+        ],
+        "exit_code": 0,
+        "stdout": "origin\thttps://github.com/wenn5055/3DGSresearch.git (fetch)\norigin\thttps://github.com/wenn5055/3DGSresearch.git (push)\n",
+        "stderr": ""
+      },
+      "patch_exit_code": 0
+    },
+    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+    "python_executable": "C:\\Users\\e1355010\\3DGSresearch\\.venv\\Scripts\\python.exe",
+    "runtime_environment": {
+      "CUDA_VISIBLE_DEVICES": null,
+      "WARP_CACHE_PATH": null,
+      "OMP_NUM_THREADS": null
+    },
+    "platform": "Windows-11-10.0.26200-SP0",
+    "gpu_snapshot": {
+      "command": [
+        "nvidia-smi",
+        "--query-gpu=name,driver_version,memory.total",
+        "--format=csv,noheader"
+      ],
+      "exit_code": 0,
+      "stdout": "NVIDIA RTX PRO 5000 Blackwell, 581.80, 48935 MiB\n",
+      "stderr": ""
+    }
+  },
+  "planned_commands": {
+    "train": [
+      "C:\\Users\\e1355010\\3DGSresearch\\.venv\\Scripts\\python.exe",
+      "-u",
+      "C:\\Users\\e1355010\\3DGSresearch\\scripts\\train_surfels.py",
+      "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1357-justChromeBall-staged-sh3-refine-5k\\config.yaml"
+    ],
+    "eval": [
+      "C:\\Users\\e1355010\\3DGSresearch\\.venv\\Scripts\\python.exe",
+      "-u",
+      "C:\\Users\\e1355010\\3DGSresearch\\scripts\\evaluate_surfels.py",
+      "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1357-justChromeBall-staged-sh3-refine-5k\\model.ply",
+      "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall",
+      "--manifest",
+      "transforms_val.json",
+      "--arch",
+      "gpu",
+      "--width",
+      "800",
+      "--height",
+      "800",
+      "--background",
+      "white",
+      "--lpips-net",
+      "alex",
+      "--output-dir",
+      "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1357-justChromeBall-staged-sh3-refine-5k\\test-renders",
+      "--csv",
+      "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1357-justChromeBall-staged-sh3-refine-5k\\test-metrics.csv",
+      "--metrics",
+      "psnr",
+      "ssim",
+      "lpips"
+    ]
+  },
+  "training_result": {
+    "completed_iterations": 5000,
+    "trainer_seconds": 63.11,
+    "stop_reason": "configured iteration limit",
+    "loss_stage": "mse",
+    "sh_degree": 3,
+    "surfel_stage": "rgb"
+  },
+  "model_artifacts": [
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1357-justChromeBall-staged-sh3-refine-5k\\model.buffers.npz",
+      "bytes": 2239343,
+      "sha256": "bcf8376e949063abfec1bfe27162cbfea1f3210bb924f9c747dbee619c9417c6"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1357-justChromeBall-staged-sh3-refine-5k\\model.coverage.png",
+      "bytes": 5798,
+      "sha256": "2bbde6f10a200cad6ad89e82e5675bcaf9669e01de245b11026d8e60ec5be176"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1357-justChromeBall-staged-sh3-refine-5k\\model.depth.png",
+      "bytes": 32934,
+      "sha256": "7d71427199a50c0968f1c452e3b8808841dfb75a9a1a37111b5aed120bff0b5f"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1357-justChromeBall-staged-sh3-refine-5k\\model.normals.png",
+      "bytes": 117314,
+      "sha256": "4f4dcbae4e2715cdf1c29b2e714866860441893ec7f156abe8b1bfc80da206e4"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1357-justChromeBall-staged-sh3-refine-5k\\model.ply",
+      "bytes": 6800416,
+      "sha256": "81f3b8db5533e7e01f3c7184d3c4020d42a91fe9f3c34700bd600f06f3504f97"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1357-justChromeBall-staged-sh3-refine-5k\\model.png",
+      "bytes": 248893,
+      "sha256": "4d493c6c17d4f923df4607fddce8030a7ce9c02a226eaf6103dce8c6678398a6"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1357-justChromeBall-staged-sh3-refine-5k\\model.sh.npz",
+      "bytes": 16699431,
+      "sha256": "179f603058fa1b4f324982d2ec8b4bdc7c9eda4c69fb0019d36dc23198aca29e"
+    },
+    {
+      "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1357-justChromeBall-staged-sh3-refine-5k\\model.surfel.npz",
+      "bytes": 2893,
+      "sha256": "d0f62221b0d537bc5cb08d81d2e88836bee329f2fe75890220063e54903a8314"
+    }
+  ],
+  "mean_metrics": {
+    "psnr_db": 20.653147677277307,
+    "ssim": 0.824707818031311,
+    "lpips": 0.12752401247620582
+  },
+  "finished_utc": "2026-11-03T05:58:57.170748+00:00",
+  "total_wall_seconds": 102.31145429999742
+}

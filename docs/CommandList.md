@@ -2,6 +2,9 @@
 
 Use **Git Bash on Windows**, from the repository root.
 
+Current reduced-scope study: [sphere SH3/HDR comparison, footprint diagnostics,
+size trial and final-test commands](sphere-study-commands-2026-11-03.md).
+
 ## New sphere: automated staged HDR (2 November)
 
 ```bash

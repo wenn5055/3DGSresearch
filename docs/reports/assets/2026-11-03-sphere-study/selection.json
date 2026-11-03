@@ -1,0 +1,131 @@
+{
+  "status": "frozen-before-test",
+  "created_utc": "2026-11-03T06:08:37.619311+00:00",
+  "validation_protocol": {
+    "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-validation\\protocol.json",
+    "bytes": 33460,
+    "sha256": "2f39f75152aadf97e61362cdb4dae1284f47c72f52e2f7ca1840c1e32035a692"
+  },
+  "validation_summary": {
+    "SH3": {
+      "model": "SH3",
+      "psnr_db": "20.652988705421798",
+      "ssim": "0.824707818031311",
+      "foreground_psnr_db": "14.036167482266432",
+      "foreground_coverage_fraction": "1.0",
+      "lpips_alex": "0.12752401247620582"
+    },
+    "HDR-1.0": {
+      "model": "HDR-1.0",
+      "psnr_db": "24.124930968913844",
+      "ssim": "0.874919770359993",
+      "foreground_psnr_db": "17.75196307293164",
+      "foreground_coverage_fraction": "1.0",
+      "lpips_alex": "0.0939941669255495"
+    },
+    "HDR-0.75": {
+      "model": "HDR-0.75",
+      "psnr_db": "24.230757528880762",
+      "ssim": "0.8771771031618119",
+      "foreground_psnr_db": "17.869308511345203",
+      "foreground_coverage_fraction": "1.0",
+      "lpips_alex": "0.09181392155587673"
+    }
+  },
+  "chosen_hdr_label": "HDR-0.75",
+  "checks": {
+    "lpips_improves": true,
+    "foreground_psnr_not_lower": true,
+    "foreground_coverage_at_least_99_percent": true
+  },
+  "selection_rule": "smaller size must improve mean validation LPIPS, not lower foreground PSNR, and retain mean foreground coverage >=0.99",
+  "all_validation_runs": [
+    "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1357-justChromeBall-staged-sh3-refine-5k",
+    "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov02-2023-justChromeBall-staged-hdr-refine-5k",
+    "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1402-justChromeBall-staged-hdr-refine-5k"
+  ],
+  "selected_labels": [
+    "SH3",
+    "HDR-1.0",
+    "HDR-0.75"
+  ],
+  "primary_matched_comparison": [
+    "SH3",
+    "HDR-1.0"
+  ],
+  "selected_checkpoints": [
+    [
+      {
+        "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1357-justChromeBall-staged-sh3-refine-5k\\model.ply",
+        "bytes": 6800416,
+        "sha256": "81f3b8db5533e7e01f3c7184d3c4020d42a91fe9f3c34700bd600f06f3504f97"
+      },
+      {
+        "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1357-justChromeBall-staged-sh3-refine-5k\\model.surfel.npz",
+        "bytes": 2893,
+        "sha256": "d0f62221b0d537bc5cb08d81d2e88836bee329f2fe75890220063e54903a8314"
+      },
+      {
+        "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1357-justChromeBall-staged-sh3-refine-5k\\model.sh.npz",
+        "bytes": 16699431,
+        "sha256": "179f603058fa1b4f324982d2ec8b4bdc7c9eda4c69fb0019d36dc23198aca29e"
+      }
+    ],
+    [
+      {
+        "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov02-2023-justChromeBall-staged-hdr-refine-5k\\model.ply",
+        "bytes": 6800416,
+        "sha256": "76565e6e24a13c663b8d5b703e5e4d4f8eed784381a0410bec3353ac69f65e2f"
+      },
+      {
+        "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov02-2023-justChromeBall-staged-hdr-refine-5k\\model.surfel.npz",
+        "bytes": 1740038,
+        "sha256": "a1f67b5c29a30ee365c062f0d8dc9fdf83c0c5406f58330427ce0a024a7b83e4"
+      }
+    ],
+    [
+      {
+        "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1402-justChromeBall-staged-hdr-refine-5k\\model.ply",
+        "bytes": 6800416,
+        "sha256": "8b7870f8711b79407c3c73a8044710272648709ffd1c4347223e763eaad15888"
+      },
+      {
+        "path": "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1402-justChromeBall-staged-hdr-refine-5k\\model.surfel.npz",
+        "bytes": 1740440,
+        "sha256": "015d1047dabd78325050c47f02577db1683cacc96b6e488b2a9afced3963a258"
+      }
+    ]
+  ],
+  "test_command": [
+    "C:\\Users\\e1355010\\3DGSresearch\\.venv\\Scripts\\python.exe",
+    "-u",
+    "C:\\Users\\e1355010\\3DGSresearch\\scripts\\evaluate_reflection_suite.py",
+    "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1357-justChromeBall-staged-sh3-refine-5k",
+    "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov02-2023-justChromeBall-staged-hdr-refine-5k",
+    "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1402-justChromeBall-staged-hdr-refine-5k",
+    "--labels",
+    "SH3",
+    "HDR-1.0",
+    "HDR-0.75",
+    "--output",
+    "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-sphere-final-test",
+    "--manifest",
+    "transforms_test.json",
+    "--views",
+    "0",
+    "13",
+    "73",
+    "88",
+    "--metrics",
+    "psnr",
+    "ssim",
+    "lpips",
+    "--cpu-threads",
+    "2"
+  ],
+  "script": {
+    "path": "C:\\Users\\e1355010\\3DGSresearch\\scripts\\finalize_sphere_study.py",
+    "bytes": 3939,
+    "sha256": "bdd93b3f2a0620a95f1400469ddb1017bfd81cc95a91360f802338a2ca487274"
+  }
+}
