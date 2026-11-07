@@ -89,7 +89,7 @@ def main():
             path = (document.parent / target.split('#')[0]).resolve()
             assert path.exists(), f'{document.name}: missing link {target}'
             local_links += 1
-    assert len(re.findall(r'^!\[', text, flags=re.M)) == 10
+    assert len(re.findall(r'^!\[', text, flags=re.M)) == 11
     analysis_path = ASSETS / '2026-11-07-report-analysis/analysis.json'
     analysis = json.loads(analysis_path.read_text(encoding='utf-8'))
     main_effect = analysis['comparisons']['HDR-1.0_vs_SH3']
@@ -98,9 +98,8 @@ def main():
     assert f"{main_effect['psnr_db']['min']:.4f}–{main_effect['psnr_db']['max']:.4f} dB" in text
     assert '198/200' in text and '189/200' in text
     conditional = analysis['normal_intervention']['normal_substitution_effect']
-    assert f"{abs(conditional['learned-light']['lpips_alex']['mean']):.6f}" in text
-    assert f"{conditional['reference-light']['lpips_alex']['mean']:.6f}" in text
-    assert f"{analysis['normal_intervention']['difference_of_conditional_mean_effects']['lpips_alex']:.6f}" in text
+    assert f"{abs(conditional['learned-light']['lpips_alex']['mean']):.4f}" in text
+    assert f"{conditional['reference-light']['lpips_alex']['mean']:.4f}" in text
     for source in analysis['sources']:
         assert hashlib.sha256((ROOT / source['path']).read_bytes()).hexdigest() == source['sha256']
     assert len(csv_rows(normal_asset / 'validation-metrics.csv')) == 200
@@ -114,7 +113,7 @@ def main():
             checked_copies += 1
     print(json.dumps({'table_rows_checked': len(checked), 'local_links_checked': local_links,
                       'available_original_input_hashes_checked': checked_copies,
-                      'report_figures': 10, 'saved_data_analysis_sources_checked': len(analysis['sources']),
+                      'report_figures': 11, 'saved_data_analysis_sources_checked': len(analysis['sources']),
                       'loss_trial_paired_validation_rows': 200, 'loss_trial_normal_rows': 10,
                       'validation_rows': 200, 'normal_rows': 10,
                       'author_review_items': text.count('[AUTHOR REVIEW:')}, indent=2))

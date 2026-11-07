@@ -51,11 +51,13 @@ pre { padding: 10px; background: #f3f5f7; white-space: pre-wrap; font-size: 11px
   h2 { font-size: 15pt; margin-top: 18pt; }
   h3 { font-size: 11.8pt; margin-top: 13pt; }
   h1,h2,h3 { break-after: avoid; }
+  p { break-inside: avoid; }
+  p:has(+ .equation) { break-after: avoid; }
   table { font-size: 8.4pt; }
   th,td { padding: 5px; }
   thead { display: table-header-group; }
   figure img { max-height: 175mm; }
-  figure[data-figure="B1"] img { max-height: 85mm; }
+  figure[data-figure="D1"] img { max-height: 85mm; }
   figcaption { font-size: 8.4pt; }
   pre { font-size: 8pt; }
   .screen-tools { display: none; }
@@ -149,7 +151,7 @@ def main():
                              'images': len(pdf_page.get_images()), 'first_text': page_text[:100]})
         pdf_page.get_pixmap(matrix=pymupdf.Matrix(0.85, 0.85)).save(output / f'page-{index+1:02}.png')
     pdf_text = '\n'.join(p.get_text() for p in pdf)
-    for needle in ('24.5732', '0.083517', '1.5943', 'AI-use declaration', 'Reproducibility'):
+    for needle in ('24.5732', '0.083517', '1.5943', 'AI-use declaration', 'Reproduce the results'):
         if needle not in pdf_text:
             raise RuntimeError(f'Missing expected PDF text: {needle}')
     (output / 'report-text.txt').write_text(pdf_text, encoding='utf-8')

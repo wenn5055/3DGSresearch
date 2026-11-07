@@ -7,6 +7,7 @@
 - [Refinement-loss trial](../experiments/2026-11-07-refinement-loss.md): user-requested 5k L1/D-SSIM continuation, validation only; 10.15% lower LPIPS with a PSNR cost and unchanged normal accuracy.
 - Independent agent reviews: [grading/argument](reviews/rubric-review.md), [technical accuracy](reviews/technical-review.md), [structure/readability](reviews/editorial-review.md).
 - [Review changes and rationale](reviews/revision-summary.md): what was incorporated and what remains an author decision.
+- [Course connections](course-connections.md): verified Unit 11 motivation, Unit 10 loss discussion and relevant Units 5, 6, 8, 9 and 12.
 
 The primary evidence is the recorded **100k-point / seed-7 / 10k + 5k** study. The main models remain unchanged. After drafting, the user requested one additional 5k loss trial; it is a separate validation-only diagnostic. Later 200k exploration is also separate from the main comparison.
 
@@ -20,9 +21,11 @@ py -3.12 -m venv outputs/report-tools
 ./outputs/report-tools/Scripts/python.exe docs/final-report/build_report.py
 ```
 
-Outputs are `outputs/final-report-draft/report.pdf` and `report.html`. The HTML embeds all figures and needs no network connection. The builder uses installed Chrome or Edge; pass `--browser PATH` for another Chromium executable. It verifies all ten images load, checks expected PDF text, exports page previews, and records asset hashes/package versions in `build-manifest.json`.
+Outputs are `outputs/final-report-draft/report.pdf` and `report.html`. The HTML embeds all figures and needs no network connection. The builder uses installed Chrome or Edge; pass `--browser PATH` for another Chromium executable. It verifies all eleven images load (ten experiment figures and one labelled method schematic), checks expected PDF text, exports page previews, and records asset hashes/package versions in `build-manifest.json`.
 
 Check numeric tables, links and available evidence hashes independently with `python docs/final-report/verify_report.py` (standard library only).
+
+`python docs/final-report/verify_course_references.py` checks the report's course links and section anchors against the recorded source manifest, offline.
 
 Generated artifacts and document-tool packages stay under ignored `outputs/`. Source prose, archive scripts and actual experiment assets are tracked. Edit `report.md`, then rebuild. Figure captions identify scene, split/view, variants and diagnostic scope.
 
@@ -38,6 +41,6 @@ Extract the ZIP into a **fresh clone**, preserving the original workspace's run 
 
 ## Review order
 
-Start with Sections 5–6: verify what the evidence says. Next review the Method attribution table, Introduction/Conclusion and AI declaration. Add author details and resolve every `AUTHOR REVIEW` marker. Confirm full checkpoint/data availability before treating the reproduction appendix as submission-ready.
+The main report now explains the project for readers who have not followed development: background → method → dedicated loss section → setup → results → discussion. Start with Section 4 for the objective choices and Section 6 for their measured consequences. Detailed shader equations/attribution, reproduction, costs and supporting scenes are in Appendices A–D. Add author details, confirm the AI declaration and resolve the `AUTHOR REVIEW` markers before submission.
 
 **Good commit point:** this draft, evidence map, review checklist and the portable normal-weight evidence. Full checkpoints need separate preservation.

@@ -1,0 +1,22 @@
+{
+  "kind": "Schematic of implemented method; not experiment data or a planned result.",
+  "note": "Top: forward computation. Bottom: training feedback. Geometry is fixed in the first training stage.",
+  "sources": [
+    {
+      "path": "src/cp4282_gs/surfels/trainer.py",
+      "sha256": "dca9461898193cbf775ebb59363a1bacf6e51db65a20db3518134dc3d77e8743"
+    },
+    {
+      "path": "src/cp4282_gs/surfels/hdr_shader.py",
+      "sha256": "96b7a8b4ebe398210d6f9d9c0f82c93fafb0782f35d915ff500f37730b294fe8"
+    },
+    {
+      "path": "src/cp4282_gs/surfels/geometry_losses.py",
+      "sha256": "5f82ac294a38b13e59f7c45de5cf3023f911fa784491e0223e5c226ca6955b91"
+    }
+  ],
+  "script": {
+    "path": "docs/final-report/make_method_diagram.py",
+    "sha256": "45f953093813d5149b4c423506a9096e1414a116ed5cfd991f5b6b0646cb4d60"
+  }
+}

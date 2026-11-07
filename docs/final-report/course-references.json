@@ -1,0 +1,78 @@
+{
+  "retrieved_date_singapore": "2026-11-07",
+  "retrieval": "Direct HTTPS GET; all seven pages returned HTTP 200. Web search returned no results.",
+  "local_snapshots": "outputs/Nov07-report-course-notes (ignored, complete primary pages)",
+  "scope": "Course concepts and links; experiment results come from repository evidence.",
+  "pages": [
+    {
+      "unit": 5,
+      "title": "Unit 5: Differentiable Rendering",
+      "url": "https://weitsang.github.io/gaussian-splatting-notes/unit-5/",
+      "html_sha256": "aaa62b4488122cfcebdc9730dee9afff641e928e9dee72830132dc625edd2f1e",
+      "text_sha256": "14b2c8ccf9b95aaccbc15a6a21324b24a0388f24abce7eea4adb6d16a76a31da",
+      "checked_sections": {
+        "loss-measure-image-error": "Loss: measure image error"
+      }
+    },
+    {
+      "unit": 6,
+      "title": "Unit 6: Evaluation Protocol and Metrics",
+      "url": "https://weitsang.github.io/gaussian-splatting-notes/unit-6/",
+      "html_sha256": "d8ab067fbdb55d3972751339d8b5d0d5693d92cc7693212191911d797e7af6c4",
+      "text_sha256": "a10fec5d0a6b83399222cf4da95962f25425c6f6c243e5ba4d7331df3b80ac9d",
+      "checked_sections": {
+        "reading-the-three-together": "Reading the three together"
+      }
+    },
+    {
+      "unit": 8,
+      "title": "Unit 8: Hands-on Synthetic 3DGS Training with Warp",
+      "url": "https://weitsang.github.io/gaussian-splatting-notes/unit-8/",
+      "html_sha256": "56f2be7e1f8d1c08cb4df225860f14fce90827f2259a649efa88907f1207b3ea",
+      "text_sha256": "48cf4c73d5da29ae56975a57a8441cb02395b7658abd2d016bfe086446febd82",
+      "checked_sections": {}
+    },
+    {
+      "unit": 9,
+      "title": "Unit 9: Hands-on Full 3DGS Training with Warp",
+      "url": "https://weitsang.github.io/gaussian-splatting-notes/unit-9/",
+      "html_sha256": "c4a6da2494ecad4d0098ae94ce8c3b32307bb22254a94f9f86a4f7365f8efa21",
+      "text_sha256": "b6fa230655e30c1237f540c14dca559226a71daf34839f94ea1376c4460bf70b",
+      "checked_sections": {
+        "the-central-idea-differentiate-the-primitive-hand-write-the-blend": "The central idea: differentiate the primitive, hand-write the blend"
+      }
+    },
+    {
+      "unit": 10,
+      "title": "Unit 10: Improving the Training Loss",
+      "url": "https://weitsang.github.io/gaussian-splatting-notes/unit-10/",
+      "html_sha256": "ae75fe27f0df1fdc4a33bd163afe2ff4699e9fa11ab037c201414588ed139723",
+      "text_sha256": "d7595d547c84a725b27319d3dd3c35aba1ba1046edbe8416571b26d33d4f99b5",
+      "checked_sections": {
+        "3-add-a-geometric-term-when-extra-signals-are-available": "3. Add a geometric term when extra signals are available",
+        "from-ssim-metric-to-structural-loss": "From SSIM metric to structural loss",
+        "why-mse-is-a-useful-but-limited-starting-point": "Why MSE is a useful but limited starting point"
+      }
+    },
+    {
+      "unit": 11,
+      "title": "Unit 11: View-Dependent 3DGS",
+      "url": "https://weitsang.github.io/gaussian-splatting-notes/unit-11/",
+      "html_sha256": "2035cccb008f01fb584c4565604ce6cb802b9c5dc4235751ae4053ff88b9f94d",
+      "text_sha256": "9fd968624c6096e4936598b4bc03f07f2da77582841e056d6530b1937172fc9d",
+      "checked_sections": {
+        "project-ideas-appearance-models-beyond-spherical-harmonics": "Project ideas: appearance models beyond spherical harmonics"
+      }
+    },
+    {
+      "unit": 12,
+      "title": "Unit 12: Initializing the Splats",
+      "url": "https://weitsang.github.io/gaussian-splatting-notes/unit-12/",
+      "html_sha256": "7c6014a0b027767dc46e939738adbae8746b4b85a606ec964735b24a8baa7214",
+      "text_sha256": "ee78d653c2358a771278e8583f509cc24e3df6f503831abdc5e4e36cf216a393",
+      "checked_sections": {
+        "why-the-renderer-makes-optimization-local": "Why the renderer makes optimization local"
+      }
+    }
+  ]
+}

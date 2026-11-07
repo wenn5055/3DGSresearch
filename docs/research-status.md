@@ -6,6 +6,8 @@ The main result remains the frozen 100k sphere study. Initial drafting did not r
 Three independent agents reviewed grading/argument, technical accuracy and structure.
 The revision adds [paired-view and conditional analysis](final-report/reviews/revision-summary.md)
 from saved CSVs, recorded implementation checks, and locally prepared reproduction configs/checkpoints.
+The later readability rewrite is aimed at interested peers, with a dedicated loss section and
+[verified course connections](final-report/course-connections.md), especially Units 10 and 11.
 
 Later 7 November, the user requested [one refinement-loss trial](experiments/2026-11-07-refinement-loss.md).
 L1 + D-SSIM improves mean validation LPIPS **0.093994 -> 0.084458** (all 100 views), but
