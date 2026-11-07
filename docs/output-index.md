@@ -1,6 +1,6 @@
 # Output folders — quick guide
 
-Updated 03 Nov 2026 (Singapore).
+Updated 07 Nov 2026 (Singapore).
 
 - Each bullet says **what changed**; multiple changes are not isolated causal tests.
 - `prepared` = no training; `smoke` = tiny execution check, not a quality experiment.
@@ -109,6 +109,7 @@ Updated 03 Nov 2026 (Singapore).
 - [Nov03-1559-justChromeBall-staged-hdr-refine-5k](../outputs/Nov03-1559-justChromeBall-staged-hdr-refine-5k/) — Staged sphere: training-mask initializer, 10k frozen appearance, 5k geometry refinement; Adam restarts at handoff. Closest prior: Nov03-1453-justChromeBall-staged-hdr-refine-5k; model.capacity: 100000 → 200000, model.initial_splats: 100000 → 200000, paths.init_ply: C:\Users\e1355010\3DGSresearch\outputs\Nov03-1451-justChromeBall-frozen-hdr-10k\model.ply → C:\Users\e1355010\3DGSresearch\outputs\Nov03-1556-justChromeBall-frozen-hdr-10k\model.ply. [completed; val]
 - [Nov03-1744-justChromeBall-normal003-100k-refine-5k-prepare](../outputs/Nov03-1744-justChromeBall-normal003-100k-refine-5k-prepare/) — surfel/deferred/SH0; 5000 steps; 100000 capacity. Closest prior: Nov02-2023-justChromeBall-staged-hdr-refine-5k; geometry_loss.normal_depth_weight: 0.01 → 0.03. [prepared; val]
 - [Nov03-1753-justChromeBall-normal003-100k](../outputs/Nov03-1753-justChromeBall-normal003-100k/) — surfel/deferred/SH0; 5000 steps; 100000 capacity. Closest prior: Nov02-2023-justChromeBall-staged-hdr-refine-5k; geometry_loss.normal_depth_weight: 0.01 → 0.03. [completed; val]
+- [Nov07-1548-justChromeBall-l1dssim-100k-refine-5k](../outputs/Nov07-1548-justChromeBall-l1dssim-100k-refine-5k/) — Matched loss trial: same frozen HDR parent; replace MSE refinement with 0.8 L1 + 0.2 D-SSIM; validation only. Closest prior: Nov02-2023-justChromeBall-staged-hdr-refine-5k; surfel.photometric_loss: inherit → l1_dssim. [completed; val]
 
 ## Tuning
 
@@ -125,6 +126,8 @@ Updated 03 Nov 2026 (Singapore).
 - [deferred-normal-sweep-smoke-4d327692](../outputs/deferred-normal-sweep-smoke-4d327692/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [dssim-smoke-input-64a59d5c](../outputs/dssim-smoke-input-64a59d5c/) — tiny D-SSIM check config.
 - [eval](../outputs/eval/) — legacy evaluation images/CSV; source checkpoint unrecorded here.
+- [final-report-draft](../outputs/final-report-draft/) — generated PDF, offline HTML, page previews and build manifest from docs/final-report/report.md; not a training run.
+- [final-report-reproduction](../outputs/final-report-reproduction/) — locally prepared, hash-verified main-checkpoint ZIP; not published or a training run.
 - [first-principles-2026-10-29](../outputs/first-principles-2026-10-29/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [first-principles-2026-10-30](../outputs/first-principles-2026-10-30/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [implementation-smoke-configs](../outputs/implementation-smoke-configs/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
@@ -156,6 +159,10 @@ Updated 03 Nov 2026 (Singapore).
 - [Nov03-sphere-lpips-verified](../outputs/Nov03-sphere-lpips-verified/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [Nov03-sphere-study](../outputs/Nov03-sphere-study/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [Nov03-sphere-validation](../outputs/Nov03-sphere-validation/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
+- [Nov07-refinement-loss-session](../outputs/Nov07-refinement-loss-session/) — completed one-loss controller/preflight, paired 100-view validation and five-view normal diagnostics; state.json; no test evaluation.
+- [Nov07-report-normal003-normals](../outputs/Nov07-report-normal003-normals/) — five-view reference-normal evaluation of saved 0.01/0.03 consistency-weight checkpoints; no training.
+- [Nov07-report-normal003-validation](../outputs/Nov07-report-normal003-validation/) — paired 100-view validation of saved 0.01/0.03 consistency-weight checkpoints; no training.
+- [Nov07-report-reproduction-plan](../outputs/Nov07-report-reproduction-plan/) — preparation-only six-stage historical 100k configs with local paths; no initialization or training.
 - [Oct30-1435-materials-chrome-audit](../outputs/Oct30-1435-materials-chrome-audit/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [Oct30-1446-materials-backbone-val](../outputs/Oct30-1446-materials-backbone-val/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [Oct30-1454-materials-surfel-contributions](../outputs/Oct30-1454-materials-surfel-contributions/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
@@ -188,6 +195,7 @@ Updated 03 Nov 2026 (Singapore).
 - [ray-plane-depth-review-2026-10-29](../outputs/ray-plane-depth-review-2026-10-29/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [ray-plane-o3_7r6fr](../outputs/ray-plane-o3_7r6fr/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
 - [red-rose-silver-capture-verified](../outputs/red-rose-silver-capture-verified/) — unrecorded folder; purpose needs review (no run.json/sweep.json).
+- [report-tools](../outputs/report-tools/) — isolated Python environment for building and checking the report PDF/HTML; not research output.
 - [runner-validation-inputs-f2cfb4b9](../outputs/runner-validation-inputs-f2cfb4b9/) — small manifests/config for runner checks.
 - [sh-smoke-input-2f60e9eb](../outputs/sh-smoke-input-2f60e9eb/) — tiny SH check config/launcher log.
 - [tmp11g3f1nx](../outputs/tmp11g3f1nx/) — unrecorded folder; purpose needs review (no run.json/sweep.json).

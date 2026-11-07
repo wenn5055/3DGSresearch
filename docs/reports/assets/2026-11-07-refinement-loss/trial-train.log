@@ -1,0 +1,407 @@
+paths:
+  data: C:\Users\e1355010\3DGSresearch\data\justChromeBall
+  output: C:\Users\e1355010\3DGSresearch\outputs\Nov07-1548-justChromeBall-l1dssim-100k-refine-5k\model.png
+  init_ply: C:\Users\e1355010\3DGSresearch\outputs\Nov02-2021-justChromeBall-frozen-hdr-10k\model.ply
+runtime:
+  arch: gpu
+  seed: 7
+model:
+  resolution: 256
+  width: 800
+  height: 800
+  capacity: 100000
+  initial_splats: 100000
+  tile_pair_capacity: null
+  scene_radius: null
+  background: white
+  sh_degree: 0
+  geometry: surfel
+training:
+  iterations: 5000
+loss:
+  mode: mse
+  dssim_weight: 0.2
+  dssim_window: 11
+learning_rates:
+  position_initial: 1.0e-05
+  position_final: 1.0e-06
+  position_max_steps: 5000
+  position_delay_steps: 0
+  position_delay_multiplier: 0.01
+  feature_dc: 0.0025
+  feature_rest: 0.000125
+  opacity: 0.005
+  scale: 0.0005
+  rotation: 0.0001
+densification:
+  interval: 0
+  child_optimizer_state: fresh_children
+  fraction: 0.2
+  percent_dense: 0.01
+  opacity_reset_interval: 0
+compact_box:
+  enabled: true
+  beta: 0.5
+  alpha_min: 0.00392156862745098
+multiview_adc:
+  enabled: false
+  views: 10
+  loss_threshold: 0.1
+  densify_score_threshold: 5.0
+  prune_score_threshold: 0.9
+  late_prune_interval: 400
+  opacity_cutoff: 0.02
+  candidate_limit: 20000
+sparse:
+  enabled: false
+  samples_per_tile: 256
+adaptive:
+  dssim_psnr_threshold: 21.0
+  sh1_psnr_threshold: 26.5
+  sh2_psnr_threshold: 27.5
+  sh3_psnr_threshold: 28.0
+  late_prune_growth_window: 3
+  late_prune_growth_percent: 2.0
+convergence:
+  enabled: false
+  min_iterations: 1200
+  patience: 5
+  min_delta: 1.0e-05
+reporting:
+  log_every: 20
+  eval_every: 100
+  eval_manifest: transforms_val.json
+  eval_views: 8
+  eval_view_ids: null
+  loss_ema_decay: 0.95
+  snapshot_every: 2500
+  save_ply: true
+geometry_loss:
+  mask_weight: 0.1
+  normal_depth_weight: 0.01
+  normal_start_iteration: 1
+  normal_ramp_iterations: 1000
+  min_coverage: 0.1
+  foreground_threshold: 0.95
+  max_relative_depth_jump: 0.05
+surfel:
+  mode: deferred
+  shading_model: hdr_angular
+  angular_lr: 0.001
+  freeze_geometry: false
+  depth_mode: ray_plane
+  specular_start_iteration: 0
+  initial_reflection: 0.5
+  reflection_lr: 0.01
+  environment_lr: 0.01
+  environment_width: 512
+  environment_height: 256
+  save_debug: true
+  sh_start_iteration: null
+  sh_band_interval: 1000
+  foreground_pruning:
+    enabled: false
+    start_iteration: 2000
+    interval: 500
+    views: 16
+    min_background_views: 3
+    persistence: 2
+    background_alpha_threshold: 0.01
+    margin_pixels: 2
+  photometric_loss: l1_dssim
+  refinement:
+    start_iteration: null
+    prune_interval: 500
+  normal_propagation:
+    enabled: false
+    interval: 1000
+    until_iteration: 24000
+    scale_factor: 1.5
+    scale_reflection_threshold: 0.02
+    color_reflection_threshold: 0.1
+    color_noise: 0.1
+    opacity_floor: 0.9
+    reflection_floor: 0.001
+    opacity_freeze_iterations: 200
+    densification_interval: 500
+
+Warp 1.18.0 initialized:
+   CUDA Toolkit 13.4, Driver 13.0
+   Devices:
+     "cpu"      : "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD"
+     "cuda:0"   : "NVIDIA RTX PRO 5000 Blackwell" (48 GiB, sm_120, mempool enabled)
+   Kernel cache:
+     \\?\C:\Users\e1355010\AppData\Local\NVIDIA\warp\Cache\1.18.0
+Warm start: geometry/materials loaded; optimizer state starts fresh.
+Geometry: surfel; training-only initialization statistics; dense rendering.
+eval_views=[100, 101, 102, 103, 104, 105, 106, 107] (held out: transforms_val.json frames [0, 13, 21, 25, 36, 66, 73, 88])
+Density child optimizer state: fresh_children
+Surfel pass: deferred; deferred start iteration: 0
+Surfel depth mode: ray_plane
+Deferred shading model: hdr_angular
+Geometry losses (training alpha only): mask=0.1, normal_depth=0.01, start=1, ramp=1000; validation gates remain photometric.
+Module cp4282_gs.surfels.geometry 7c88b71 load on device 'cuda:0' took 7.18 ms  (cached)
+Module tile_builder 6b8ee29 load on device 'cuda:0' took 7.49 ms  (cached)
+Module cp4282_gs.surfels.kernels 9f1ccb1 load on device 'cuda:0' took 7.68 ms  (cached)
+Module cp4282_gs.surfels.hdr_shader ae073b0 load on device 'cuda:0' took 7.82 ms  (cached)
+Module cp4282_gs.surfels.geometry_losses 085f575 load on device 'cuda:0' took 7.37 ms  (cached)
+Module dssim_loss fdba513 load on device 'cuda:0' took 7.49 ms  (cached)
+Sampling: independent training-camera and ADC-view random streams.
+Module 3dgs_trainer ee1372a load on device 'cuda:0' took 13.71 ms  (cached)
+Module warp.optim.adam ef20e29 load on device 'cuda:0' took 7.79 ms  (cached)
+    20: ema=0.033670, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033949, fixed_eval_mse_ema=0.005670, active=100000, pairs=277324, lr_xyz=0.00000991, train_photo=0.034919, mask=0.024382, normal_depth=0.017350, normal_weight=0.00019, normal_pixels=134420
+    40: ema=0.033702, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033949, fixed_eval_mse_ema=0.005670, active=100000, pairs=277043, lr_xyz=0.00000982, train_photo=0.031861, mask=0.024412, normal_depth=0.018636, normal_weight=0.00039, normal_pixels=133575
+    60: ema=0.033709, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033949, fixed_eval_mse_ema=0.005670, active=100000, pairs=276496, lr_xyz=0.00000973, train_photo=0.031237, mask=0.025977, normal_depth=0.016067, normal_weight=0.00059, normal_pixels=133145
+    80: ema=0.033706, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033949, fixed_eval_mse_ema=0.005670, active=100000, pairs=277720, lr_xyz=0.00000964, train_photo=0.031150, mask=0.024795, normal_depth=0.013827, normal_weight=0.00079, normal_pixels=134342
+   100: ema=0.033605, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033882, fixed_eval_mse_ema=0.005666, active=100000, pairs=275462, lr_xyz=0.00000955, train_photo=0.029220, mask=0.024523, normal_depth=0.017620, normal_weight=0.00099, normal_pixels=135095
+   120: ema=0.033595, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033882, fixed_eval_mse_ema=0.005666, active=100000, pairs=275521, lr_xyz=0.00000946, train_photo=0.031075, mask=0.023157, normal_depth=0.017614, normal_weight=0.00119, normal_pixels=134529
+   140: ema=0.033511, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033882, fixed_eval_mse_ema=0.005666, active=100000, pairs=276617, lr_xyz=0.00000938, train_photo=0.029387, mask=0.024943, normal_depth=0.013280, normal_weight=0.00139, normal_pixels=134314
+   160: ema=0.033582, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033882, fixed_eval_mse_ema=0.005666, active=100000, pairs=276692, lr_xyz=0.00000929, train_photo=0.032540, mask=0.023762, normal_depth=0.017328, normal_weight=0.00159, normal_pixels=133623
+   180: ema=0.033549, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033882, fixed_eval_mse_ema=0.005666, active=100000, pairs=276486, lr_xyz=0.00000920, train_photo=0.030431, mask=0.024615, normal_depth=0.017433, normal_weight=0.00179, normal_pixels=133554
+   200: ema=0.033633, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033793, fixed_eval_mse_ema=0.005662, active=100000, pairs=274951, lr_xyz=0.00000912, train_photo=0.032890, mask=0.023076, normal_depth=0.015891, normal_weight=0.00199, normal_pixels=133632
+   220: ema=0.033603, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033793, fixed_eval_mse_ema=0.005662, active=100000, pairs=275588, lr_xyz=0.00000904, train_photo=0.030569, mask=0.024284, normal_depth=0.015945, normal_weight=0.00219, normal_pixels=133145
+   240: ema=0.033501, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033793, fixed_eval_mse_ema=0.005662, active=100000, pairs=275632, lr_xyz=0.00000895, train_photo=0.029073, mask=0.024595, normal_depth=0.012465, normal_weight=0.00239, normal_pixels=133300
+   260: ema=0.033400, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033793, fixed_eval_mse_ema=0.005662, active=100000, pairs=275205, lr_xyz=0.00000887, train_photo=0.029234, mask=0.022086, normal_depth=0.014742, normal_weight=0.00259, normal_pixels=134580
+   280: ema=0.033356, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033793, fixed_eval_mse_ema=0.005662, active=100000, pairs=275476, lr_xyz=0.00000879, train_photo=0.030233, mask=0.022526, normal_depth=0.011941, normal_weight=0.00279, normal_pixels=134240
+   300: ema=0.033167, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033691, fixed_eval_mse_ema=0.005658, active=100000, pairs=274485, lr_xyz=0.00000871, train_photo=0.027367, mask=0.021552, normal_depth=0.014569, normal_weight=0.00299, normal_pixels=133982
+   320: ema=0.033080, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033691, fixed_eval_mse_ema=0.005658, active=100000, pairs=274460, lr_xyz=0.00000863, train_photo=0.029044, mask=0.023484, normal_depth=0.012616, normal_weight=0.00319, normal_pixels=133176
+   340: ema=0.032877, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033691, fixed_eval_mse_ema=0.005658, active=100000, pairs=275568, lr_xyz=0.00000855, train_photo=0.026779, mask=0.022088, normal_depth=0.012388, normal_weight=0.00339, normal_pixels=133822
+   360: ema=0.032768, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033691, fixed_eval_mse_ema=0.005658, active=100000, pairs=276818, lr_xyz=0.00000847, train_photo=0.028394, mask=0.022631, normal_depth=0.011198, normal_weight=0.00359, normal_pixels=135401
+   380: ema=0.032582, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033691, fixed_eval_mse_ema=0.005658, active=100000, pairs=276188, lr_xyz=0.00000839, train_photo=0.026679, mask=0.023032, normal_depth=0.013025, normal_weight=0.00379, normal_pixels=135107
+   400: ema=0.032453, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033581, fixed_eval_mse_ema=0.005652, active=100000, pairs=274007, lr_xyz=0.00000832, train_photo=0.027794, mask=0.021709, normal_depth=0.011773, normal_weight=0.00399, normal_pixels=135312
+   420: ema=0.032390, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033581, fixed_eval_mse_ema=0.005652, active=100000, pairs=273946, lr_xyz=0.00000824, train_photo=0.028857, mask=0.022908, normal_depth=0.011959, normal_weight=0.00419, normal_pixels=133176
+   440: ema=0.032205, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033581, fixed_eval_mse_ema=0.005652, active=100000, pairs=275688, lr_xyz=0.00000817, train_photo=0.026331, mask=0.022816, normal_depth=0.016884, normal_weight=0.00439, normal_pixels=134933
+   460: ema=0.032008, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033581, fixed_eval_mse_ema=0.005652, active=100000, pairs=276890, lr_xyz=0.00000809, train_photo=0.026055, mask=0.021487, normal_depth=0.011250, normal_weight=0.00459, normal_pixels=135389
+   480: ema=0.031844, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033581, fixed_eval_mse_ema=0.005652, active=100000, pairs=275549, lr_xyz=0.00000802, train_photo=0.026559, mask=0.021035, normal_depth=0.012942, normal_weight=0.00479, normal_pixels=134860
+   500: ema=0.031649, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033459, fixed_eval_mse_ema=0.005643, active=100000, pairs=273623, lr_xyz=0.00000794, train_photo=0.025722, mask=0.021801, normal_depth=0.012029, normal_weight=0.00499, normal_pixels=133747
+   520: ema=0.031492, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033459, fixed_eval_mse_ema=0.005643, active=100000, pairs=276114, lr_xyz=0.00000787, train_photo=0.026126, mask=0.023122, normal_depth=0.010452, normal_weight=0.00519, normal_pixels=135317
+   540: ema=0.031370, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033459, fixed_eval_mse_ema=0.005643, active=100000, pairs=274569, lr_xyz=0.00000780, train_photo=0.026948, mask=0.020606, normal_depth=0.009086, normal_weight=0.00539, normal_pixels=134725
+   560: ema=0.031258, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033459, fixed_eval_mse_ema=0.005643, active=100000, pairs=274469, lr_xyz=0.00000773, train_photo=0.026828, mask=0.022344, normal_depth=0.011462, normal_weight=0.00559, normal_pixels=134305
+   580: ema=0.031210, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033459, fixed_eval_mse_ema=0.005643, active=100000, pairs=274302, lr_xyz=0.00000766, train_photo=0.028164, mask=0.020747, normal_depth=0.011245, normal_weight=0.00579, normal_pixels=134240
+   600: ema=0.031182, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033325, fixed_eval_mse_ema=0.005632, active=100000, pairs=273257, lr_xyz=0.00000759, train_photo=0.028511, mask=0.020865, normal_depth=0.009291, normal_weight=0.00599, normal_pixels=134958
+   620: ema=0.030893, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033325, fixed_eval_mse_ema=0.005632, active=100000, pairs=273976, lr_xyz=0.00000752, train_photo=0.023305, mask=0.020388, normal_depth=0.009406, normal_weight=0.00619, normal_pixels=134616
+   640: ema=0.030743, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033325, fixed_eval_mse_ema=0.005632, active=100000, pairs=274921, lr_xyz=0.00000745, train_photo=0.025609, mask=0.021932, normal_depth=0.015139, normal_weight=0.00639, normal_pixels=134933
+   660: ema=0.031030, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033325, fixed_eval_mse_ema=0.005632, active=100000, pairs=272853, lr_xyz=0.00000738, train_photo=0.034254, mask=0.021368, normal_depth=0.013906, normal_weight=0.00659, normal_pixels=133053
+   680: ema=0.030865, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033325, fixed_eval_mse_ema=0.005632, active=100000, pairs=274657, lr_xyz=0.00000731, train_photo=0.025450, mask=0.021721, normal_depth=0.013938, normal_weight=0.00679, normal_pixels=135084
+   700: ema=0.030805, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033192, fixed_eval_mse_ema=0.005620, active=100000, pairs=272942, lr_xyz=0.00000724, train_photo=0.027556, mask=0.020512, normal_depth=0.008291, normal_weight=0.00699, normal_pixels=134958
+   720: ema=0.030778, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033192, fixed_eval_mse_ema=0.005620, active=100000, pairs=273105, lr_xyz=0.00000718, train_photo=0.028148, mask=0.020334, normal_depth=0.013021, normal_weight=0.00719, normal_pixels=134236
+   740: ema=0.030925, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033192, fixed_eval_mse_ema=0.005620, active=100000, pairs=272612, lr_xyz=0.00000711, train_photo=0.031508, mask=0.021015, normal_depth=0.013527, normal_weight=0.00739, normal_pixels=133053
+   760: ema=0.030764, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033192, fixed_eval_mse_ema=0.005620, active=100000, pairs=274287, lr_xyz=0.00000705, train_photo=0.025584, mask=0.020506, normal_depth=0.009857, normal_weight=0.00759, normal_pixels=134944
+   780: ema=0.030527, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033192, fixed_eval_mse_ema=0.005620, active=100000, pairs=274458, lr_xyz=0.00000698, train_photo=0.023792, mask=0.021384, normal_depth=0.013248, normal_weight=0.00779, normal_pixels=134933
+   800: ema=0.030523, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033050, fixed_eval_mse_ema=0.005607, active=100000, pairs=272659, lr_xyz=0.00000692, train_photo=0.028293, mask=0.020498, normal_depth=0.010904, normal_weight=0.00799, normal_pixels=133815
+   820: ema=0.030419, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033050, fixed_eval_mse_ema=0.005607, active=100000, pairs=275741, lr_xyz=0.00000685, train_photo=0.026349, mask=0.020132, normal_depth=0.009768, normal_weight=0.00819, normal_pixels=135389
+   840: ema=0.030615, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033050, fixed_eval_mse_ema=0.005607, active=100000, pairs=272242, lr_xyz=0.00000679, train_photo=0.032365, mask=0.018877, normal_depth=0.012185, normal_weight=0.00839, normal_pixels=133184
+   860: ema=0.030511, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033050, fixed_eval_mse_ema=0.005607, active=100000, pairs=274635, lr_xyz=0.00000673, train_photo=0.026475, mask=0.019858, normal_depth=0.006969, normal_weight=0.00859, normal_pixels=135085
+   880: ema=0.030583, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.033050, fixed_eval_mse_ema=0.005607, active=100000, pairs=274308, lr_xyz=0.00000667, train_photo=0.029778, mask=0.021024, normal_depth=0.009584, normal_weight=0.00879, normal_pixels=134370
+   900: ema=0.030370, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.032903, fixed_eval_mse_ema=0.005591, active=100000, pairs=272331, lr_xyz=0.00000661, train_photo=0.024249, mask=0.019791, normal_depth=0.009050, normal_weight=0.00899, normal_pixels=135389
+   920: ema=0.030165, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.032903, fixed_eval_mse_ema=0.005591, active=100000, pairs=274081, lr_xyz=0.00000655, train_photo=0.024289, mask=0.019318, normal_depth=0.007023, normal_weight=0.00919, normal_pixels=135124
+   940: ema=0.030029, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.032903, fixed_eval_mse_ema=0.005591, active=100000, pairs=274756, lr_xyz=0.00000649, train_photo=0.025248, mask=0.020835, normal_depth=0.011800, normal_weight=0.00939, normal_pixels=135269
+   960: ema=0.029935, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.032903, fixed_eval_mse_ema=0.005591, active=100000, pairs=273397, lr_xyz=0.00000643, train_photo=0.025954, mask=0.021122, normal_depth=0.008758, normal_weight=0.00959, normal_pixels=134295
+   980: ema=0.029934, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.032903, fixed_eval_mse_ema=0.005591, active=100000, pairs=273595, lr_xyz=0.00000637, train_photo=0.027959, mask=0.018660, normal_depth=0.008413, normal_weight=0.00979, normal_pixels=134686
+  1000: ema=0.029754, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.032748, fixed_eval_mse_ema=0.005572, active=100000, pairs=272016, lr_xyz=0.00000631, train_photo=0.024290, mask=0.019059, normal_depth=0.013084, normal_weight=0.00999, normal_pixels=134594
+  1001: normal-depth regularization ramp complete.
+  1020: ema=0.029499, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.032748, fixed_eval_mse_ema=0.005572, active=100000, pairs=273484, lr_xyz=0.00000625, train_photo=0.022623, mask=0.019630, normal_depth=0.007362, normal_weight=0.01000, normal_pixels=134922
+  1040: ema=0.029369, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.032748, fixed_eval_mse_ema=0.005572, active=100000, pairs=275206, lr_xyz=0.00000619, train_photo=0.024903, mask=0.019184, normal_depth=0.008724, normal_weight=0.01000, normal_pixels=135571
+  1060: ema=0.029316, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.032748, fixed_eval_mse_ema=0.005572, active=100000, pairs=273278, lr_xyz=0.00000614, train_photo=0.026308, mask=0.018778, normal_depth=0.010872, normal_weight=0.01000, normal_pixels=133623
+  1080: ema=0.029321, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.032748, fixed_eval_mse_ema=0.005572, active=100000, pairs=273107, lr_xyz=0.00000608, train_photo=0.027329, mask=0.019982, normal_depth=0.009667, normal_weight=0.01000, normal_pixels=134457
+  1100: ema=0.029458, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.032599, fixed_eval_mse_ema=0.005554, active=100000, pairs=271812, lr_xyz=0.00000603, train_photo=0.029933, mask=0.020143, normal_depth=0.011483, normal_weight=0.01000, normal_pixels=133623
+  1120: ema=0.029314, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.032599, fixed_eval_mse_ema=0.005554, active=100000, pairs=273252, lr_xyz=0.00000597, train_photo=0.024570, mask=0.019400, normal_depth=0.006173, normal_weight=0.01000, normal_pixels=134079
+  1140: ema=0.029297, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.032599, fixed_eval_mse_ema=0.005554, active=100000, pairs=272959, lr_xyz=0.00000592, train_photo=0.026859, mask=0.020256, normal_depth=0.009412, normal_weight=0.01000, normal_pixels=133537
+  1160: ema=0.029077, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.032599, fixed_eval_mse_ema=0.005554, active=100000, pairs=273088, lr_xyz=0.00000586, train_photo=0.022774, mask=0.020523, normal_depth=0.007341, normal_weight=0.01000, normal_pixels=134314
+  1180: ema=0.029064, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.032599, fixed_eval_mse_ema=0.005554, active=100000, pairs=271720, lr_xyz=0.00000581, train_photo=0.026787, mask=0.019210, normal_depth=0.011158, normal_weight=0.01000, normal_pixels=134238
+  1200: ema=0.029026, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.032439, fixed_eval_mse_ema=0.005533, active=100000, pairs=271433, lr_xyz=0.00000575, train_photo=0.026426, mask=0.017950, normal_depth=0.007189, normal_weight=0.01000, normal_pixels=134752
+  1220: ema=0.029014, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.032439, fixed_eval_mse_ema=0.005533, active=100000, pairs=272187, lr_xyz=0.00000570, train_photo=0.026782, mask=0.019301, normal_depth=0.007593, normal_weight=0.01000, normal_pixels=133996
+  1240: ema=0.028802, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.032439, fixed_eval_mse_ema=0.005533, active=100000, pairs=272717, lr_xyz=0.00000565, train_photo=0.022812, mask=0.019044, normal_depth=0.006760, normal_weight=0.01000, normal_pixels=134698
+  1260: ema=0.028689, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.032439, fixed_eval_mse_ema=0.005533, active=100000, pairs=273160, lr_xyz=0.00000560, train_photo=0.024401, mask=0.020311, normal_depth=0.010001, normal_weight=0.01000, normal_pixels=135084
+  1280: ema=0.028629, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.032439, fixed_eval_mse_ema=0.005533, active=100000, pairs=272898, lr_xyz=0.00000555, train_photo=0.025265, mask=0.021284, normal_depth=0.009708, normal_weight=0.01000, normal_pixels=134688
+  1300: ema=0.028492, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.032275, fixed_eval_mse_ema=0.005510, active=100000, pairs=271222, lr_xyz=0.00000550, train_photo=0.023940, mask=0.018852, normal_depth=0.006473, normal_weight=0.01000, normal_pixels=133822
+  1320: ema=0.028463, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.032275, fixed_eval_mse_ema=0.005510, active=100000, pairs=273157, lr_xyz=0.00000545, train_photo=0.025850, mask=0.019841, normal_depth=0.007270, normal_weight=0.01000, normal_pixels=134370
+  1340: ema=0.028590, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.032275, fixed_eval_mse_ema=0.005510, active=100000, pairs=272242, lr_xyz=0.00000540, train_photo=0.028977, mask=0.019381, normal_depth=0.009422, normal_weight=0.01000, normal_pixels=133505
+  1360: ema=0.028443, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.032275, fixed_eval_mse_ema=0.005510, active=100000, pairs=272638, lr_xyz=0.00000535, train_photo=0.023453, mask=0.021104, normal_depth=0.009248, normal_weight=0.01000, normal_pixels=134688
+  1380: ema=0.028300, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.032275, fixed_eval_mse_ema=0.005510, active=100000, pairs=272468, lr_xyz=0.00000530, train_photo=0.023642, mask=0.018752, normal_depth=0.006579, normal_weight=0.01000, normal_pixels=133822
+  1400: ema=0.028365, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.032113, fixed_eval_mse_ema=0.005487, active=100000, pairs=270850, lr_xyz=0.00000525, train_photo=0.027580, mask=0.019254, normal_depth=0.009133, normal_weight=0.01000, normal_pixels=133182
+  1420: ema=0.028286, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.032113, fixed_eval_mse_ema=0.005487, active=100000, pairs=271944, lr_xyz=0.00000520, train_photo=0.024765, mask=0.019044, normal_depth=0.011564, normal_weight=0.01000, normal_pixels=134979
+  1440: ema=0.028195, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.032113, fixed_eval_mse_ema=0.005487, active=100000, pairs=271945, lr_xyz=0.00000515, train_photo=0.024443, mask=0.019357, normal_depth=0.009177, normal_weight=0.01000, normal_pixels=133405
+  1460: ema=0.028030, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.032113, fixed_eval_mse_ema=0.005487, active=100000, pairs=272364, lr_xyz=0.00000511, train_photo=0.023014, mask=0.017937, normal_depth=0.007570, normal_weight=0.01000, normal_pixels=134945
+  1480: ema=0.028110, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.032113, fixed_eval_mse_ema=0.005487, active=100000, pairs=272057, lr_xyz=0.00000506, train_photo=0.027600, mask=0.019389, normal_depth=0.009277, normal_weight=0.01000, normal_pixels=133623
+  1500: ema=0.027956, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.031954, fixed_eval_mse_ema=0.005464, active=100000, pairs=270643, lr_xyz=0.00000501, train_photo=0.023115, mask=0.018564, normal_depth=0.005934, normal_weight=0.01000, normal_pixels=134079
+  1520: ema=0.027814, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.031954, fixed_eval_mse_ema=0.005464, active=100000, pairs=272007, lr_xyz=0.00000497, train_photo=0.023216, mask=0.017944, normal_depth=0.011503, normal_weight=0.01000, normal_pixels=134420
+  1540: ema=0.027729, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.031954, fixed_eval_mse_ema=0.005464, active=100000, pairs=272565, lr_xyz=0.00000492, train_photo=0.024045, mask=0.019974, normal_depth=0.006451, normal_weight=0.01000, normal_pixels=133688
+  1560: ema=0.027812, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.031954, fixed_eval_mse_ema=0.005464, active=100000, pairs=271816, lr_xyz=0.00000488, train_photo=0.027376, mask=0.019296, normal_depth=0.009230, normal_weight=0.01000, normal_pixels=133623
+  1580: ema=0.027600, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.031954, fixed_eval_mse_ema=0.005464, active=100000, pairs=272066, lr_xyz=0.00000483, train_photo=0.021722, mask=0.017698, normal_depth=0.007768, normal_weight=0.01000, normal_pixels=134945
+  1600: ema=0.027591, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.031796, fixed_eval_mse_ema=0.005441, active=100000, pairs=270468, lr_xyz=0.00000479, train_photo=0.025652, mask=0.016890, normal_depth=0.006975, normal_weight=0.01000, normal_pixels=134914
+  1620: ema=0.027438, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.031796, fixed_eval_mse_ema=0.005441, active=100000, pairs=272060, lr_xyz=0.00000474, train_photo=0.022629, mask=0.018137, normal_depth=0.008390, normal_weight=0.01000, normal_pixels=134860
+  1640: ema=0.027246, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.031796, fixed_eval_mse_ema=0.005441, active=100000, pairs=272734, lr_xyz=0.00000470, train_photo=0.021570, mask=0.019619, normal_depth=0.007615, normal_weight=0.01000, normal_pixels=135170
+  1660: ema=0.027207, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.031796, fixed_eval_mse_ema=0.005441, active=100000, pairs=271726, lr_xyz=0.00000466, train_photo=0.024603, mask=0.017657, normal_depth=0.008932, normal_weight=0.01000, normal_pixels=133623
+  1680: ema=0.027092, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.031796, fixed_eval_mse_ema=0.005441, active=100000, pairs=272206, lr_xyz=0.00000461, train_photo=0.022934, mask=0.018870, normal_depth=0.008768, normal_weight=0.01000, normal_pixels=134969
+  1700: ema=0.027080, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.031631, fixed_eval_mse_ema=0.005416, active=100000, pairs=270237, lr_xyz=0.00000457, train_photo=0.024837, mask=0.018975, normal_depth=0.012955, normal_weight=0.01000, normal_pixels=134441
+  1720: ema=0.026960, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.031631, fixed_eval_mse_ema=0.005416, active=100000, pairs=272245, lr_xyz=0.00000453, train_photo=0.022848, mask=0.017362, normal_depth=0.009337, normal_weight=0.01000, normal_pixels=135322
+  1740: ema=0.027216, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.031631, fixed_eval_mse_ema=0.005416, active=100000, pairs=270175, lr_xyz=0.00000449, train_photo=0.030249, mask=0.017131, normal_depth=0.010965, normal_weight=0.01000, normal_pixels=133184
+  1760: ema=0.027083, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.031631, fixed_eval_mse_ema=0.005416, active=100000, pairs=271567, lr_xyz=0.00000445, train_photo=0.022681, mask=0.018210, normal_depth=0.006564, normal_weight=0.01000, normal_pixels=133822
+  1780: ema=0.026999, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.031631, fixed_eval_mse_ema=0.005416, active=100000, pairs=271633, lr_xyz=0.00000441, train_photo=0.023432, mask=0.018938, normal_depth=0.007901, normal_weight=0.01000, normal_pixels=134768
+  1800: ema=0.026860, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.031468, fixed_eval_mse_ema=0.005390, active=100000, pairs=270043, lr_xyz=0.00000437, train_photo=0.022246, mask=0.018887, normal_depth=0.007872, normal_weight=0.01000, normal_pixels=134768
+  1820: ema=0.027037, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.031468, fixed_eval_mse_ema=0.005390, active=100000, pairs=270716, lr_xyz=0.00000433, train_photo=0.028518, mask=0.017974, normal_depth=0.009129, normal_weight=0.01000, normal_pixels=133632
+  1840: ema=0.026967, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.031468, fixed_eval_mse_ema=0.005390, active=100000, pairs=271604, lr_xyz=0.00000429, train_photo=0.023493, mask=0.020409, normal_depth=0.008837, normal_weight=0.01000, normal_pixels=134688
+  1860: ema=0.026961, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.031468, fixed_eval_mse_ema=0.005390, active=100000, pairs=271100, lr_xyz=0.00000425, train_photo=0.024999, mask=0.017822, normal_depth=0.007901, normal_weight=0.01000, normal_pixels=134240
+  1880: ema=0.026985, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.031468, fixed_eval_mse_ema=0.005390, active=100000, pairs=270292, lr_xyz=0.00000421, train_photo=0.025395, mask=0.019624, normal_depth=0.008697, normal_weight=0.01000, normal_pixels=133145
+  1900: ema=0.026812, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.031296, fixed_eval_mse_ema=0.005362, active=100000, pairs=269796, lr_xyz=0.00000417, train_photo=0.021680, mask=0.017418, normal_depth=0.009021, normal_weight=0.01000, normal_pixels=135309
+  1920: ema=0.026931, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.031296, fixed_eval_mse_ema=0.005362, active=100000, pairs=269935, lr_xyz=0.00000413, train_photo=0.027182, mask=0.019445, normal_depth=0.007520, normal_weight=0.01000, normal_pixels=133176
+  1940: ema=0.027229, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.031296, fixed_eval_mse_ema=0.005362, active=100000, pairs=271020, lr_xyz=0.00000409, train_photo=0.030931, mask=0.018185, normal_depth=0.014210, normal_weight=0.01000, normal_pixels=133270
+  1960: ema=0.027073, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.031296, fixed_eval_mse_ema=0.005362, active=100000, pairs=272073, lr_xyz=0.00000406, train_photo=0.022099, mask=0.019168, normal_depth=0.009303, normal_weight=0.01000, normal_pixels=135269
+  1980: ema=0.027226, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.031296, fixed_eval_mse_ema=0.005362, active=100000, pairs=270177, lr_xyz=0.00000402, train_photo=0.028017, mask=0.019592, normal_depth=0.015229, normal_weight=0.01000, normal_pixels=133791
+  2000: ema=0.027492, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.031123, fixed_eval_mse_ema=0.005333, active=100000, pairs=269501, lr_xyz=0.00000398, train_photo=0.030780, mask=0.016751, normal_depth=0.009665, normal_weight=0.01000, normal_pixels=133184
+  2020: ema=0.027141, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.031123, fixed_eval_mse_ema=0.005333, active=100000, pairs=272503, lr_xyz=0.00000394, train_photo=0.018596, mask=0.017708, normal_depth=0.009101, normal_weight=0.01000, normal_pixels=135389
+  2040: ema=0.027308, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.031123, fixed_eval_mse_ema=0.005333, active=100000, pairs=269608, lr_xyz=0.00000391, train_photo=0.028725, mask=0.016683, normal_depth=0.009550, normal_weight=0.01000, normal_pixels=133184
+  2060: ema=0.027209, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.031123, fixed_eval_mse_ema=0.005333, active=100000, pairs=271480, lr_xyz=0.00000387, train_photo=0.023469, mask=0.017884, normal_depth=0.006314, normal_weight=0.01000, normal_pixels=134958
+  2080: ema=0.027049, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.031123, fixed_eval_mse_ema=0.005333, active=100000, pairs=270850, lr_xyz=0.00000384, train_photo=0.022078, mask=0.018443, normal_depth=0.009295, normal_weight=0.01000, normal_pixels=133654
+  2100: ema=0.026960, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.030955, fixed_eval_mse_ema=0.005305, active=100000, pairs=269317, lr_xyz=0.00000380, train_photo=0.023440, mask=0.017717, normal_depth=0.006303, normal_weight=0.01000, normal_pixels=134958
+  2120: ema=0.026749, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.030955, fixed_eval_mse_ema=0.005305, active=100000, pairs=271036, lr_xyz=0.00000377, train_photo=0.020753, mask=0.018815, normal_depth=0.009401, normal_weight=0.01000, normal_pixels=134933
+  2140: ema=0.026528, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.030955, fixed_eval_mse_ema=0.005305, active=100000, pairs=271749, lr_xyz=0.00000373, train_photo=0.020346, mask=0.018929, normal_depth=0.009179, normal_weight=0.01000, normal_pixels=135269
+  2160: ema=0.026562, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.030955, fixed_eval_mse_ema=0.005305, active=100000, pairs=270535, lr_xyz=0.00000370, train_photo=0.025314, mask=0.018336, normal_depth=0.006706, normal_weight=0.01000, normal_pixels=133826
+  2180: ema=0.026512, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.030955, fixed_eval_mse_ema=0.005305, active=100000, pairs=270432, lr_xyz=0.00000366, train_photo=0.023697, mask=0.017789, normal_depth=0.008597, normal_weight=0.01000, normal_pixels=134550
+  2200: ema=0.026297, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.030798, fixed_eval_mse_ema=0.005278, active=100000, pairs=269080, lr_xyz=0.00000363, train_photo=0.020327, mask=0.017929, normal_depth=0.009380, normal_weight=0.01000, normal_pixels=135401
+  2220: ema=0.026232, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.030798, fixed_eval_mse_ema=0.005278, active=100000, pairs=271398, lr_xyz=0.00000360, train_photo=0.023220, mask=0.017062, normal_depth=0.006469, normal_weight=0.01000, normal_pixels=135058
+  2240: ema=0.026503, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.030798, fixed_eval_mse_ema=0.005278, active=100000, pairs=270732, lr_xyz=0.00000356, train_photo=0.029861, mask=0.017129, normal_depth=0.008309, normal_weight=0.01000, normal_pixels=134245
+  2260: ema=0.026384, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.030798, fixed_eval_mse_ema=0.005278, active=100000, pairs=270170, lr_xyz=0.00000353, train_photo=0.022294, mask=0.017143, normal_depth=0.011913, normal_weight=0.01000, normal_pixels=134594
+  2280: ema=0.026488, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.030798, fixed_eval_mse_ema=0.005278, active=100000, pairs=269654, lr_xyz=0.00000350, train_photo=0.026691, mask=0.016560, normal_depth=0.010310, normal_weight=0.01000, normal_pixels=133322
+  2300: ema=0.026334, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.030650, fixed_eval_mse_ema=0.005253, active=100000, pairs=268852, lr_xyz=0.00000347, train_photo=0.021654, mask=0.016989, normal_depth=0.006518, normal_weight=0.01000, normal_pixels=135058
+  2320: ema=0.026268, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.030650, fixed_eval_mse_ema=0.005253, active=100000, pairs=270760, lr_xyz=0.00000344, train_photo=0.023133, mask=0.017728, normal_depth=0.009988, normal_weight=0.01000, normal_pixels=135072
+  2340: ema=0.026073, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.030650, fixed_eval_mse_ema=0.005253, active=100000, pairs=271032, lr_xyz=0.00000340, train_photo=0.020573, mask=0.017070, normal_depth=0.008396, normal_weight=0.01000, normal_pixels=135319
+  2360: ema=0.026251, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.030650, fixed_eval_mse_ema=0.005253, active=100000, pairs=269675, lr_xyz=0.00000337, train_photo=0.027811, mask=0.017450, normal_depth=0.009207, normal_weight=0.01000, normal_pixels=133632
+  2380: ema=0.026253, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.030650, fixed_eval_mse_ema=0.005253, active=100000, pairs=270268, lr_xyz=0.00000334, train_photo=0.024521, mask=0.016714, normal_depth=0.008896, normal_weight=0.01000, normal_pixels=133575
+  2400: ema=0.026532, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.030503, fixed_eval_mse_ema=0.005228, active=100000, pairs=268663, lr_xyz=0.00000331, train_photo=0.030101, mask=0.016330, normal_depth=0.009423, normal_weight=0.01000, normal_pixels=133184
+  2420: ema=0.026273, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.030503, fixed_eval_mse_ema=0.005228, active=100000, pairs=270279, lr_xyz=0.00000328, train_photo=0.019532, mask=0.017478, normal_depth=0.007605, normal_weight=0.01000, normal_pixels=133822
+  2440: ema=0.026291, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.030503, fixed_eval_mse_ema=0.005228, active=100000, pairs=269450, lr_xyz=0.00000325, train_photo=0.024670, mask=0.018768, normal_depth=0.008520, normal_weight=0.01000, normal_pixels=133251
+  2460: ema=0.026192, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.030503, fixed_eval_mse_ema=0.005228, active=100000, pairs=270177, lr_xyz=0.00000322, train_photo=0.022452, mask=0.017922, normal_depth=0.006946, normal_weight=0.01000, normal_pixels=134944
+  2480: ema=0.026061, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.030503, fixed_eval_mse_ema=0.005228, active=100000, pairs=269756, lr_xyz=0.00000319, train_photo=0.021759, mask=0.017087, normal_depth=0.010635, normal_weight=0.01000, normal_pixels=134856
+  2500: ema=0.026178, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.030360, fixed_eval_mse_ema=0.005204, active=100000, pairs=268474, lr_xyz=0.00000316, train_photo=0.026399, mask=0.018961, normal_depth=0.009654, normal_weight=0.01000, normal_pixels=133554
+  2520: ema=0.026136, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.030360, fixed_eval_mse_ema=0.005204, active=100000, pairs=269877, lr_xyz=0.00000313, train_photo=0.023493, mask=0.017894, normal_depth=0.006971, normal_weight=0.01000, normal_pixels=133826
+  2540: ema=0.025992, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.030360, fixed_eval_mse_ema=0.005204, active=100000, pairs=270713, lr_xyz=0.00000310, train_photo=0.021471, mask=0.017102, normal_depth=0.006628, normal_weight=0.01000, normal_pixels=135085
+  2560: ema=0.025743, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.030360, fixed_eval_mse_ema=0.005204, active=100000, pairs=270710, lr_xyz=0.00000308, train_photo=0.019109, mask=0.018120, normal_depth=0.009794, normal_weight=0.01000, normal_pixels=135288
+  2580: ema=0.025847, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.030360, fixed_eval_mse_ema=0.005204, active=100000, pairs=269712, lr_xyz=0.00000305, train_photo=0.025780, mask=0.019443, normal_depth=0.010075, normal_weight=0.01000, normal_pixels=133799
+  2600: ema=0.025812, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.030217, fixed_eval_mse_ema=0.005179, active=100000, pairs=268294, lr_xyz=0.00000302, train_photo=0.023255, mask=0.018023, normal_depth=0.007652, normal_weight=0.01000, normal_pixels=135095
+  2620: ema=0.025941, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.030217, fixed_eval_mse_ema=0.005179, active=100000, pairs=268758, lr_xyz=0.00000299, train_photo=0.026549, mask=0.017509, normal_depth=0.010070, normal_weight=0.01000, normal_pixels=134238
+  2640: ema=0.025812, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.030217, fixed_eval_mse_ema=0.005179, active=100000, pairs=269592, lr_xyz=0.00000296, train_photo=0.021562, mask=0.016703, normal_depth=0.011955, normal_weight=0.01000, normal_pixels=134420
+  2660: ema=0.025876, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.030217, fixed_eval_mse_ema=0.005179, active=100000, pairs=269832, lr_xyz=0.00000294, train_photo=0.025382, mask=0.016527, normal_depth=0.006789, normal_weight=0.01000, normal_pixels=134350
+  2680: ema=0.025852, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.030217, fixed_eval_mse_ema=0.005179, active=100000, pairs=270161, lr_xyz=0.00000291, train_photo=0.023739, mask=0.015644, normal_depth=0.008227, normal_weight=0.01000, normal_pixels=134914
+  2700: ema=0.026082, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.030074, fixed_eval_mse_ema=0.005154, active=100000, pairs=268094, lr_xyz=0.00000288, train_photo=0.028590, mask=0.017404, normal_depth=0.012891, normal_weight=0.01000, normal_pixels=133270
+  2720: ema=0.025819, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.030074, fixed_eval_mse_ema=0.005154, active=100000, pairs=270409, lr_xyz=0.00000286, train_photo=0.018993, mask=0.017352, normal_depth=0.009729, normal_weight=0.01000, normal_pixels=135401
+  2740: ema=0.025610, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.030074, fixed_eval_mse_ema=0.005154, active=100000, pairs=270441, lr_xyz=0.00000283, train_photo=0.019750, mask=0.017936, normal_depth=0.009885, normal_weight=0.01000, normal_pixels=135288
+  2760: ema=0.025536, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.030074, fixed_eval_mse_ema=0.005154, active=100000, pairs=269414, lr_xyz=0.00000281, train_photo=0.022352, mask=0.016866, normal_depth=0.008547, normal_weight=0.01000, normal_pixels=133700
+  2780: ema=0.025379, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.030074, fixed_eval_mse_ema=0.005154, active=100000, pairs=270480, lr_xyz=0.00000278, train_photo=0.020680, mask=0.016480, normal_depth=0.006777, normal_weight=0.01000, normal_pixels=135058
+  2800: ema=0.025377, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.029940, fixed_eval_mse_ema=0.005130, active=100000, pairs=267993, lr_xyz=0.00000275, train_photo=0.023411, mask=0.018421, normal_depth=0.008834, normal_weight=0.01000, normal_pixels=133251
+  2820: ema=0.025235, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.029940, fixed_eval_mse_ema=0.005130, active=100000, pairs=269988, lr_xyz=0.00000273, train_photo=0.020792, mask=0.016404, normal_depth=0.009975, normal_weight=0.01000, normal_pixels=135309
+  2840: ema=0.025392, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.029940, fixed_eval_mse_ema=0.005130, active=100000, pairs=269390, lr_xyz=0.00000270, train_photo=0.026674, mask=0.016208, normal_depth=0.007705, normal_weight=0.01000, normal_pixels=134148
+  2860: ema=0.025289, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.029940, fixed_eval_mse_ema=0.005130, active=100000, pairs=270058, lr_xyz=0.00000268, train_photo=0.021568, mask=0.017104, normal_depth=0.006831, normal_weight=0.01000, normal_pixels=134958
+  2880: ema=0.025240, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.029940, fixed_eval_mse_ema=0.005130, active=100000, pairs=269133, lr_xyz=0.00000265, train_photo=0.022515, mask=0.016608, normal_depth=0.012062, normal_weight=0.01000, normal_pixels=134594
+  2900: ema=0.025111, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.029794, fixed_eval_mse_ema=0.005104, active=100000, pairs=267845, lr_xyz=0.00000263, train_photo=0.020914, mask=0.016619, normal_depth=0.009684, normal_weight=0.01000, normal_pixels=135571
+  2920: ema=0.024881, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.029794, fixed_eval_mse_ema=0.005104, active=100000, pairs=269794, lr_xyz=0.00000261, train_photo=0.018775, mask=0.016306, normal_depth=0.010060, normal_weight=0.01000, normal_pixels=135309
+  2940: ema=0.024716, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.029794, fixed_eval_mse_ema=0.005104, active=100000, pairs=269177, lr_xyz=0.00000258, train_photo=0.019818, mask=0.016444, normal_depth=0.012001, normal_weight=0.01000, normal_pixels=134420
+  2960: ema=0.024472, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.029794, fixed_eval_mse_ema=0.005104, active=100000, pairs=268932, lr_xyz=0.00000256, train_photo=0.018075, mask=0.016609, normal_depth=0.010559, normal_weight=0.01000, normal_pixels=135173
+  2980: ema=0.024404, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.029794, fixed_eval_mse_ema=0.005104, active=100000, pairs=268230, lr_xyz=0.00000254, train_photo=0.021369, mask=0.016415, normal_depth=0.010082, normal_weight=0.01000, normal_pixels=133768
+  3000: ema=0.024303, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.029656, fixed_eval_mse_ema=0.005079, active=100000, pairs=267758, lr_xyz=0.00000251, train_photo=0.020756, mask=0.015329, normal_depth=0.008467, normal_weight=0.01000, normal_pixels=134914
+  3020: ema=0.024299, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.029656, fixed_eval_mse_ema=0.005079, active=100000, pairs=269916, lr_xyz=0.00000249, train_photo=0.022298, mask=0.018314, normal_depth=0.009331, normal_weight=0.01000, normal_pixels=135084
+  3040: ema=0.024196, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.029656, fixed_eval_mse_ema=0.005079, active=100000, pairs=268850, lr_xyz=0.00000247, train_photo=0.020468, mask=0.016457, normal_depth=0.012085, normal_weight=0.01000, normal_pixels=134594
+  3060: ema=0.024286, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.029656, fixed_eval_mse_ema=0.005079, active=100000, pairs=269094, lr_xyz=0.00000244, train_photo=0.024123, mask=0.017983, normal_depth=0.008490, normal_weight=0.01000, normal_pixels=134176
+  3080: ema=0.024261, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.029656, fixed_eval_mse_ema=0.005079, active=100000, pairs=268181, lr_xyz=0.00000242, train_photo=0.021898, mask=0.017504, normal_depth=0.013073, normal_weight=0.01000, normal_pixels=134441
+  3100: ema=0.024134, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.029523, fixed_eval_mse_ema=0.005055, active=100000, pairs=267595, lr_xyz=0.00000240, train_photo=0.019900, mask=0.017401, normal_depth=0.008425, normal_weight=0.01000, normal_pixels=134768
+  3120: ema=0.024020, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.029523, fixed_eval_mse_ema=0.005055, active=100000, pairs=268900, lr_xyz=0.00000238, train_photo=0.020116, mask=0.016475, normal_depth=0.009659, normal_weight=0.01000, normal_pixels=134587
+  3140: ema=0.024130, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.029523, fixed_eval_mse_ema=0.005055, active=100000, pairs=269074, lr_xyz=0.00000236, train_photo=0.024532, mask=0.016183, normal_depth=0.007192, normal_weight=0.01000, normal_pixels=134350
+  3160: ema=0.024014, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.029523, fixed_eval_mse_ema=0.005055, active=100000, pairs=269070, lr_xyz=0.00000233, train_photo=0.020051, mask=0.016573, normal_depth=0.009752, normal_weight=0.01000, normal_pixels=134860
+  3180: ema=0.023979, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.029523, fixed_eval_mse_ema=0.005055, active=100000, pairs=269141, lr_xyz=0.00000231, train_photo=0.021547, mask=0.016752, normal_depth=0.008817, normal_weight=0.01000, normal_pixels=134922
+  3200: ema=0.024079, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.029394, fixed_eval_mse_ema=0.005031, active=100000, pairs=267421, lr_xyz=0.00000229, train_photo=0.024123, mask=0.017618, normal_depth=0.008510, normal_weight=0.01000, normal_pixels=135095
+  3220: ema=0.023985, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.029394, fixed_eval_mse_ema=0.005031, active=100000, pairs=269635, lr_xyz=0.00000227, train_photo=0.020352, mask=0.017566, normal_depth=0.010165, normal_weight=0.01000, normal_pixels=135288
+  3240: ema=0.023921, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.029394, fixed_eval_mse_ema=0.005031, active=100000, pairs=270195, lr_xyz=0.00000225, train_photo=0.020797, mask=0.018000, normal_depth=0.010319, normal_weight=0.01000, normal_pixels=135269
+  3260: ema=0.024219, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.029394, fixed_eval_mse_ema=0.005031, active=100000, pairs=268270, lr_xyz=0.00000223, train_photo=0.028126, mask=0.016736, normal_depth=0.009030, normal_weight=0.01000, normal_pixels=133632
+  3280: ema=0.024050, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.029394, fixed_eval_mse_ema=0.005031, active=100000, pairs=268570, lr_xyz=0.00000221, train_photo=0.019095, mask=0.016271, normal_depth=0.011856, normal_weight=0.01000, normal_pixels=134594
+  3300: ema=0.024200, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.029274, fixed_eval_mse_ema=0.005009, active=100000, pairs=267328, lr_xyz=0.00000219, train_photo=0.025169, mask=0.017973, normal_depth=0.008359, normal_weight=0.01000, normal_pixels=133159
+  3320: ema=0.024033, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.029274, fixed_eval_mse_ema=0.005009, active=100000, pairs=269192, lr_xyz=0.00000217, train_photo=0.018945, mask=0.018112, normal_depth=0.008667, normal_weight=0.01000, normal_pixels=135107
+  3340: ema=0.023881, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.029274, fixed_eval_mse_ema=0.005009, active=100000, pairs=270251, lr_xyz=0.00000215, train_photo=0.019068, mask=0.018480, normal_depth=0.008989, normal_weight=0.01000, normal_pixels=135317
+  3360: ema=0.024065, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.029274, fixed_eval_mse_ema=0.005009, active=100000, pairs=267790, lr_xyz=0.00000213, train_photo=0.025759, mask=0.016976, normal_depth=0.010150, normal_weight=0.01000, normal_pixels=134238
+  3380: ema=0.023952, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.029274, fixed_eval_mse_ema=0.005009, active=100000, pairs=267979, lr_xyz=0.00000211, train_photo=0.020085, mask=0.016345, normal_depth=0.008784, normal_weight=0.01000, normal_pixels=134616
+  3400: ema=0.023899, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.029149, fixed_eval_mse_ema=0.004985, active=100000, pairs=267154, lr_xyz=0.00000209, train_photo=0.021163, mask=0.016369, normal_depth=0.008646, normal_weight=0.01000, normal_pixels=134725
+  3420: ema=0.023810, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.029149, fixed_eval_mse_ema=0.004985, active=100000, pairs=267418, lr_xyz=0.00000207, train_photo=0.020410, mask=0.015967, normal_depth=0.012004, normal_weight=0.01000, normal_pixels=134529
+  3440: ema=0.023653, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.029149, fixed_eval_mse_ema=0.004985, active=100000, pairs=270084, lr_xyz=0.00000205, train_photo=0.018731, mask=0.018399, normal_depth=0.009122, normal_weight=0.01000, normal_pixels=135317
+  3460: ema=0.023591, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.029149, fixed_eval_mse_ema=0.004985, active=100000, pairs=269345, lr_xyz=0.00000203, train_photo=0.020718, mask=0.016124, normal_depth=0.009162, normal_weight=0.01000, normal_pixels=135319
+  3480: ema=0.023893, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.029149, fixed_eval_mse_ema=0.004985, active=100000, pairs=267456, lr_xyz=0.00000201, train_photo=0.027978, mask=0.015482, normal_depth=0.009269, normal_weight=0.01000, normal_pixels=133184
+  3500: ema=0.023919, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.029026, fixed_eval_mse_ema=0.004961, active=100000, pairs=267072, lr_xyz=0.00000200, train_photo=0.022676, mask=0.016644, normal_depth=0.007274, normal_weight=0.01000, normal_pixels=134958
+  3520: ema=0.024335, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.029026, fixed_eval_mse_ema=0.004961, active=100000, pairs=267458, lr_xyz=0.00000198, train_photo=0.030459, mask=0.017038, normal_depth=0.008655, normal_weight=0.01000, normal_pixels=133321
+  3540: ema=0.024136, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.029026, fixed_eval_mse_ema=0.004961, active=100000, pairs=268309, lr_xyz=0.00000196, train_photo=0.018622, mask=0.016196, normal_depth=0.010813, normal_weight=0.01000, normal_pixels=135173
+  3560: ema=0.024000, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.029026, fixed_eval_mse_ema=0.004961, active=100000, pairs=268842, lr_xyz=0.00000194, train_photo=0.019442, mask=0.018786, normal_depth=0.009770, normal_weight=0.01000, normal_pixels=134688
+  3580: ema=0.024022, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.029026, fixed_eval_mse_ema=0.004961, active=100000, pairs=268809, lr_xyz=0.00000192, train_photo=0.022760, mask=0.015837, normal_depth=0.009712, normal_weight=0.01000, normal_pixels=133575
+  3600: ema=0.024295, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028913, fixed_eval_mse_ema=0.004940, active=100000, pairs=266972, lr_xyz=0.00000191, train_photo=0.027642, mask=0.017456, normal_depth=0.009404, normal_weight=0.01000, normal_pixels=133623
+  3620: ema=0.024352, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028913, fixed_eval_mse_ema=0.004940, active=100000, pairs=268945, lr_xyz=0.00000189, train_photo=0.023798, mask=0.015623, normal_depth=0.007586, normal_weight=0.01000, normal_pixels=134686
+  3640: ema=0.024112, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028913, fixed_eval_mse_ema=0.004940, active=100000, pairs=269833, lr_xyz=0.00000187, train_photo=0.017620, mask=0.018268, normal_depth=0.009323, normal_weight=0.01000, normal_pixels=135317
+  3660: ema=0.024119, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028913, fixed_eval_mse_ema=0.004940, active=100000, pairs=269527, lr_xyz=0.00000185, train_photo=0.022544, mask=0.016395, normal_depth=0.007497, normal_weight=0.01000, normal_pixels=135085
+  3680: ema=0.023930, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028913, fixed_eval_mse_ema=0.004940, active=100000, pairs=268317, lr_xyz=0.00000184, train_photo=0.018632, mask=0.016156, normal_depth=0.008925, normal_weight=0.01000, normal_pixels=134725
+  3700: ema=0.023966, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028799, fixed_eval_mse_ema=0.004919, active=100000, pairs=266841, lr_xyz=0.00000182, train_photo=0.022931, mask=0.016252, normal_depth=0.009049, normal_weight=0.01000, normal_pixels=134240
+  3720: ema=0.023875, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028799, fixed_eval_mse_ema=0.004919, active=100000, pairs=268744, lr_xyz=0.00000180, train_photo=0.020407, mask=0.016581, normal_depth=0.008829, normal_weight=0.01000, normal_pixels=133822
+  3740: ema=0.023822, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028799, fixed_eval_mse_ema=0.004919, active=100000, pairs=269005, lr_xyz=0.00000179, train_photo=0.021158, mask=0.015565, normal_depth=0.009817, normal_weight=0.01000, normal_pixels=135322
+  3760: ema=0.024091, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028799, fixed_eval_mse_ema=0.004919, active=100000, pairs=267285, lr_xyz=0.00000177, train_photo=0.027428, mask=0.016844, normal_depth=0.008587, normal_weight=0.01000, normal_pixels=133321
+  3780: ema=0.023893, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028799, fixed_eval_mse_ema=0.004919, active=100000, pairs=268133, lr_xyz=0.00000175, train_photo=0.018418, mask=0.015940, normal_depth=0.012300, normal_weight=0.01000, normal_pixels=134420
+  3800: ema=0.024055, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028695, fixed_eval_mse_ema=0.004899, active=100000, pairs=266713, lr_xyz=0.00000174, train_photo=0.025502, mask=0.015620, normal_depth=0.008022, normal_weight=0.01000, normal_pixels=134148
+  3820: ema=0.023949, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028695, fixed_eval_mse_ema=0.004899, active=100000, pairs=270168, lr_xyz=0.00000172, train_photo=0.020217, mask=0.016001, normal_depth=0.010493, normal_weight=0.01000, normal_pixels=135571
+  3840: ema=0.023758, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028695, fixed_eval_mse_ema=0.004899, active=100000, pairs=268387, lr_xyz=0.00000171, train_photo=0.018301, mask=0.017385, normal_depth=0.010126, normal_weight=0.01000, normal_pixels=134933
+  3860: ema=0.023843, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028695, fixed_eval_mse_ema=0.004899, active=100000, pairs=267758, lr_xyz=0.00000169, train_photo=0.023709, mask=0.016561, normal_depth=0.008690, normal_weight=0.01000, normal_pixels=133996
+  3880: ema=0.023705, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028695, fixed_eval_mse_ema=0.004899, active=100000, pairs=268418, lr_xyz=0.00000167, train_photo=0.019290, mask=0.016856, normal_depth=0.010376, normal_weight=0.01000, normal_pixels=134969
+  3900: ema=0.023535, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028597, fixed_eval_mse_ema=0.004881, active=100000, pairs=266692, lr_xyz=0.00000166, train_photo=0.018619, mask=0.015692, normal_depth=0.012347, normal_weight=0.01000, normal_pixels=134529
+  3920: ema=0.023466, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028597, fixed_eval_mse_ema=0.004881, active=100000, pairs=268836, lr_xyz=0.00000164, train_photo=0.020469, mask=0.015851, normal_depth=0.009513, normal_weight=0.01000, normal_pixels=135319
+  3940: ema=0.023368, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028597, fixed_eval_mse_ema=0.004881, active=100000, pairs=267234, lr_xyz=0.00000163, train_photo=0.019825, mask=0.015752, normal_depth=0.010740, normal_weight=0.01000, normal_pixels=133768
+  3960: ema=0.023260, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028597, fixed_eval_mse_ema=0.004881, active=100000, pairs=267566, lr_xyz=0.00000161, train_photo=0.019438, mask=0.016646, normal_depth=0.010041, normal_weight=0.01000, normal_pixels=134107
+  3980: ema=0.023113, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028597, fixed_eval_mse_ema=0.004881, active=100000, pairs=268182, lr_xyz=0.00000160, train_photo=0.018630, mask=0.016029, normal_depth=0.010119, normal_weight=0.01000, normal_pixels=134860
+  4000: ema=0.023203, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028495, fixed_eval_mse_ema=0.004861, active=100000, pairs=266574, lr_xyz=0.00000158, train_photo=0.023071, mask=0.017379, normal_depth=0.008601, normal_weight=0.01000, normal_pixels=134176
+  4020: ema=0.023358, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028495, fixed_eval_mse_ema=0.004861, active=100000, pairs=267260, lr_xyz=0.00000157, train_photo=0.024463, mask=0.017600, normal_depth=0.009747, normal_weight=0.01000, normal_pixels=133251
+  4040: ema=0.023722, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028495, fixed_eval_mse_ema=0.004861, active=100000, pairs=267532, lr_xyz=0.00000156, train_photo=0.028979, mask=0.015363, normal_depth=0.011075, normal_weight=0.01000, normal_pixels=133322
+  4060: ema=0.023833, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028495, fixed_eval_mse_ema=0.004861, active=100000, pairs=268262, lr_xyz=0.00000154, train_photo=0.024300, mask=0.015674, normal_depth=0.007326, normal_weight=0.01000, normal_pixels=134350
+  4080: ema=0.023638, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028495, fixed_eval_mse_ema=0.004861, active=100000, pairs=268110, lr_xyz=0.00000153, train_photo=0.018205, mask=0.016232, normal_depth=0.010199, normal_weight=0.01000, normal_pixels=134955
+  4100: ema=0.024059, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028397, fixed_eval_mse_ema=0.004842, active=100000, pairs=266501, lr_xyz=0.00000151, train_photo=0.030308, mask=0.016680, normal_depth=0.008587, normal_weight=0.01000, normal_pixels=133321
+  4120: ema=0.024030, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028397, fixed_eval_mse_ema=0.004842, active=100000, pairs=268653, lr_xyz=0.00000150, train_photo=0.021904, mask=0.014956, normal_depth=0.008673, normal_weight=0.01000, normal_pixels=134752
+  4140: ema=0.023821, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028397, fixed_eval_mse_ema=0.004842, active=100000, pairs=267699, lr_xyz=0.00000149, train_photo=0.018156, mask=0.015731, normal_depth=0.012448, normal_weight=0.01000, normal_pixels=134594
+  4160: ema=0.023682, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028397, fixed_eval_mse_ema=0.004842, active=100000, pairs=268598, lr_xyz=0.00000147, train_photo=0.019396, mask=0.015626, normal_depth=0.007888, normal_weight=0.01000, normal_pixels=135124
+  4180: ema=0.023546, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028397, fixed_eval_mse_ema=0.004842, active=100000, pairs=267774, lr_xyz=0.00000146, train_photo=0.019078, mask=0.017994, normal_depth=0.008949, normal_weight=0.01000, normal_pixels=134305
+  4200: ema=0.023496, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028302, fixed_eval_mse_ema=0.004824, active=100000, pairs=266465, lr_xyz=0.00000145, train_photo=0.020893, mask=0.015342, normal_depth=0.010215, normal_weight=0.01000, normal_pixels=135322
+  4220: ema=0.023308, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028302, fixed_eval_mse_ema=0.004824, active=100000, pairs=268584, lr_xyz=0.00000143, train_photo=0.018077, mask=0.015670, normal_depth=0.009476, normal_weight=0.01000, normal_pixels=135319
+  4240: ema=0.023068, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028302, fixed_eval_mse_ema=0.004824, active=100000, pairs=268067, lr_xyz=0.00000142, train_photo=0.016899, mask=0.015175, normal_depth=0.010386, normal_weight=0.01000, normal_pixels=134945
+  4260: ema=0.022933, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028302, fixed_eval_mse_ema=0.004824, active=100000, pairs=267833, lr_xyz=0.00000141, train_photo=0.018677, mask=0.015950, normal_depth=0.009666, normal_weight=0.01000, normal_pixels=133700
+  4280: ema=0.023009, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028302, fixed_eval_mse_ema=0.004824, active=100000, pairs=268076, lr_xyz=0.00000139, train_photo=0.022682, mask=0.016715, normal_depth=0.009022, normal_weight=0.01000, normal_pixels=134457
+  4300: ema=0.022979, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028202, fixed_eval_mse_ema=0.004805, active=100000, pairs=266409, lr_xyz=0.00000138, train_photo=0.020471, mask=0.018327, normal_depth=0.009775, normal_weight=0.01000, normal_pixels=134843
+  4320: ema=0.023318, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028202, fixed_eval_mse_ema=0.004805, active=100000, pairs=267402, lr_xyz=0.00000137, train_photo=0.028130, mask=0.015231, normal_depth=0.010977, normal_weight=0.01000, normal_pixels=133322
+  4340: ema=0.023227, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028202, fixed_eval_mse_ema=0.004805, active=100000, pairs=268211, lr_xyz=0.00000136, train_photo=0.019785, mask=0.016254, normal_depth=0.009221, normal_weight=0.01000, normal_pixels=133822
+  4360: ema=0.023168, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028202, fixed_eval_mse_ema=0.004805, active=100000, pairs=268153, lr_xyz=0.00000134, train_photo=0.020289, mask=0.016458, normal_depth=0.011063, normal_weight=0.01000, normal_pixels=135294
+  4380: ema=0.023047, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028202, fixed_eval_mse_ema=0.004805, active=100000, pairs=267221, lr_xyz=0.00000133, train_photo=0.019092, mask=0.015713, normal_depth=0.009167, normal_weight=0.01000, normal_pixels=134616
+  4400: ema=0.022864, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028105, fixed_eval_mse_ema=0.004786, active=100000, pairs=266288, lr_xyz=0.00000132, train_photo=0.017706, mask=0.015602, normal_depth=0.012433, normal_weight=0.01000, normal_pixels=134594
+  4420: ema=0.022840, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028105, fixed_eval_mse_ema=0.004786, active=100000, pairs=268482, lr_xyz=0.00000131, train_photo=0.020744, mask=0.015222, normal_depth=0.010358, normal_weight=0.01000, normal_pixels=135322
+  4440: ema=0.022750, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028105, fixed_eval_mse_ema=0.004786, active=100000, pairs=267832, lr_xyz=0.00000129, train_photo=0.019114, mask=0.018224, normal_depth=0.009864, normal_weight=0.01000, normal_pixels=134843
+  4460: ema=0.022690, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028105, fixed_eval_mse_ema=0.004786, active=100000, pairs=267894, lr_xyz=0.00000128, train_photo=0.019808, mask=0.016584, normal_depth=0.009044, normal_weight=0.01000, normal_pixels=134457
+  4480: ema=0.022741, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028105, fixed_eval_mse_ema=0.004786, active=100000, pairs=268239, lr_xyz=0.00000127, train_photo=0.021856, mask=0.017584, normal_depth=0.008930, normal_weight=0.01000, normal_pixels=133688
+  4500: ema=0.022644, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028012, fixed_eval_mse_ema=0.004767, active=100000, pairs=266243, lr_xyz=0.00000126, train_photo=0.019114, mask=0.015900, normal_depth=0.009921, normal_weight=0.01000, normal_pixels=134698
+  4520: ema=0.022624, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028012, fixed_eval_mse_ema=0.004767, active=100000, pairs=267506, lr_xyz=0.00000125, train_photo=0.020392, mask=0.017756, normal_depth=0.009070, normal_weight=0.01000, normal_pixels=134295
+  4540: ema=0.022722, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028012, fixed_eval_mse_ema=0.004767, active=100000, pairs=267136, lr_xyz=0.00000124, train_photo=0.022751, mask=0.017300, normal_depth=0.008936, normal_weight=0.01000, normal_pixels=133159
+  4560: ema=0.022698, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028012, fixed_eval_mse_ema=0.004767, active=100000, pairs=267188, lr_xyz=0.00000122, train_photo=0.020490, mask=0.016353, normal_depth=0.012306, normal_weight=0.01000, normal_pixels=134979
+  4580: ema=0.022765, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.028012, fixed_eval_mse_ema=0.004767, active=100000, pairs=266723, lr_xyz=0.00000121, train_photo=0.022193, mask=0.017351, normal_depth=0.010061, normal_weight=0.01000, normal_pixels=133251
+  4600: ema=0.022664, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.027924, fixed_eval_mse_ema=0.004750, active=100000, pairs=266168, lr_xyz=0.00000120, train_photo=0.018881, mask=0.017770, normal_depth=0.009874, normal_weight=0.01000, normal_pixels=135317
+  4620: ema=0.022463, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.027924, fixed_eval_mse_ema=0.004750, active=100000, pairs=267079, lr_xyz=0.00000119, train_photo=0.016956, mask=0.015687, normal_depth=0.011503, normal_weight=0.01000, normal_pixels=134856
+  4640: ema=0.022657, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.027924, fixed_eval_mse_ema=0.004750, active=100000, pairs=267753, lr_xyz=0.00000118, train_photo=0.024707, mask=0.015463, normal_depth=0.007937, normal_weight=0.01000, normal_pixels=134350
+  4660: ema=0.022455, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.027924, fixed_eval_mse_ema=0.004750, active=100000, pairs=268989, lr_xyz=0.00000117, train_photo=0.017026, mask=0.015016, normal_depth=0.010875, normal_weight=0.01000, normal_pixels=135312
+  4680: ema=0.022392, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.027924, fixed_eval_mse_ema=0.004750, active=100000, pairs=267062, lr_xyz=0.00000116, train_photo=0.019433, mask=0.016293, normal_depth=0.012455, normal_weight=0.01000, normal_pixels=134979
+  4700: ema=0.022700, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.027840, fixed_eval_mse_ema=0.004735, active=100000, pairs=266128, lr_xyz=0.00000115, train_photo=0.026800, mask=0.016203, normal_depth=0.013098, normal_weight=0.01000, normal_pixels=133270
+  4720: ema=0.022683, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.027840, fixed_eval_mse_ema=0.004735, active=100000, pairs=267389, lr_xyz=0.00000114, train_photo=0.020504, mask=0.017659, normal_depth=0.009272, normal_weight=0.01000, normal_pixels=134295
+  4740: ema=0.022515, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.027840, fixed_eval_mse_ema=0.004735, active=100000, pairs=267269, lr_xyz=0.00000113, train_photo=0.017645, mask=0.015537, normal_depth=0.011323, normal_weight=0.01000, normal_pixels=135173
+  4760: ema=0.022603, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.027840, fixed_eval_mse_ema=0.004735, active=100000, pairs=267491, lr_xyz=0.00000112, train_photo=0.022606, mask=0.015756, normal_depth=0.009565, normal_weight=0.01000, normal_pixels=134240
+  4780: ema=0.022402, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.027840, fixed_eval_mse_ema=0.004735, active=100000, pairs=267176, lr_xyz=0.00000111, train_photo=0.016973, mask=0.015091, normal_depth=0.011698, normal_weight=0.01000, normal_pixels=134804
+  4800: ema=0.022238, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.027767, fixed_eval_mse_ema=0.004721, active=100000, pairs=266022, lr_xyz=0.00000110, train_photo=0.017477, mask=0.015512, normal_depth=0.009245, normal_weight=0.01000, normal_pixels=134616
+  4820: ema=0.022306, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.027767, fixed_eval_mse_ema=0.004721, active=100000, pairs=267492, lr_xyz=0.00000109, train_photo=0.021926, mask=0.015721, normal_depth=0.009507, normal_weight=0.01000, normal_pixels=134240
+  4840: ema=0.022443, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.027767, fixed_eval_mse_ema=0.004721, active=100000, pairs=267624, lr_xyz=0.00000108, train_photo=0.023297, mask=0.016649, normal_depth=0.008820, normal_weight=0.01000, normal_pixels=134944
+  4860: ema=0.022570, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.027767, fixed_eval_mse_ema=0.004721, active=100000, pairs=266776, lr_xyz=0.00000107, train_photo=0.023138, mask=0.017491, normal_depth=0.009628, normal_weight=0.01000, normal_pixels=133145
+  4880: ema=0.022625, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.027767, fixed_eval_mse_ema=0.004721, active=100000, pairs=267449, lr_xyz=0.00000106, train_photo=0.021993, mask=0.015691, normal_depth=0.009620, normal_weight=0.01000, normal_pixels=134240
+  4900: ema=0.022561, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.027696, fixed_eval_mse_ema=0.004708, active=100000, pairs=266093, lr_xyz=0.00000105, train_photo=0.019653, mask=0.015805, normal_depth=0.011217, normal_weight=0.01000, normal_pixels=135389
+  4920: ema=0.022533, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.027696, fixed_eval_mse_ema=0.004708, active=100000, pairs=267591, lr_xyz=0.00000104, train_photo=0.020252, mask=0.016642, normal_depth=0.009378, normal_weight=0.01000, normal_pixels=133747
+  4940: ema=0.022417, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.027696, fixed_eval_mse_ema=0.004708, active=100000, pairs=267589, lr_xyz=0.00000103, train_photo=0.018496, mask=0.015959, normal_depth=0.011225, normal_weight=0.01000, normal_pixels=135072
+  4960: ema=0.022649, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.027696, fixed_eval_mse_ema=0.004708, active=100000, pairs=266487, lr_xyz=0.00000102, train_photo=0.025335, mask=0.016203, normal_depth=0.010687, normal_weight=0.01000, normal_pixels=134238
+  4980: ema=0.022668, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.027696, fixed_eval_mse_ema=0.004708, active=100000, pairs=267295, lr_xyz=0.00000101, train_photo=0.021227, mask=0.016904, normal_depth=0.010291, normal_weight=0.01000, normal_pixels=133537
+  5000: ema=0.022798, loss_phase=l1_dssim, stage=l1_dssim, surfel_stage=deferred, sh_stage=sh0, fixed_eval_ema=0.027623, fixed_eval_mse_ema=0.004694, active=100000, pairs=266017, lr_xyz=0.00000100, train_photo=0.023385, mask=0.017931, normal_depth=0.009505, normal_weight=0.01000, normal_pixels=133300
+Final loss stage: l1_dssim
+Final surfel stage: deferred
+Final SH degree: 0 (configured maximum: 0)
+Training finished after 5,000 iterations in 70.26s (0.014s/iter).
+Training Warp pool high bytes: 1340538322

@@ -1,6 +1,18 @@
 # Project todo list
 
-## Current priority - 3 November 2026
+## Current priority - 7 November 2026: final report
+
+- [x] Assemble a [complete first report draft](final-report/report.md) with actual experiment figures, literature and measured results.
+- [x] Map claims and figures to [their evidence](final-report/evidence-map.md).
+- [x] Incorporate three independent reviews, paired-camera/conditional-effect analysis and portable reproduction preparation; [revision summary](final-report/reviews/revision-summary.md).
+- [x] Close the completed normal-weight trial with paired validation and reference-normal diagnostics; [negative result](experiments/2026-11-07-normal-weight-closeout.md).
+- [x] Complete the later user-requested [L1/D-SSIM refinement-loss trial](experiments/2026-11-07-refinement-loss.md): LPIPS improves, PSNR falls, normal accuracy essentially unchanged; validation only.
+- [ ] Complete [author review, exact attribution, AI declaration and artifact availability](final-report/review-checklist.md).
+- [ ] Finalise the report and prepare the 20-minute presentation; report due 13 November.
+
+No broad experiment sweep is required to finish the scoped report. Extra experiments need a specific essential claim or supervisor requirement.
+
+## Completed primary study - 3 November 2026
 
 [Current sphere scope and commands](sphere-study-commands-2026-11-03.md)
 supersede earlier Materials/Ship and logo follow-ups. Historical checklists

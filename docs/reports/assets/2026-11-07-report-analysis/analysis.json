@@ -1,0 +1,241 @@
+{
+  "scope": "Descriptive camera variation in one saved seed/scene; not independent training repetitions.",
+  "comparisons": {
+    "HDR-1.0_vs_SH3": {
+      "psnr_db": {
+        "n": 200,
+        "mean": 4.30773714146132,
+        "min": 2.9349369187068817,
+        "p10": 3.322474573640947,
+        "median": 4.443868971162109,
+        "p90": 5.242138193383541,
+        "max": 5.542468594923061,
+        "improved": 200,
+        "worsened": 0,
+        "unchanged": 0
+      },
+      "ssim": {
+        "n": 200,
+        "mean": 0.05949417471885681,
+        "min": 0.04183322191238403,
+        "p10": 0.04740091562271118,
+        "median": 0.06091415882110596,
+        "p90": 0.0685349941253662,
+        "max": 0.07330220937728882,
+        "improved": 200,
+        "worsened": 0,
+        "unchanged": 0
+      },
+      "lpips_alex": {
+        "n": 200,
+        "mean": 0.04524305962026119,
+        "min": 0.029009394347667694,
+        "p10": 0.03490306138992309,
+        "median": 0.04554371163249016,
+        "p90": 0.05489252358675003,
+        "max": 0.060238420963287354,
+        "improved": 200,
+        "worsened": 0,
+        "unchanged": 0
+      },
+      "foreground_psnr_db": {
+        "n": 200,
+        "mean": 4.597349590628289,
+        "min": 3.1730781557989616,
+        "p10": 3.5682735196885638,
+        "median": 4.736932262228448,
+        "p90": 5.561572333706609,
+        "max": 5.87847511631146,
+        "improved": 200,
+        "worsened": 0,
+        "unchanged": 0
+      }
+    },
+    "HDR-0.75_vs_HDR-1.0": {
+      "psnr_db": {
+        "n": 200,
+        "mean": 0.17210934961327173,
+        "min": -0.043388402910466084,
+        "p10": 0.06388655116406632,
+        "median": 0.1746369245281354,
+        "p90": 0.28313510984220824,
+        "max": 0.38342799798497396,
+        "improved": 198,
+        "worsened": 2,
+        "unchanged": 0
+      },
+      "ssim": {
+        "n": 200,
+        "mean": 0.003139603137969971,
+        "min": 0.0003554821014404297,
+        "p10": 0.0017486155033111573,
+        "median": 0.003179311752319336,
+        "p90": 0.0046867609024047845,
+        "max": 0.005771458148956299,
+        "improved": 200,
+        "worsened": 0,
+        "unchanged": 0
+      },
+      "lpips_alex": {
+        "n": 200,
+        "mean": 0.002528970278799534,
+        "min": -0.0026011765003204346,
+        "p10": 0.0004169248044490815,
+        "median": 0.002568349242210388,
+        "p90": 0.004765648394823074,
+        "max": 0.0065728649497032166,
+        "improved": 189,
+        "worsened": 11,
+        "unchanged": 0
+      },
+      "foreground_psnr_db": {
+        "n": 200,
+        "mean": 0.19333500523028646,
+        "min": -0.03374899129041253,
+        "p10": 0.08136454571419982,
+        "median": 0.19268629154744765,
+        "p90": 0.31190531464542487,
+        "max": 0.4200463823652214,
+        "improved": 198,
+        "worsened": 2,
+        "unchanged": 0
+      }
+    }
+  },
+  "normal_intervention": {
+    "normal_substitution_effect": {
+      "learned-light": {
+        "psnr_db": {
+          "n": 5,
+          "mean": -0.8017565115357754,
+          "min": -1.6890452370832776,
+          "p10": -1.6487136706356893,
+          "median": -1.0897028846530254,
+          "p90": 0.25624824231230514,
+          "max": 0.5648774415180604,
+          "improved": 1,
+          "worsened": 4,
+          "unchanged": 0
+        },
+        "ssim": {
+          "n": 5,
+          "mean": -0.0039708614349365234,
+          "min": -0.013728499412536621,
+          "p10": -0.013636040687561034,
+          "median": -0.0058893561363220215,
+          "p90": 0.007547724246978761,
+          "max": 0.011216819286346436,
+          "improved": 2,
+          "worsened": 3,
+          "unchanged": 0
+        },
+        "lpips_alex": {
+          "n": 5,
+          "mean": -0.005781775712966919,
+          "min": -0.016461580991744995,
+          "p10": -0.01607084572315216,
+          "median": -0.011632278561592102,
+          "p90": 0.008400900661945345,
+          "max": 0.012665055692195892,
+          "improved": 2,
+          "worsened": 3,
+          "unchanged": 0
+        }
+      },
+      "reference-light": {
+        "psnr_db": {
+          "n": 5,
+          "mean": 2.3056889554605737,
+          "min": 1.5078452146611738,
+          "p10": 1.5508664990575085,
+          "median": 2.5668242911481123,
+          "p90": 2.943542135503094,
+          "max": 3.0409569858323238,
+          "improved": 5,
+          "worsened": 0,
+          "unchanged": 0
+        },
+        "ssim": {
+          "n": 5,
+          "mean": 0.09905716180801391,
+          "min": 0.09449666738510132,
+          "p10": 0.0963241457939148,
+          "median": 0.0991101861000061,
+          "p90": 0.10148978233337402,
+          "max": 0.10222172737121582,
+          "improved": 5,
+          "worsened": 0,
+          "unchanged": 0
+        },
+        "lpips_alex": {
+          "n": 5,
+          "mean": 0.028656744211912156,
+          "min": 0.012274034321308136,
+          "p10": 0.012582527101039886,
+          "median": 0.02055102214217186,
+          "p90": 0.05025414824485779,
+          "max": 0.056443944573402405,
+          "improved": 5,
+          "worsened": 0,
+          "unchanged": 0
+        }
+      }
+    },
+    "difference_of_conditional_mean_effects": {
+      "psnr_db": 3.1074454669963494,
+      "ssim": 0.10302802324295043,
+      "lpips_alex": 0.03443851992487908
+    },
+    "interpretation": "Effect of substituting normal direction in the existing shader, conditional on lighting; changes reflection direction and angular blend, not geometry or material parameters. Difference is descriptive on five cameras; not a factorial retraining experiment."
+  },
+  "figure_selections": {
+    "test-crops-views-0-73.png": {
+      "views": [
+        0,
+        73
+      ],
+      "source_rectangles_xyxy": [
+        [
+          0,
+          0,
+          1260,
+          380
+        ],
+        [
+          0,
+          722,
+          1260,
+          1064
+        ]
+      ]
+    },
+    "normal-example-view-0.png": {
+      "view": 0,
+      "source_rectangle_xyxy": [
+        0,
+        0,
+        1098,
+        430
+      ]
+    },
+    "note": "Layout crops only; full original sheets remain tracked. No experimental pixel retouching."
+  },
+  "sources": [
+    {
+      "path": "docs/reports/assets/2026-11-03-sphere-study/test/metrics.csv",
+      "sha256": "31fbbd0a621db40e8891645fb35ca366b40fc1ef7b91120f9d51f834db348522"
+    },
+    {
+      "path": "docs/reports/assets/2026-11-03-reference-normal-swap/metrics.csv",
+      "sha256": "24346fb97af004c043415b251ea24fa46778e4d95052b75ff9eb37b3f1abc2ea"
+    },
+    {
+      "path": "docs/reports/assets/2026-11-03-sphere-study/test-reflection-crops.png",
+      "sha256": "91300bced7d716c1ba42f82e4dd5c8cd63097ab9bb1fe711e1ce8e5eb4392c67"
+    },
+    {
+      "path": "docs/reports/assets/2026-11-03-reference-normal-swap/normal-comparison.png",
+      "sha256": "fdd3b99b9a754876e5deba92bce654184dbc57cc01254e67e9e92f733296b66e"
+    }
+  ]
+}

@@ -2,6 +2,10 @@
 
 Custom NVIDIA Warp Gaussian/surfel training, built from the CP4282 assignments.
 
+Current writing work: [final report first draft](docs/final-report/README.md), including
+PDF build instructions, an evidence map and author-review checklist. The primary
+experiment is the completed [100k sphere study](docs/sphere-study-commands-2026-11-03.md).
+
 Research extensions include staged D-SSIM, SH degrees 0–3, and independent
 Gaussian-control / RGB-surfel / deferred-surfel passes. Start with the
 [edited-scene workflow](docs/materials-red-rose-silver.md) for current reflection-driven

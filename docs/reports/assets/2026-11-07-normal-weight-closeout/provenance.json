@@ -1,0 +1,190 @@
+{
+  "status": "completed",
+  "analysis_date_singapore": "2026-11-07",
+  "training_date_singapore": "2026-11-03",
+  "evaluation_only": true,
+  "config_differences": {
+    "paths.output": [
+      "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov02-2023-justChromeBall-staged-hdr-refine-5k\\model.png",
+      "C:\\Users\\e1355010\\3DGSresearch\\outputs\\Nov03-1753-justChromeBall-normal003-100k\\model.png"
+    ],
+    "geometry_loss.normal_depth_weight": [
+      0.01,
+      0.03
+    ]
+  },
+  "training_core_sources_match": true,
+  "validation_summary": [
+    {
+      "model": "normal001",
+      "psnr_db": "24.124930968913844",
+      "ssim": "0.874919770359993",
+      "foreground_psnr_db": "17.75196307293164",
+      "foreground_coverage_fraction": "1.0",
+      "lpips_alex": "0.0939941669255495"
+    },
+    {
+      "model": "normal003",
+      "psnr_db": "24.085719248187733",
+      "ssim": "0.8741249185800553",
+      "foreground_psnr_db": "17.69729488904035",
+      "foreground_coverage_fraction": "1.0",
+      "lpips_alex": "0.0942442137002945"
+    }
+  ],
+  "five_view_normal_means": {
+    "normal001": {
+      "mesh_normal_mae_deg": 1.5728033304214477,
+      "normal_coherence": 0.998552143573761,
+      "foreground_coverage_fraction": 1.0
+    },
+    "normal003": {
+      "mesh_normal_mae_deg": 1.5942598342895509,
+      "normal_coherence": 0.9989269256591797,
+      "foreground_coverage_fraction": 1.0
+    }
+  },
+  "improved_views_out_of_100": {
+    "psnr_db": 19,
+    "ssim": 13,
+    "lpips_alex": 46
+  },
+  "crop_boxes_xyxy": {
+    "0": [
+      297,
+      294,
+      499,
+      496
+    ],
+    "51": [
+      295,
+      301,
+      497,
+      503
+    ]
+  },
+  "normal_scope": "reference mesh normals; valid reference foreground with coverage>=0.5; heatmap clipped at 30 degrees",
+  "conclusion": "Higher weight slightly worsens mean image and reference-normal scores despite higher normal coherence; no successful detail recovery established.",
+  "sources": [
+    {
+      "path": "outputs/Nov02-2023-justChromeBall-staged-hdr-refine-5k/run.json",
+      "sha256": "1fa5ae6158f628d071f697dd371a1483972e1443e7426e675683cec3557d7a65",
+      "bytes": 19359
+    },
+    {
+      "path": "outputs/Nov03-1753-justChromeBall-normal003-100k/run.json",
+      "sha256": "a234aea772093d8e0e0fe5b4c2e4c7180608fe375d2900c226b942458991762f",
+      "bytes": 19437
+    },
+    {
+      "path": "outputs/Nov02-2021-justChromeBall-frozen-hdr-10k/model.ply",
+      "sha256": "983a341a89bf15c2856a17ab46022c5652455a4963a25d1da0e821e0d3a31445",
+      "bytes": 6800416
+    },
+    {
+      "path": "outputs/Nov02-2021-justChromeBall-frozen-hdr-10k/model.surfel.npz",
+      "sha256": "28f3428fda288b9cee6782cc6b9a496f60e0d2ba0938da99fd8b31791b35ee2a",
+      "bytes": 1738486
+    },
+    {
+      "path": "outputs/Nov02-2023-justChromeBall-staged-hdr-refine-5k/source-files.json",
+      "sha256": "cb675ca7f0621fb3e4622f6e11472094870f2eff9d35ee50d2e6ef89f385e9c2",
+      "bytes": 20615
+    },
+    {
+      "path": "outputs/Nov03-1753-justChromeBall-normal003-100k/source-files.json",
+      "sha256": "c570a3cf13e2b17aa2a4dae1e7a3333a06a3325edfb4e043c70fefeca2d6b255",
+      "bytes": 22618
+    },
+    {
+      "path": "outputs/Nov07-report-normal003-validation/protocol.json",
+      "sha256": "67934ab3535942efaa797a6d3b07b14d3f588c23059f3d1e5f370609e0b25cab",
+      "bytes": 31561
+    },
+    {
+      "path": "outputs/Nov07-report-normal003-normals/protocol.json",
+      "sha256": "a5bb719dc01c87ceaacb2d3ec037ae9591057dae5eb3f7bf2918165ce8ac612b",
+      "bytes": 3311
+    },
+    {
+      "path": "outputs/Nov07-report-normal003-validation/summary.csv",
+      "sha256": "0e3be8da42621a9217788255ae2a93d8f2e5afbf1ccd3ea23ead8cde83d6e600",
+      "bytes": 258
+    },
+    {
+      "path": "outputs/Nov07-report-normal003-validation/metrics.csv",
+      "sha256": "1cac5fc3a471cf2ef151374cc8eaa1bda0685bfe9e2aa416ed2ec86584b15f06",
+      "bytes": 25304
+    },
+    {
+      "path": "outputs/Nov07-report-normal003-normals/diagnostics.csv",
+      "sha256": "aceacd3bcdda42a45b057d966247a5da2316e37ebc401e79cb072a82dda34c92",
+      "bytes": 2188
+    },
+    {
+      "path": "outputs/Nov07-report-normal003-validation/crop-metrics.csv",
+      "sha256": "4c6d97f9255c132a269e917b5515cee9378ac02e959a0cf8abc99f15b43a595a",
+      "bytes": 661
+    },
+    {
+      "path": "outputs/Nov07-report-normal003-normals/normal-comparison.png",
+      "sha256": "ad21075c14dce744d4d0c8c36f1ff99c4f66a785aa7a242f87e817163dbb2295",
+      "bytes": 596076
+    },
+    {
+      "path": "outputs/Nov07-report-normal003-normals/normal-errors.png",
+      "sha256": "0f77a3935afd47ba1a44919bfb9b9edf74533f5502fda6acc05b8c14350b5d1d",
+      "bytes": 563508
+    },
+    {
+      "path": "outputs/Nov07-report-normal003-normals/footprints.png",
+      "sha256": "9f47b2efe1cdacfa322eff9f07657bf602a91cb88c7e0d6a31f28ec4a832f727",
+      "bytes": 44755
+    },
+    {
+      "path": "outputs/Nov03-1753-justChromeBall-normal003-100k/config.yaml",
+      "sha256": "3600c5ff07e7ac461069347ec4ba56e533b41eb7df7cf7f8136516bb70f974dd",
+      "bytes": 3042
+    },
+    {
+      "path": "data/justChromeBall/val/r_0.png",
+      "sha256": "113b7746463a6787647995aa9d60b060cc362731e6ce5214eadb0916209199d7",
+      "bytes": 349753
+    },
+    {
+      "path": "outputs/Nov07-report-normal003-validation/reference-0.png",
+      "sha256": "eab953bba147237c60a0b74eb7b943b3a028c7cb2b5ce3dff4eba20f222d9bdc",
+      "bytes": 284144
+    },
+    {
+      "path": "outputs/Nov07-report-normal003-validation/model-0-0.png",
+      "sha256": "954fe6d66041e823f324543249ef32ded08b1160760c7695d23025274cafcb11",
+      "bytes": 267670
+    },
+    {
+      "path": "outputs/Nov07-report-normal003-validation/model-1-0.png",
+      "sha256": "cfb5d4786d510c7749eedbcfdffb8677ad2bf48bbd93e9fe05d6a9d029a59ad0",
+      "bytes": 267665
+    },
+    {
+      "path": "data/justChromeBall/val/r_51.png",
+      "sha256": "d3678ce652dc589718de9e97af43d5ec9590c65dbfeeabb41f1bc040e9fff0f7",
+      "bytes": 370778
+    },
+    {
+      "path": "outputs/Nov07-report-normal003-validation/reference-51.png",
+      "sha256": "5cd6680aec681d2942fc9772309ee172027b01920f2e41cf40dc566ea29b36a2",
+      "bytes": 302825
+    },
+    {
+      "path": "outputs/Nov07-report-normal003-validation/model-0-51.png",
+      "sha256": "900622dfb221748a843ef6f099a6070289b1bacac7cae954b0d8c8300da4e8c2",
+      "bytes": 250934
+    },
+    {
+      "path": "outputs/Nov07-report-normal003-validation/model-1-51.png",
+      "sha256": "d1db3328f337ff127ce5136d568422c2d430718c14c8411131b2123eac1b8e2d",
+      "bytes": 251138
+    }
+  ]
+}

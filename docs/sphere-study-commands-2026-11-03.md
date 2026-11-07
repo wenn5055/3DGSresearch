@@ -401,11 +401,17 @@ diagnostic views, PSNR improves **20.4016 -> 22.7073 dB**, SSIM
 averages 1.47 degrees. Reference normals with the learned map remain blurred,
 supporting an interaction between normal error and the learned lighting fit.
 These are five-view evaluation interventions, not retrained models or new test
-scores. No normal-consistency training change has run.
+scores. The separate consistency-weight training trial below subsequently completed.
 
 [Four-combination pictures, normal maps, repeat command and checks](experiments/2026-11-03-reference-normal-swap.md).
 
-## Next normal-training trial: prepared, not run
+## Normal-training trial: completed; closeout added 7 November
+
+The trial below completed on 3 November in `outputs/Nov03-1753-justChromeBall-normal003-100k`.
+The earlier "prepared, not run" heading was stale. Evaluation-only closeout on 7 November found
+slightly worse validation image scores and reference-normal errors despite higher normal coherence.
+[Actual figures, paired results and reproduction](experiments/2026-11-07-normal-weight-closeout.md).
+The commands below retain the original protocol for reference; no further trial is queued.
 
 Use the primary **100k, initial-size multiplier 1.0** baseline from
 `Nov02-2023-justChromeBall-staged-hdr-refine-5k`. The separate trial config is

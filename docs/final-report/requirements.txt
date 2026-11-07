@@ -1,0 +1,4 @@
+# Isolated report-building environment; does not modify research dependencies.
+Markdown==3.11.3
+playwright==1.64.1
+PyMuPDF==2.1

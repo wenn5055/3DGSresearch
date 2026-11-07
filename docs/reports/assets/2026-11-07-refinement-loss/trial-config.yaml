@@ -1,0 +1,126 @@
+paths:
+  data: C:\Users\e1355010\3DGSresearch\data\justChromeBall
+  output: C:\Users\e1355010\3DGSresearch\outputs\Nov07-1548-justChromeBall-l1dssim-100k-refine-5k\model.png
+  init_ply: C:\Users\e1355010\3DGSresearch\outputs\Nov02-2021-justChromeBall-frozen-hdr-10k\model.ply
+runtime:
+  arch: gpu
+  seed: 7
+model:
+  resolution: 256
+  width: 800
+  height: 800
+  capacity: 100000
+  initial_splats: 100000
+  tile_pair_capacity: null
+  scene_radius: null
+  background: white
+  sh_degree: 0
+  geometry: surfel
+training:
+  iterations: 5000
+loss:
+  mode: mse
+  dssim_weight: 0.2
+  dssim_window: 11
+learning_rates:
+  position_initial: 1.0e-05
+  position_final: 1.0e-06
+  position_max_steps: 5000
+  position_delay_steps: 0
+  position_delay_multiplier: 0.01
+  feature_dc: 0.0025
+  feature_rest: 0.000125
+  opacity: 0.005
+  scale: 0.0005
+  rotation: 0.0001
+densification:
+  interval: 0
+  child_optimizer_state: fresh_children
+  fraction: 0.2
+  percent_dense: 0.01
+  opacity_reset_interval: 0
+compact_box:
+  enabled: true
+  beta: 0.5
+  alpha_min: 0.00392156862745098
+multiview_adc:
+  enabled: false
+  views: 10
+  loss_threshold: 0.1
+  densify_score_threshold: 5.0
+  prune_score_threshold: 0.9
+  late_prune_interval: 400
+  opacity_cutoff: 0.02
+  candidate_limit: 20000
+sparse:
+  enabled: false
+  samples_per_tile: 256
+adaptive:
+  dssim_psnr_threshold: 21.0
+  sh1_psnr_threshold: 26.5
+  sh2_psnr_threshold: 27.5
+  sh3_psnr_threshold: 28.0
+  late_prune_growth_window: 3
+  late_prune_growth_percent: 2.0
+convergence:
+  enabled: false
+  min_iterations: 1200
+  patience: 5
+  min_delta: 1.0e-05
+reporting:
+  log_every: 20
+  eval_every: 100
+  eval_manifest: transforms_val.json
+  eval_views: 8
+  eval_view_ids: null
+  loss_ema_decay: 0.95
+  snapshot_every: 2500
+  save_ply: true
+geometry_loss:
+  mask_weight: 0.1
+  normal_depth_weight: 0.01
+  normal_start_iteration: 1
+  normal_ramp_iterations: 1000
+  min_coverage: 0.1
+  foreground_threshold: 0.95
+  max_relative_depth_jump: 0.05
+surfel:
+  mode: deferred
+  shading_model: hdr_angular
+  angular_lr: 0.001
+  freeze_geometry: false
+  depth_mode: ray_plane
+  specular_start_iteration: 0
+  initial_reflection: 0.5
+  reflection_lr: 0.01
+  environment_lr: 0.01
+  environment_width: 512
+  environment_height: 256
+  save_debug: true
+  sh_start_iteration: null
+  sh_band_interval: 1000
+  foreground_pruning:
+    enabled: false
+    start_iteration: 2000
+    interval: 500
+    views: 16
+    min_background_views: 3
+    persistence: 2
+    background_alpha_threshold: 0.01
+    margin_pixels: 2
+  photometric_loss: l1_dssim
+  refinement:
+    start_iteration: null
+    prune_interval: 500
+  normal_propagation:
+    enabled: false
+    interval: 1000
+    until_iteration: 24000
+    scale_factor: 1.5
+    scale_reflection_threshold: 0.02
+    color_reflection_threshold: 0.1
+    color_noise: 0.1
+    opacity_floor: 0.9
+    reflection_floor: 0.001
+    opacity_freeze_iterations: 200
+    densification_interval: 500

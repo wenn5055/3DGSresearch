@@ -1,20 +1,38 @@
 # Reflection research status
 
-Latest follow-up: [five-view reference-normal intervention](experiments/2026-11-03-reference-normal-swap.md)
+**7 November: final report drafting and review.** [Reviewed draft and build instructions](final-report/README.md),
+[evidence map](final-report/evidence-map.md), and [remaining author review](final-report/review-checklist.md).
+The main result remains the frozen 100k sphere study. Initial drafting did not retrain it.
+Three independent agents reviewed grading/argument, technical accuracy and structure.
+The revision adds [paired-view and conditional analysis](final-report/reviews/revision-summary.md)
+from saved CSVs, recorded implementation checks, and locally prepared reproduction configs/checkpoints.
+
+Later 7 November, the user requested [one refinement-loss trial](experiments/2026-11-07-refinement-loss.md).
+L1 + D-SSIM improves mean validation LPIPS **0.093994 -> 0.084458** (all 100 views), but
+PSNR falls **24.1249 -> 23.5677 dB**. Five-view normal error is essentially unchanged
+**1.5728 -> 1.5759 degrees**; fine reflection detail remains unresolved. One 5k continuation
+completed; main checkpoints/test results are unchanged. No further loss sweep or test evaluation is queued.
+
+[Normal-weight closeout](experiments/2026-11-07-normal-weight-closeout.md): the 0.03 trial completed
+on 3 November; the older "prepared/not run" instructions were stale. Paired validation on 7 November
+gives PSNR 24.1249 -> 24.0857, LPIPS 0.093994 -> 0.094244. Five-view reference-normal error
+slightly worsens 1.5728 -> 1.5943 degrees despite higher normal coherence. No detail recovery established.
+
+Earlier follow-up: [five-view reference-normal intervention](experiments/2026-11-03-reference-normal-swap.md)
 recovers much more reflection structure when paired with reference lighting.
 At fixed reference lighting, normal substitution improves PSNR 20.4016 ->
 22.7073 dB, SSIM 0.844558 -> 0.943615 and LPIPS 0.085452 -> 0.056796.
 Learned normals have 1.47-degree mean error; correcting normals alone under
 learned lighting remains blurred. Normal/light interaction is supported;
-training changes remain untested. These are five-view diagnostic means.
+the later consistency-weight trial above did not help. These are five-view diagnostic means.
 
-Latest diagnostic: [reference-lighting swap on the frozen 100k sphere](experiments/2026-11-03-reference-lighting-swap.md)
+Earlier diagnostic: [reference-lighting swap on the frozen 100k sphere](experiments/2026-11-03-reference-lighting-swap.md)
 restores finer texture but leaves warped reflections. All-100-view validation
 LPIPS improves 0.091814 -> 0.079982 while PSNR drops 24.2308 -> 20.6415 dB.
-Geometry and materials were fixed and checkpoints unchanged. Normal accuracy
-is the next diagnostic; material/light compensation remains a confound.
+Geometry and materials were fixed and checkpoints unchanged. The normal intervention
+above followed this experiment; material/light compensation remains a confound.
 
-Latest user direction: stop footprint sweeps, use multiplier 1 and the original
+Earlier training direction: stop footprint sweeps, use multiplier 1 and the original
 10k + 5k schedule; fresh defaults now initialize up to 200k points. The completed
 100k study below remains archived separately. [Current commands and caveats](sphere-study-commands-2026-11-03.md#later-3-november-direction-close-footprint-tuning-use-200k-defaults).
 
@@ -24,7 +42,7 @@ Logo-specific geometry investigation closed; plain-sphere capture and staged HDR
 matched SH3/HDR and the single size trial have completed validation. The
 validation-selected models have completed all 200 test views; no more
 experiments are queued. Existing Materials results are supporting evidence.
-[Today's illustrated closeout](reports/2026-11-02-research-wrap-up.md) includes
+[2 November illustrated closeout](reports/2026-11-02-research-wrap-up.md) includes
 the new dataset, both training stages and reflection crops.
 [Scope decision and proposed sphere diagnostic](research-scope-2026-11-02.md).
 The completed position-rate trial improves image quality; the logo remains unresolved.
@@ -54,10 +72,11 @@ evidence is in the [illustrated wrap-up report](reports/2026-10-30-research-wrap
   **0.842281 -> 0.874920**. PSNR improves on 95 views, SSIM on all 100;
   [3 November LPIPS follow-up](experiments/2026-11-03-sphere-lpips.md) improves
   **0.119765 -> 0.093994** on all 100 views without retraining. Fine reflections
-  remain blurred. No SH/LDR sphere controls or test evaluation yet.
+  remain blurred. Matched SH3 controls and test evaluation were subsequently
+  completed in the 3 November study below; LDR remains deferred.
 - **Full 30k joint HDR/angular + alpha-mask presets remain untrained.**
-  Early-SH Gaussian, Ship and new-method test/video runs
-  were cancelled before starting.
+  Early-SH Gaussian, Ship and the earlier planned Materials test/video jobs
+  were cancelled before starting; the later sphere test completed separately.
 
 Latest sphere validation: SH3 **20.6530 dB / 0.127524 LPIPS**;
 HDR-1.0 **24.1249 / 0.093994**; HDR-0.75 **24.2308 / 0.091814**.
