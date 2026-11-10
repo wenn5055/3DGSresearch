@@ -1,246 +1,230 @@
 # CP4282 Gaussian Splatting Research
 
 Custom NVIDIA Warp Gaussian/surfel training, built from the CP4282 assignments.
+The main experiment compares **SH3 appearance against deferred HDR reflection
+shading** on a chrome sphere, using the same starting geometry and training budget.
 
-Current writing work: [final report first draft](docs/final-report/README.md), including
-PDF build instructions, an evidence map and author-review checklist. The primary
-experiment is the completed [100k sphere study](docs/sphere-study-commands-2026-11-03.md).
+[Final report](docs/final-report/report.md) ·
+[Report build instructions](docs/final-report/README.md) ·
+[Evidence map](docs/final-report/evidence-map.md)
 
-Research extensions include staged D-SSIM, SH degrees 0–3, and independent
-Gaussian-control / RGB-surfel / deferred-surfel passes. Start with the
-[edited-scene workflow](docs/materials-red-rose-silver.md) for current reflection-driven
-normal propagation, [project passes](docs/project-passes.md) for the earlier comparisons,
-and [findings](docs/findings.md) for measured results.
-For a one-line explanation of each output folder, see the auto-updated
-[output index](docs/output-index.md).
+## Main experiment and recorded results
 
-Historical teaching files and their successors are listed in the
-[archive candidates](docs/archive-candidates.md). Archive headers identify these files;
-the main trainer and its shared dependencies remain active.
+| Setting | Meaning |
+| --- | --- |
+| 100k | 100,000 Gaussian surface patches (surfels), fixed throughout each run |
+| 10k + 5k | 10,000 steps fitting appearance with geometry frozen, then 5,000 steps refining geometry and appearance |
+| SH3 | Spherical-harmonic appearance up to degree three |
+| HDR-1.0 | Deferred HDR/angular reflection model, initial splat-size multiplier 1.0 |
+| HDR-0.75 | Same HDR model, initial tangent scales multiplied by 0.75; still 100,000 surfels |
+| Dataset | `data/justChromeBall`: 100 training, 100 validation and 200 test images, at 800 × 800 |
+| Seed | 7 |
 
-## Setup
+The initializer estimates a rough surface from the **training images' alpha masks
+and camera poses**, then samples 100,000 patches. It uses no held-out images or
+Blender reference geometry. Both main methods start from the same initializer;
+HDR-0.75 changes only its two tangent scales before training. Initialization is
+part of the experimental method. Its script and all 400 input images are tracked;
+the generated `initial.ply` lives under ignored `outputs/`.
+
+Recorded means over all **200 test views**:
+
+| Model | PSNR ↑, dB | SSIM ↑ | LPIPS AlexNet ↓ |
+| --- | ---: | ---: | ---: |
+| SH3 | 20.2655 | 0.821398 | 0.128760 |
+| HDR-1.0 | 24.5732 | 0.880892 | 0.083517 |
+| HDR-0.75 | 24.7453 | 0.884031 | 0.080988 |
+
+![Recorded chrome-sphere test reflection crops: reference, SH3, HDR-1.0 and HDR-0.75](docs/reports/assets/2026-11-03-sphere-study/test-reflection-crops.png)
+
+*Observed `justChromeBall` test views 0, 13, 73 and 88, top to bottom. Columns:
+Blender reference, SH3, HDR-1.0 and HDR-0.75, after 10k + 5k steps. These are
+matched crops from the recorded runs. HDR recovers more reflection structure,
+but fine branches and ground texture remain blurred. The HDR/SH3 comparison
+changes the complete appearance treatment; the size comparison is between the
+two HDR variants. [Full per-view scores](docs/reports/assets/2026-11-03-sphere-study/test/metrics.csv)
+retain regressions.*
+
+## Reproduce from a fresh clone
+
+Run the following steps in order in **Git Bash on Windows**, from the repository
+root after cloning. These use the original launch commands, with paths adapted
+to newly generated folders. No checkpoint download or Blender installation is
+needed for this training/evaluation sequence.
+
+Use Python 3.12 and an NVIDIA CUDA GPU. The recorded runs used Python 3.12.10,
+Warp 1.18.0 and an RTX PRO 5000 Blackwell. `requirements.txt` specifies minimum
+versions; different hardware/packages can change scores and timings.
+
+### 1. Install and activate the environment
 
 ```bash
 git clone https://github.com/wenn5055/3DGSresearch.git
 cd 3DGSresearch
-python3 -m venv .venv
-source .venv/bin/activate
+py -3.12 -m venv .venv
+source .venv/Scripts/activate
 python -m pip install -r requirements.txt
 ```
 
-`torch` and `lpips` are in that list only for the evaluator's LPIPS metric. If you would rather not
-pull PyTorch down, install everything above them and run the evaluator with `--metrics psnr ssim`.
+For an existing clone/environment, just run `source .venv/Scripts/activate`.
+Keep this terminal open so the path variables below remain available. Run jobs
+sequentially and keep training/evaluation source code unchanged until step 6
+finishes, so the source checks pass. Keep `torch` and `lpips` installed to
+reproduce the LPIPS comparison. The first LPIPS evaluation may download weights.
 
-The repository contains a small Lego dataset under `data/lego/`. The three manifests sit at the
-top of that directory and name the images in the split directories beside them:
+### 2. Train HDR-1.0 and create the shared initializer
 
-- `train/` — 100 posed training images, listed by `transforms_train.json`.
-- `val/` — 100 validation images, listed by `transforms_val.json`, for training-time held-out checks.
-- `test/` — 200 held-out images, listed by `transforms_test.json`, for final evaluation.
-- `init.ply` — the 45,733-splat point cloud training starts from.
+```bash
+python scripts/run_staged_hdr.py data/justChromeBall
+```
 
-The three splits share no images.
+Subcommands: generate the 100k initializer → train frozen appearance for 10k
+steps → refine geometry and appearance for 5k → evaluate validation images after
+each training stage. This original command measures PSNR/SSIM; step 5 adds LPIPS
+for all three final models.
 
-The trainer reads **both** manifests. It optimises only against `train/`; it renders eight
-held-out views from `val/` every `reporting.eval_every` iterations to report `fixed_eval`, so
-that number measures generalisation rather than a second reading of the training loss. The
-validation views are never used to compute a gradient. The trainer prints exactly which frames it
-picked on its first line, and `reporting.eval_manifest: null` reverts to evaluating on training
-views if you want the old behaviour.
+The launcher prints `Pipeline directory: ...` and `Final model: .../model.ply`.
+**Replace both placeholders below** using those printed paths, then run:
 
-## Gaussian baseline
+```bash
+INIT="outputs/REPLACE_WITH_HDR_PIPELINE_FOLDER/initializer/initial.ply"
+HDR1="outputs/REPLACE_WITH_HDR_REFINED_RUN_FOLDER"
+```
 
-`3dgs_trainer.py` implements dense and sampled backward rendering, optimization,
-density control, D-SSIM and SH appearance.
+Use repository-relative paths with `/` separators. `INIT` points to the
+geometry-only initializer in the pipeline folder. `HDR1` points to the final
+model's **containing folder**, which is a separate timestamped run folder.
+For example, a printed `Final model: C:\...\outputs\Nov10-1430-justChromeBall-staged-hdr-refine-5k\model.ply`
+means `HDR1="outputs/Nov10-1430-justChromeBall-staged-hdr-refine-5k"`.
+
+### 3. Train SH3 from the same initializer
+
+```bash
+python scripts/run_staged_hdr.py data/justChromeBall \
+  --appearance sh3 \
+  --init-ply "$INIT" \
+  --metrics psnr ssim lpips
+```
+
+Subcommands: reuse the initializer → 10k frozen appearance → 5k refinement →
+validation evaluation after each stage.
+
+Replace the placeholder with the containing folder from this run's printed
+`Final model`, then run:
+
+```bash
+SH3="outputs/REPLACE_WITH_SH3_REFINED_RUN_FOLDER"
+```
+
+### 4. Train HDR-0.75 from the same initializer
+
+```bash
+python scripts/run_staged_hdr.py data/justChromeBall \
+  --appearance hdr --scale-multiplier 0.75 \
+  --init-ply "$INIT" \
+  --metrics psnr ssim lpips
+```
+
+Subcommands: copy the initializer with its two tangent scales multiplied by
+0.75 → 10k frozen appearance → 5k refinement → validation evaluation after each
+stage. Scales remain learnable during refinement.
+
+Replace the placeholder with this final model's containing folder, then run:
+
+```bash
+HDR075="outputs/REPLACE_WITH_HDR075_REFINED_RUN_FOLDER"
+```
+
+### 5. Compare all three on validation
+
+Create a fresh timestamped name for the comparison outputs:
+
+```bash
+STUDY="outputs/$(date +%b%d-%H%M%S)-sphere-reproduction"
+
+python scripts/evaluate_reflection_suite.py \
+  "$SH3" "$HDR1" "$HDR075" \
+  --labels SH3 HDR-1.0 HDR-0.75 \
+  --output "$STUDY/validation" \
+  --manifest transforms_val.json --views 0 13 73 88 51 \
+  --metrics psnr ssim lpips --cpu-threads 2
+```
+
+Open `$STUDY/validation/index.html` for comparisons and inspect `summary.csv`
+and `metrics.csv`. Metrics cover **all 100 validation images**; `--views`
+selects illustration cameras only. Use fresh output names when repeating.
+
+### 6. Freeze the selection, then evaluate test images
+
+```bash
+python scripts/finalize_sphere_study.py "$STUDY/validation" \
+  --selection "$STUDY/selection.json" \
+  --test-output "$STUDY/test"
+```
+
+The selection retains the same-size SH3/HDR-1.0 comparison. It additionally
+retains HDR-0.75 if validation LPIPS improves, foreground PSNR does not decrease
+and mean foreground coverage is at least 99%. It records the decision and
+checkpoint hashes **before** test evaluation.
+
+Subcommand: evaluate the retained models on **all 200 test views**, with views
+0, 13, 73 and 88 used for illustrations. The recorded study retained all three;
+a new run's selection follows its own validation results.
+
+Compare `$STUDY/test/summary.csv` with the recorded table above. Open
+`$STUDY/test/index.html` to inspect rendered images and crops; `metrics.csv`
+contains per-view scores. Test results are for reporting, not further tuning.
+
+## Saved models and verification
+
+A **checkpoint** is a trained model saved to disk. Keep `model.ply` and
+`model.surfel.npz` together; SH3 also requires `model.sh.npz`. These files allow
+rendering and scoring without retraining. Full checkpoints are outside Git;
+the [report instructions](docs/final-report/README.md) describe the separately
+prepared bundle, whose persistent download location is still pending.
+
+Each training stage saves `run.json`, resolved configs, `train.log`, package
+versions, source snapshots and input hashes in its timestamped run folder.
+The pipeline folder's `pipeline.json` records the actual frozen/refined run
+paths. Evaluation files called `test-metrics.csv` and `test-renders` inside these
+training runs refer to **validation** when `transforms_val.json` was used.
+
+To check the report's tables and tracked evidence without training:
+
+```bash
+python docs/final-report/verify_report.py
+```
+
+This checks saved evidence/report consistency; steps 5–6 perform model evaluation.
+The reproduction sequence was checked through config preparation, matching
+settings against archived configs and existing pipeline tests; a complete new
+training repetition has not been performed for this README rewrite.
+
+## Other workflows and development
+
+- [Original sphere commands and diagnostics](docs/sphere-study-commands-2026-11-03.md)
+- [Full command reference](docs/command-reference.md): logging, Gaussian/SH training and evaluation
+- [Research status](docs/research-status.md) and [findings](docs/findings.md)
+- [Edited Materials scene workflow](docs/materials-red-rose-silver.md)
+- [Earlier Gaussian/RGB/deferred passes](docs/project-passes.md)
+- [Output index](docs/output-index.md) and [historical teaching files](docs/archive-candidates.md)
+- [Blender scene attribution](data/blender/SOURCE.md)
+
+The original Lego Gaussian baseline remains available:
 
 ```bash
 python 3dgs_trainer.py config/3dgs_training_gpu.yaml
-```
-
-Check your gradients against finite differences before judging a training run:
-
-```bash
-python 3dgs_gradient_check_gpu.py --device cpu
-```
-
-The backward kernels are implemented; use the checks to verify changes before training.
-
-The original assignment walkthrough is retained as a historical reference:
-
-- `3dgs_trainer_annotated.md`
-
-Shared and support files:
-
-- `shared/trainable_gaussian.py`: trainable splat parameter storage used by the trainer
-  (documented in `shared_annotated.md`)
-- `shared/training_config.py`: the YAML schema, defaults and validation
-- `gaussian_first_tile_workspace_gpu.py`: tile record construction used by the trainer
-- `config/3dgs_training_gpu.yaml`: the starter YAML for training runs. Its paths are resolved
-  relative to the config file, and `shared/training_config.py` lists every key it may contain.
-- `3dgs_renderer_v1.py`, `3dgs_1_syn_trainer.py`, `3dgs_k_syn_trainer.py`: historical
-  teaching renderer and synthetic trainers; archive together with `shared/camera.py`
-  and `shared/projected_gaussians.py`. Current Gaussian rendering/training uses
-  `3dgs_evaluator.py` and `3dgs_trainer.py`.
-
-## Evaluating your output
-
-[Illustrated 30 October wrap-up](docs/reports/2026-10-30-research-wrap-up.md) ·
-[Current reflection research status](docs/research-status.md) summarizes results,
-active comparisons and the latest decision without the full experiment history.
-
-To train and evaluate in a new run folder:
-
-```bash
-python scripts/run_experiment.py config/materials_rgb.yaml --metrics psnr ssim lpips
-```
-
-New run and sweep folders begin with the month, day and 24-hour Singapore time,
-e.g. `outputs/Oct28-1305-materials/`.
-Add `--name cap1k` to get `Oct28-1305-materials-cap1k`. Repeated names receive `-2`,
-`-3`, etc. Exact dates and UTC timestamps are saved in the run metadata.
-Use the same timestamp prefix for new manually created report/study folders.
-Existing folders retain their names so saved references continue to work.
-
-To export a compact checkpoint after measuring training-view contributions:
-
-```bash
-python scripts/prune_frozen_splats.py outputs/YOUR_RUN --importance outputs/YOUR_IMPORTANCE_AUDIT --remove-fraction 0.4
-```
-
-The export gets a timestamp-first folder automatically and preserves the parent.
-It verifies input/checkpoint fingerprints and retains matching geometry, SH and
-material rows. This reduces inference size; it does not retrain the model or
-reduce its original training cost. Validate PSNR, SSIM, LPIPS and reflection
-quality before choosing a fraction. See the
-[measured pruning comparison](docs/experiments/2026-10-30-frozen-pruning.md).
-
-The Materials config enables the Unit 10 loss curriculum: MSE warm-up, then dense
-`0.8 * MSE + 0.2 * D-SSIM` with reflected 11x11 windows. It switches when the smoothed
-validation MSE reaches 21 dB PSNR (`adaptive.dssim_psnr_threshold`), chosen below the
-previous Materials MSE plateau. Configs without a `loss` block keep MSE-only training;
-set `loss.mode: mse` for a baseline comparison. The full settings are:
-
-```yaml
-loss:
-  mode: mse_dssim
-  dssim_weight: 0.2
-  dssim_window: 11
-adaptive:
-  dssim_psnr_threshold: 21.0
-```
-
-The gate uses held-out MSE, and early stopping starts only after D-SSIM activates.
-Logs show `stage`, `loss_phase`, the blended `fixed_eval_ema`, and the separate
-`fixed_eval_mse_ema`. A transition resets the objective baseline so the two loss scales
-are not compared. The final stage is saved in the run summary; if the gate is never
-reached, the trainer explicitly reports that the run used MSE only. Final PSNR and SSIM
-evaluation still uses the rendered images and ordinary MSE, independent of training loss.
-
-### Spherical-harmonic baselines
-
-`model.sh_degree` selects the maximum appearance degree: `0` (the default) keeps
-fixed RGB; `1`, `2`, or `3` enable directional colour. Materials presets are provided:
-
-```bash
-python scripts/run_experiment.py config/materials_sh2.yaml --name sh2 --metrics psnr ssim
-python scripts/run_experiment.py config/materials_sh3.yaml --name sh3 --metrics psnr ssim
-```
-
-Both presets copy the current RGB experiment settings and change the appearance
-settings and output path. Compare saved configs when changing any preset later.
-They first fit RGB, switch to D-SSIM at 21 dB, then unlock SH bands at 22, 23, and
-24 dB of smoothed held-out MSE PSNR. Degree 2 stops unlocking after the second band.
-The gates are `adaptive.sh1_psnr_threshold`, `sh2_psnr_threshold`, and
-`sh3_psnr_threshold`; each can advance only on an evaluation tick, after the loss
-warm-up. Early stopping waits until the configured maximum degree unlocks. If a gate
-is never reached, the log and summary report the actual degree that was trained.
-
-The rest-coefficient learning rate is `learning_rates.feature_rest` (0.000125 by
-default). Locked bands have zero gradients and untouched optimizer state. Each band
-has its own Adam step count; density control copies the parent's coefficients to
-its children and resets SH optimizer state with the geometry optimizer.
-
-The existing per-splat RGB is the DC term. The higher bands add 3, 8, or 15 RGB
-coefficient vectors for degrees 1, 2, or 3. Colour is evaluated once per splat/view
-and reused by both dense and sparse rendering. Gradients include the appearance
-path through the splat-to-camera direction back to position.
-
-Every SH checkpoint consists of the ordinary RGB/geometric `.ply` plus a `.sh.npz`
-sidecar with coefficients in the same active-splat order. The sidecar records the
-active and maximum degrees and the basis/direction conventions. These follow the
-course's positive polynomial signs and splat-to-camera direction, with direct RGB
-as DC; they are not interchangeable with Graphdeco's SH checkpoint format.
-Keep both files together. Evaluation automatically loads the saved active degree;
-`--sh-degree 0` previews base RGB, and `--sh-degree 1/2/3` can truncate a checkpoint
-to a lower trained degree. Asking for an untrained degree or a missing explicitly
-requested sidecar is an error.
-
-### Tune the SH learning rate on validation
-
-The sweep compares half/default/double `learning_rates.feature_rest`
-(`0.0000625`, `0.000125`, `0.00025`), changing no other training settings:
-
-```bash
-python scripts/tune_sh_learning_rate.py config/materials_sh3.yaml
-```
-
-Candidates run sequentially and evaluate all validation views. Selection uses mean
-validation PSNR, with SSIM breaking exact ties. A candidate must finish the configured
-iteration budget and reach the configured SH degree to be eligible. The sweep saves
-`summary.md`, `validation-results.csv`, `sweep.json`, and the selected `best-config.yaml`
-under a dated `outputs/*-lr-sweep/` directory. Selection is provisional for one seed;
-test scores are not used to choose parameters.
-
-Use `--baseline-run outputs/EXISTING_RUN` to reuse a matching baseline model and
-re-evaluate it on validation. Configs and trainer/evaluator source hashes must match.
-Add `--wait-for outputs/RUN_A outputs/RUN_B` to wait for existing jobs before starting
-new GPU work. Add `--prepare-only` to save a plan without launching experiments.
-Continue a prepared/interrupted sweep with:
-
-```bash
-python scripts/tune_sh_learning_rate.py --resume outputs/SWEEP_DIRECTORY
-```
-
-Keep training/evaluation source files unchanged while a sweep runs; it stops if they
-change, preserving evidence instead of ranking different implementations together.
-
-`3dgs_evaluator.py` renders every camera in a manifest, saves the images, and reports the metrics
-you ask for:
-
-```bash
 python 3dgs_evaluator.py outputs/warp-training.ply data/lego
 ```
 
-It decides three things for you rather than making you pick a script:
-
-- **Device.** `--arch auto` (the default) uses CUDA when Warp reports it and CPU otherwise. Force
-  it with `--arch cpu` or `--arch gpu`; asking for gpu without CUDA is an error, not a slow
-  fallback.
-- **Appearance.** If a `<ply-stem>.sh.npz` sidecar sits beside the PLY, the render uses its
-  saved active SH degree. `--sh-degree 0` ignores it, `--sh-degree 1/2/3` selects a trained
-  degree, and `--sh-npz` points at a sidecar stored elsewhere.
-- **Metrics.** `--metrics` takes any of `psnr`, `ssim`, `lpips`; all three run by default. LPIPS
-  needs PyTorch, so drop it with `--metrics psnr ssim` if you have not installed the optional
-  requirements.
-
-Use `--manifest transforms_train.json` or `--manifest transforms_val.json` to score against those
-splits instead of the held-out test split, and `--width`/`--height` to render at a different
-resolution than the default. The test manifest has 200 views; on CPU, evaluate a smaller split
-first.
-
-## Running checks
+Run the existing development checks:
 
 ```bash
-python -m compileall src scripts shared 3dgs_trainer.py 3dgs_gradient_check_gpu.py gaussian_first_tile_workspace_gpu.py 3dgs_1_syn_trainer.py 3dgs_k_syn_trainer.py image_metrics.py 3dgs_evaluator.py 3dgs_renderer_v1.py
 python -m unittest discover -s scripts -p "test_*.py"
-```
-
-Verify the Gaussian backward pass with finite differences:
-
-```bash
 python 3dgs_gradient_check_gpu.py --device cpu
 python 3dgs_gradient_check_gpu.py --device cuda:0
 ```
 
-Use `--help` on each script for its command-line arguments. Start with low resolution and a small
-iteration count while debugging.
+Use `--help` on individual scripts for their arguments. The report's
+[evidence map](docs/final-report/evidence-map.md) links supporting normal,
+lighting and loss diagnostics separately from this main comparison.
