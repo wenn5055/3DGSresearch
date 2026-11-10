@@ -21,10 +21,10 @@ loss:
   mode: mse
 model:
   background: white
-  capacity: 200000
+  capacity: 100000
   geometry: surfel
   height: 800
-  initial_splats: 200000
+  initial_splats: 100000
   sh_degree: 0
   width: 800
 paths:

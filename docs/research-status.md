@@ -34,9 +34,10 @@ LPIPS improves 0.091814 -> 0.079982 while PSNR drops 24.2308 -> 20.6415 dB.
 Geometry and materials were fixed and checkpoints unchanged. The normal intervention
 above followed this experiment; material/light compensation remains a confound.
 
-Earlier training direction: stop footprint sweeps, use multiplier 1 and the original
-10k + 5k schedule; fresh defaults now initialize up to 200k points. The completed
-100k study below remains archived separately. [Current commands and caveats](sphere-study-commands-2026-11-03.md#later-3-november-direction-close-footprint-tuning-use-200k-defaults).
+**10 November: sphere defaults restored to 100k points**, multiplier 1 and the
+original 10k + 5k schedule for submission reproduction. The earlier 200k exploration
+remains historical; the completed study's archived configs/results are preserved.
+[Commands and history](sphere-study-commands-2026-11-03.md).
 
 **Updated 3 November 2026: focus on specular reflection reconstruction.
 Logo-specific geometry investigation closed; plain-sphere capture and staged HDR completed.**

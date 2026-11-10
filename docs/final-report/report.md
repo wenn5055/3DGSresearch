@@ -343,7 +343,7 @@ python scripts/evaluate_reflection_suite.py `
 
 ### B.2 Retrain or repeat a diagnostic
 
-`python docs/final-report/reproduce_study.py --output outputs/NEW_PLAN` prepares the six archived 100k stage configs with local paths. Add `--run` with a fresh output directory to initialize and train them. Preparation was checked; full training was not repeated for this rewrite. This helper validates models without automatically evaluating test views. Current 200k presets are separate from this historical study.
+`python docs/final-report/reproduce_study.py --output outputs/NEW_PLAN` prepares the six archived 100k stage configs with local paths. Add `--run` with a fresh output directory to initialize and train them. Preparation was checked; full training was not repeated for this rewrite. This helper validates models without automatically evaluating test views. Default sphere presets were restored to 100k on 10 November; the archived configs preserve the recorded study settings.
 
 The dated lighting, normal and loss experiment notes under `docs/experiments/` give diagnostic commands and their required exports. The [evidence map](evidence-map.md) links every main claim and figure to its saved data. Reference geometry and lighting remain evaluation-only. No new experiments were run for the readability rewrite.
 

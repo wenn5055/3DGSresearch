@@ -4,9 +4,10 @@ Specified 3 November 2026, Singapore, before new SH3/size results. This is the
 bounded continuation of the [reduced project scope](reports/2026-11-02-research-wrap-up.md#current-scope-sphere-as-the-main-experiment-3-november).
 Run commands in **Git Bash from the repository root**.
 
-**Later defaults update:** new fresh runs use **200k points, multiplier 1, 10k +
-5k steps**. The completed study below used 100k; its archived configs/results
-are unchanged. See the final section before repeating historical commands.
+**10 November defaults update:** new fresh runs again use **100k points,
+multiplier 1, 10k + 5k steps**, matching the completed study's point budget.
+The earlier 200k exploration is recorded below as history; archived study
+configs/results are unchanged.
 
 **Completed 3 November, 14:12 Singapore:** matched SH3/HDR training, the single
 size trial, validation-only selection and all 200 test views. Commands below
@@ -352,15 +353,19 @@ are preserved alongside the figure. Reference lighting remains evaluation-only.
 
 ## Later 3 November direction: close footprint tuning; use 200k defaults
 
+**Historical direction, superseded 10 November:** the two presets and fresh
+initializer limit have been restored to 100000 for submission reproduction.
+The command below now launches 100k; it no longer requests the 200k exploration.
+
 The user reported that the visible blobs persisted after footprint changes and
 a longer refinement attempt. Stop further footprint sweeps and return the
 multiplier to **1**. Refinement was reverted to **5k** (position decay over 5k),
 with the frozen stage still 10k. This records the user's visual assessment,
 not a claim that every extended run's numerical score failed to improve.
 
-The two source presets now set `model.capacity` and `model.initial_splats` to
-**200000**. The launcher's fresh initializer uses `--max-points 200000`.
-For a fresh higher-density run:
+At that time, the two source presets set `model.capacity` and
+`model.initial_splats` to **200000**, and the fresh initializer used
+`--max-points 200000`. The command used for that exploration was:
 
 ```bash
 python scripts/run_staged_hdr.py data/justChromeBall \
@@ -374,9 +379,9 @@ The initializer also adjusts tangent sizes with sampling density: doubling
 points reduces initial scales by approximately sqrt(1/2), even at multiplier 1.
 This is a denser representation experiment, not an isolated size-fixed count test.
 
-For exact 100k replays of the earlier study, restore both presets' capacity/
-initial-count fields and the fresh initializer limit to 100000, or use the
-archived resolved configs with their recorded parents. Historical study/test
+The presets' capacity/initial-count fields and fresh initializer limit are now
+100000 again. For the recorded study settings, use the archived resolved configs
+with their recorded parents and locally rebased paths. Historical study/test
 results remain frozen; later exploratory runs are listed separately in the
 [output index](output-index.md). Previously inspected test scores are development
 context, not a fresh untouched benchmark for further tuning.
@@ -420,7 +425,7 @@ Use the primary **100k, initial-size multiplier 1.0** baseline from
 It retains the same `Nov02-2021-justChromeBall-frozen-hdr-10k/model.ply` parent
 and material sidecar, seed 7, 800px, 5k refinement and learning-rate schedules.
 This uses the size-1.0 baseline, rather than the size-0.75 diagnostic model.
-The current 200k defaults do not affect this archived-config trial.
+The archived-config trial is independent of subsequent default changes.
 
 From the repository root with the project environment active:
 
