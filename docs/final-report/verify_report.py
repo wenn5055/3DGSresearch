@@ -22,6 +22,24 @@ def main():
     text = (HERE / 'report.md').read_text(encoding='utf-8')
     assert '[BUILD:' not in text
     checked = []
+    revision_asset = ASSETS / '2026-11-11-report-revision'
+    revision = json.loads((revision_asset / 'provenance.json').read_text(encoding='utf-8'))
+    for row in csv_rows(revision_asset / 'materials-summary.csv'):
+        rows = csv_rows(revision_asset / f"materials-evidence/{row['model']}.metrics.csv")
+        assert len(rows) == int(row['views']) == 200
+        for key, decimals in [('psnr_db', 4), ('ssim', 6)]:
+            mean = sum(float(item[key]) for item in rows) / len(rows)
+            assert abs(mean - float(row[key])) < 1e-10
+            assert f'{mean:.{decimals}f}' in text
+        checked.append('early-materials:' + row['model'])
+    for source in revision['sources']:
+        assert hashlib.sha256((ROOT / source['path']).read_bytes()).hexdigest() == source['sha256'], source['path']
+    archive = json.loads((revision_asset / 'materials-evidence/archive.json').read_text(encoding='utf-8'))
+    for item in archive:
+        assert hashlib.sha256((ROOT / item['copy']).read_bytes()).hexdigest() == item['sha256']
+        original = ROOT / item['original']
+        if original.is_file():
+            assert hashlib.sha256(original.read_bytes()).hexdigest() == item['sha256']
     for row in csv_rows(ASSETS / '2026-11-03-sphere-study/test/summary.csv'):
         name = {'SH3': 'SH3', 'HDR-1.0': 'HDR-1.0, matched primary',
                 'HDR-0.75': 'HDR-0.75, additional variant'}[row['model']]
@@ -89,9 +107,12 @@ def main():
             path = (document.parent / target.split('#')[0]).resolve()
             assert path.exists(), f'{document.name}: missing link {target}'
             local_links += 1
-    assert len(re.findall(r'^!\[', text, flags=re.M)) == 11
+    assert len(re.findall(r'^!\[', text, flags=re.M)) == 13
+    for label in ('E1', '4a', '4b', '6'):
+        assert f'*Figure {label}.' in text
     analysis_path = ASSETS / '2026-11-07-report-analysis/analysis.json'
     analysis = json.loads(analysis_path.read_text(encoding='utf-8'))
+    assert analysis['effect_plot']['kind'] == 'histograms'
     main_effect = analysis['comparisons']['HDR-1.0_vs_SH3']
     assert all(r['improved'] == 200 for r in main_effect.values())
     assert f"median {main_effect['psnr_db']['median']:.4f} dB" in text
@@ -113,7 +134,9 @@ def main():
             checked_copies += 1
     print(json.dumps({'table_rows_checked': len(checked), 'local_links_checked': local_links,
                       'available_original_input_hashes_checked': checked_copies,
-                      'report_figures': 11, 'saved_data_analysis_sources_checked': len(analysis['sources']),
+                      'report_figures': 13, 'saved_data_analysis_sources_checked': len(analysis['sources']),
+                      'revision_figure_sources_checked': len(revision['sources']),
+                      'historical_materials_metric_rows_checked': 400,
                       'loss_trial_paired_validation_rows': 200, 'loss_trial_normal_rows': 10,
                       'validation_rows': 200, 'normal_rows': 10,
                       'author_review_items': text.count('[AUTHOR REVIEW:')}, indent=2))

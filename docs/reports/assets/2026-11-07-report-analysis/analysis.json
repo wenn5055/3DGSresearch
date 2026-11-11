@@ -188,6 +188,12 @@
     },
     "interpretation": "Effect of substituting normal direction in the existing shader, conditional on lighting; changes reflection direction and angular blend, not geometry or material parameters. Difference is descriptive on five cameras; not a factorial retraining experiment."
   },
+  "effect_plot": {
+    "kind": "histograms",
+    "bins": 12,
+    "x": "paired improvement; positive favours HDR-1.0",
+    "y": "number of test views, not cumulative percentage"
+  },
   "figure_selections": {
     "test-crops-views-0-73.png": {
       "views": [

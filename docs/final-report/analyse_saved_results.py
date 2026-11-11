@@ -11,6 +11,7 @@ from pathlib import Path
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator
 import numpy as np
 from PIL import Image
 
@@ -75,14 +76,21 @@ def main():
     fig, axes = plt.subplots(1, 3, figsize=(11.6, 3.0), constrained_layout=True)
     labels = [('psnr_db', 'Whole-image PSNR gain (dB)'),
               ('foreground_psnr_db', 'Foreground PSNR gain (dB)'),
-              ('lpips_alex', 'LPIPS reduction')]
+              ('lpips_alex', 'LPIPS reduction (absolute units)')]
+    result['effect_plot'] = {'kind': 'histograms', 'bins': 12,
+                             'x': 'paired improvement; positive favours HDR-1.0',
+                             'y': 'number of test views, not cumulative percentage'}
     for ax, (key, label) in zip(axes, labels):
-        values = np.sort(all_deltas['HDR-1.0_vs_SH3'][key])
-        ax.step(values, np.arange(1, len(values) + 1) / len(values) * 100, where='post', color='#246482', linewidth=2)
-        ax.axvline(0, color='#8f9497', linestyle='--', linewidth=1)
-        ax.set(xlabel=label, ylabel='Test views at or below (%)', ylim=(0, 102))
-        ax.grid(alpha=.2)
-    fig.suptitle('justChromeBall | 200 test views | HDR-1.0 versus matched SH3 | positive = better', fontsize=11)
+        values = np.asarray(all_deltas['HDR-1.0_vs_SH3'][key])
+        counts, _, _ = ax.hist(values, bins=12, color='#246482', edgecolor='white')
+        assert int(counts.sum()) == 200
+        ax.axvline(0, color='#666666', linestyle='--', linewidth=1)
+        ax.set(xlabel=label, ylabel='Number of test views', xlim=(-.04 * values.max(), 1.07 * values.max()))
+        ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+        ax.text(.03, .95, '200/200 views improve', transform=ax.transAxes, va='top', fontsize=9)
+        ax.set_ylim(0, counts.max() * 1.22)
+        ax.grid(axis='y', alpha=.2)
+    fig.suptitle('Chrome sphere | HDR-1.0 versus SH3 | right of zero = improvement', fontsize=11)
     fig.savefig(DEST / 'paired-test-effects.png', dpi=190)
     plt.close(fig)
     # Compact selections from tracked actual sheets, preserving original labels.

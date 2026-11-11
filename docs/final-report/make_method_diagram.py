@@ -30,7 +30,7 @@ def main():
                                      linewidth=1.3, color=color))
 
     positions = [.12, 3.15, 6.18, 9.21]
-    labels = ['Learned scene\npatches + lighting',
+    labels = ['Learned scene\nsurfels + lighting',
               'First rendering pass\nblend surface attributes',
               'Second rendering pass\ncompute pixel reflections',
               'Rendered image\npredicted RGB colours']

@@ -17,6 +17,6 @@
   ],
   "script": {
     "path": "docs/final-report/make_method_diagram.py",
-    "sha256": "45f953093813d5149b4c423506a9096e1414a116ed5cfd991f5b6b0646cb4d60"
+    "sha256": "627f7af857a620d2edbfeb3cd8b1cb76c2e9a6814ca00689588046def9668578"
   }
 }

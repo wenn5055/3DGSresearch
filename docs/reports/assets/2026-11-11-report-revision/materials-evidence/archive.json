@@ -1,0 +1,32 @@
+[
+  {
+    "original": "outputs/materials-Oct28-1945-dssim/run.json",
+    "copy": "docs/reports/assets/2026-11-11-report-revision/materials-evidence/rgb.run.json",
+    "sha256": "5d0ec9f15f7ffd1e2e807e959e3c2ccfd457c969f84da7ca68f9800c628a0322"
+  },
+  {
+    "original": "outputs/materials-Oct28-1945-dssim/test-metrics.csv",
+    "copy": "docs/reports/assets/2026-11-11-report-revision/materials-evidence/rgb.metrics.csv",
+    "sha256": "7f7e6ee44164e6e66712cd52a2b86e76efd383517a10882b6d72ebee3d583d9b"
+  },
+  {
+    "original": "outputs/materials-Oct28-1945-dssim/test-renders/r_13.png",
+    "copy": "docs/reports/assets/2026-11-11-report-revision/materials-evidence/rgb.view-13.png",
+    "sha256": "2025ddfbab656529a00a8a883c6cb4c36bfac3079016467d65e70203cd1f1ebd"
+  },
+  {
+    "original": "outputs/materials-Oct28-2157-sh3/run.json",
+    "copy": "docs/reports/assets/2026-11-11-report-revision/materials-evidence/sh3.run.json",
+    "sha256": "5ca140bebef385889c35bfb7f19e4eb5a447c97998c9c88e11ccb677c5c303b1"
+  },
+  {
+    "original": "outputs/materials-Oct28-2157-sh3/test-metrics.csv",
+    "copy": "docs/reports/assets/2026-11-11-report-revision/materials-evidence/sh3.metrics.csv",
+    "sha256": "3bf3a12e0cc8d6ad952614b7eb15105114aa5f1c49aab7ad6ffc46ab108e768b"
+  },
+  {
+    "original": "outputs/materials-Oct28-2157-sh3/test-renders/r_13.png",
+    "copy": "docs/reports/assets/2026-11-11-report-revision/materials-evidence/sh3.view-13.png",
+    "sha256": "2c06ae0fa3ecd7543454996ad20cea95a232b4ed9977edbc4798889641825ed0"
+  }
+]

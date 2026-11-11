@@ -29,6 +29,7 @@ The full prose draft is [report.md](report.md); the claim/figure inventory is [e
 - [x] Prepare a locally portable main-checkpoint bundle and historical 100k reproduction configs; no publishing or new training.
 - [x] Complete the later user-requested L1/D-SSIM refinement trial: one 5k continuation, 100-view validation and five-view normals, actual crops and a separately labelled report result. No test evaluation.
 - [x] Rewrite for interested peers, define terms before using them, add dedicated loss explanations and cite verified course material (especially Units 10–11). Preserve result tables and move detailed math/metadata to appendices.
+- [x] Address 11 November author comments: add clearly separated early Materials RGB/SH3 results and actual images; clarify terminology/count/budget; replace cumulative plots with histograms; lead with visible refinement improvements while retaining the failure; use one environment display exposure; show all four lighting/normal cases and identify the HDR-0.75 diagnostic. Verify source/figure evidence without rebuilding the PDF.
 
 ## Optional strengthening; not required to finish this scoped draft
 

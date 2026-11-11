@@ -1,0 +1,147 @@
+{
+  "date_singapore": "2026-11-11",
+  "scope": "Existing experimental images and saved metrics only; no new training or evaluation.",
+  "materials": {
+    "scene": "original Materials",
+    "split": "test",
+    "view": 13,
+    "selection": "Reuse existing illustration camera 13, without ranking historical view scores.",
+    "crop_xyxy": [
+      200,
+      505,
+      380,
+      685
+    ],
+    "means": [
+      {
+        "model": "rgb",
+        "views": 200,
+        "psnr_db": 24.93650635801196,
+        "ssim": 0.9079433384537697
+      },
+      {
+        "model": "sh3",
+        "views": 200,
+        "psnr_db": 26.06896794273428,
+        "ssim": 0.922090217769146
+      }
+    ],
+    "historical_protocol": "Initial exploration; validation contributed to initial mean colour. Separate from later training-only surfel study."
+  },
+  "figures": {
+    "materials-initial-exploration.png": "Full frames downsampled; identical Chrome crops enlarged with Lanczos; reference alpha composited on white.",
+    "refinement-improvements.png": {
+      "source_rectangle_xyxy": [
+        0,
+        0,
+        1080,
+        850
+      ],
+      "views": [
+        0,
+        13
+      ],
+      "model": "HDR-1.0"
+    },
+    "environment-comparison.png": {
+      "source_rectangle_xyxy": [
+        0,
+        0,
+        1024,
+        298
+      ],
+      "display_ev": 0
+    },
+    "lighting-normal-permutations.png": {
+      "view": 0,
+      "model": "HDR-0.75",
+      "source_rectangles_xyxy": [
+        [
+          12,
+          68,
+          312,
+          368
+        ],
+        [
+          324,
+          68,
+          624,
+          368
+        ],
+        [
+          636,
+          68,
+          936,
+          368
+        ],
+        [
+          948,
+          68,
+          1248,
+          368
+        ],
+        [
+          1260,
+          68,
+          1560,
+          368
+        ]
+      ],
+      "source_order": [
+        "target",
+        "learned/learned",
+        "reference/learned",
+        "learned/reference",
+        "reference/reference"
+      ],
+      "grid": "Rows: learned/reference lighting; columns: learned/reference normals."
+    }
+  },
+  "display": "Layout crops, labels and uniform resizing only; no experimental pixel retouching.",
+  "sources": [
+    {
+      "path": "docs/reports/assets/2026-11-11-report-revision/materials-evidence/rgb.run.json",
+      "sha256": "5d0ec9f15f7ffd1e2e807e959e3c2ccfd457c969f84da7ca68f9800c628a0322"
+    },
+    {
+      "path": "docs/reports/assets/2026-11-11-report-revision/materials-evidence/rgb.metrics.csv",
+      "sha256": "7f7e6ee44164e6e66712cd52a2b86e76efd383517a10882b6d72ebee3d583d9b"
+    },
+    {
+      "path": "docs/reports/assets/2026-11-11-report-revision/materials-evidence/sh3.run.json",
+      "sha256": "5ca140bebef385889c35bfb7f19e4eb5a447c97998c9c88e11ccb677c5c303b1"
+    },
+    {
+      "path": "docs/reports/assets/2026-11-11-report-revision/materials-evidence/sh3.metrics.csv",
+      "sha256": "3bf3a12e0cc8d6ad952614b7eb15105114aa5f1c49aab7ad6ffc46ab108e768b"
+    },
+    {
+      "path": "data/materials/test/r_13.png",
+      "sha256": "cbfc7049df1b542b72799a03e0aabacb2c9a0fe8f7b15f68e4a608bb9892d288"
+    },
+    {
+      "path": "docs/reports/assets/2026-11-11-report-revision/materials-evidence/rgb.view-13.png",
+      "sha256": "2025ddfbab656529a00a8a883c6cb4c36bfac3079016467d65e70203cd1f1ebd"
+    },
+    {
+      "path": "docs/reports/assets/2026-11-11-report-revision/materials-evidence/sh3.view-13.png",
+      "sha256": "2c06ae0fa3ecd7543454996ad20cea95a232b4ed9977edbc4798889641825ed0"
+    },
+    {
+      "path": "docs/reports/assets/2026-11-02-sphere/reflection-crops.png",
+      "sha256": "264cde1f223ae25db8340e94f0f8421648de8753b45c895e35aeed3a52da1c90"
+    },
+    {
+      "path": "docs/reports/assets/2026-11-03-environment-check/comparison.png",
+      "sha256": "dcefba71c93c921e4dd579d46a469947223616a1f0db4144fae31d7df7463a79"
+    },
+    {
+      "path": "docs/reports/assets/2026-11-03-reference-normal-swap/reflection-crops.png",
+      "sha256": "8e92eba59b3ff1a9104043f0a699c3acced5beb89dfed6da6e6981f3b67f5ea7"
+    },
+    {
+      "path": "docs/final-report/make_revision_figures.py",
+      "sha256": "fe508748c4300fc7aaa74ce3a8e1c9c7f21eac7dc540a86e9a08f3ea47b79468"
+    }
+  ]
+}
