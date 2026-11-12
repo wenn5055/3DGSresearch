@@ -1,0 +1,97 @@
+{
+  "scene": "justChromeBall",
+  "split": "validation",
+  "views": [
+    0,
+    51
+  ],
+  "models": [
+    "SH3",
+    "HDR-1.0"
+  ],
+  "kind": "New visualisations of existing saved experimental arrays; no model rendering or optimisation.",
+  "validity": "Intersection: reference alpha >= 0.95, mesh hit, both model coverages >= 0.5, nonzero normals and finite depths.",
+  "normal_encoding": "world-space XYZ in [-1,1] mapped to RGB in [0,1]",
+  "angular_error": "acos of normalised dot product against the Blender mesh normal, in degrees",
+  "depth_convention": "positive camera-z distance, not Euclidean ray distance",
+  "depth_shared_range_scene_units": [
+    3.3724217414855957,
+    4.098087787628174
+  ],
+  "rgb_error": "Mean over RGB of absolute saved uint8 PNG differences / 255. Full-frame, including background; not report PSNR input.",
+  "statistics_scope": "Two selected validation views, using a common covered-foreground mask; not the five-view or full-split means.",
+  "statistics": [
+    {
+      "view": 0,
+      "model": "SH3",
+      "joint_valid_pixels": 135134,
+      "normal_error_mean_deg": 1.9920642948107485,
+      "depth_error_mean_scene_units": 0.0035035740584135056,
+      "normal_fraction_clipped_above_5_deg": 0.007311261414595882,
+      "depth_fraction_clipped_above_0_02": 0.004262435804460758,
+      "rgb_fraction_clipped_above_0_25": 0.054765625
+    },
+    {
+      "view": 0,
+      "model": "HDR-1.0",
+      "joint_valid_pixels": 135134,
+      "normal_error_mean_deg": 1.6133273544627318,
+      "depth_error_mean_scene_units": 0.0023497308138757944,
+      "normal_fraction_clipped_above_5_deg": 0.0010730090132757115,
+      "depth_fraction_clipped_above_0_02": 0.002486420885935442,
+      "rgb_fraction_clipped_above_0_25": 0.014178125
+    },
+    {
+      "view": 51,
+      "model": "SH3",
+      "joint_valid_pixels": 134511,
+      "normal_error_mean_deg": 2.2011211955933967,
+      "depth_error_mean_scene_units": 0.005630054511129856,
+      "normal_fraction_clipped_above_5_deg": 0.006728074283887563,
+      "depth_fraction_clipped_above_0_02": 0.00475797518418568,
+      "rgb_fraction_clipped_above_0_25": 0.03408125
+    },
+    {
+      "view": 51,
+      "model": "HDR-1.0",
+      "joint_valid_pixels": 134511,
+      "normal_error_mean_deg": 1.5363881958146242,
+      "depth_error_mean_scene_units": 0.0033884483855217695,
+      "normal_fraction_clipped_above_5_deg": 0.003077815197270112,
+      "depth_fraction_clipped_above_0_02": 0.0024533309543457414,
+      "rgb_fraction_clipped_above_0_25": 0.0256796875
+    }
+  ],
+  "sources": [
+    {
+      "path": "docs/presentation/assets/2026-11-12-qna/archive.json",
+      "sha256": "87245b83c5da82be08ccd241ae8feabc95070f49f46ac3a50ba7639e64cf5b80"
+    },
+    {
+      "path": "docs/presentation/assets/2026-11-12-qna/inputs/validation-0.npz",
+      "sha256": "cb49e391802f72f62b1b14adb57f4bd71ca7de5ceac216286e741d63fb1e697f"
+    },
+    {
+      "path": "docs/presentation/assets/2026-11-12-qna/inputs/validation-51.npz",
+      "sha256": "4f55e083d3218db6f622d9104c117f685d26812d97ba65a814a0d9aace8d634b"
+    },
+    {
+      "path": "docs/presentation/make_qna_figures.py",
+      "sha256": "d5226a7156bbf8246cf32ee0da6a96aefa7c2f32eb138c5802b3bfaa5d74760e"
+    }
+  ],
+  "figures": [
+    {
+      "path": "docs/presentation/assets/2026-11-12-qna/rgb-differences.png",
+      "sha256": "851a98ac12bc5f6bd1ce7fb0bb37939119af92a13de92744bf485b766036e2c4"
+    },
+    {
+      "path": "docs/presentation/assets/2026-11-12-qna/normal-comparison-errors.png",
+      "sha256": "3ddebe1190577a205b945efc10510a21fc9b857cde0bc115ed01f4c4b5908b64"
+    },
+    {
+      "path": "docs/presentation/assets/2026-11-12-qna/depth-comparison-errors.png",
+      "sha256": "84569a5a0d4296b83bf4ebf2adefa3b86128bc29f5c4e5911c03c9b065b95b1b"
+    }
+  ]
+}

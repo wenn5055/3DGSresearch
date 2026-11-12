@@ -1,66 +1,48 @@
-# Preliminary 20-minute presentation
+# Research presentation
 
-Ten main slides rehearsed to 18 minutes, with two minutes of buffer and three
-backup slides. Built from the reviewed report and tracked actual experimental
-images. No training, evaluation, or image synthesis is performed.
+The current deck has **12 main slides for a 15-minute talk and 7 Q&A slides**, in 16:9 format. It uses British English, the agreed speaking script, native editable PowerPoint text/shapes, and actual saved experiment images.
 
-## Build and open
+- [PowerPoint deck](../../outputs/presentation-15min/reconstructing-reflections-15min.pptx): editable slides with full speaker notes.
+- [Offline slideshow](../../outputs/presentation-15min/reconstructing-reflections-15min.html): self-contained HTML, including notes, appendix navigation and image enlargement.
+- [Main-slide overview](../../outputs/presentation-15min/overview-main.png) and [Q&A overview](../../outputs/presentation-15min/overview-qna.png).
+- [Speaking script](speaker-script-15min.md) and [visual Q&A appendix](qna-visual-appendix.md): narrative, timing, explanations and source figures.
+
+The main talk covers motivation, Materials exploration, SH3 versus reflection shading, the deferred method, shared training, full-view test results, refinement, all four lighting/normal combinations, the two loss trials, scope and conclusions. Main speaker notes reproduce the spoken paragraphs from the script.
+
+Q&A slides provide more full-view comparisons, RGB differences, normal and depth checks, additional lighting substitutions, loss-trial normal maps and earlier scene failures. They follow the conclusion and sit outside the 15-minute timing.
+
+## Build
+
+Use the isolated presentation environment:
 
 ```powershell
 py -3.12 -m venv outputs/presentation-tools
 ./outputs/presentation-tools/Scripts/python.exe -m pip install -r docs/presentation/requirements.txt
-./outputs/presentation-tools/Scripts/python.exe docs/presentation/build_deck.py
+./outputs/presentation-tools/Scripts/python.exe docs/presentation/build_deck_15min.py
 ```
 
-Requires an installed Chrome or Edge. Outputs under `outputs/presentation-preliminary/`:
+An installed Chrome or Edge is required for preview checks. Outputs stay under ignored `outputs/presentation-15min/` and include the PPTX, HTML, nineteen slide PNGs, two overview sheets, speaker notes, asset/crop provenance and validation/build manifests. No PDF, model rendering or training is performed.
 
-- `reflections-preliminary.pptx`: native editable text, shapes and embedded figures; speaker notes included.
-- `reflections-preliminary.pdf`: 16:9 reading copy, including backup slides.
-- `reflections-preliminary.html`: standalone offline slideshow. Arrow keys/Space advance; N shows notes; F enters fullscreen.
-- `speaker-notes.txt`: timed speaking cues and transitions, not a verbatim 18-minute script.
-- `overview.png` and `slide-01.png` through `slide-13.png`: visual previews.
-- `asset-manifest.json`: exact source hashes and crop coordinates.
-- `validation.json`: HTML text overflow checks and PDF page count.
+The [new builder](build_deck_15min.py) reuses drawing primitives from [the preliminary builder](build_deck.py), while replacing the content, timing, author metadata, notes and exports. The earlier 20-minute deck and builder remain available separately under `outputs/presentation-preliminary/` and `build_deck.py`.
 
-PDF and PNG previews use the HTML layout. PowerPoint uses the same coordinates
-and editable objects; font/layout differences between Office versions remain
-possible. Review the PowerPoint in the application before presenting.
+## Present
 
-## Narrative
+PowerPoint contains clickable Q&A topic links on the conclusion slide. In the offline slideshow, Arrow keys or Space advance, N toggles speaker notes, F enters fullscreen, and Q jumps to the first Q&A slide. The dropdown selects any slide; click an image to enlarge it and press Escape to close it. All images are embedded, so no network connection is needed.
 
-1. Reconstructing reflections — question and visual target (1 minute).
-2. Why reflections need more than directional colour (1.5).
-3. Blend the surface, then shade the reflection (2.5).
-4. Fit appearance first, then refine geometry (2).
-5. A controlled appearance comparison (1.5).
-6. Explicit reflections improve every tested view (2.5).
-7. Higher scores still leave distorted reflections (1).
-8. Normals and lighting must be checked together (3).
-9. Changing the loss changes the trade-off (2).
-10. Reconstruction quality needs more than one score (1).
+Timings are rehearsal targets. The script contains approximately 1,600 spoken words, leaving time for pointing at figures, pauses and transitions. The planned main-slide durations sum to 15 minutes; Q&A has no allotted speaking time.
 
-Backup: full test results, four-case lighting/normal diagnostic, and attribution.
+## Evidence and validation
 
-## Visual evidence
+![Main-slide overview](../../outputs/presentation-15min/overview-main.png)
 
-![Actual sphere test reflections](../reports/assets/2026-11-07-report-analysis/test-crops-views-0-73.png)
+*Twelve main slides. Actual sphere and Materials images are drawn from the saved experiment evidence; the method pipeline uses editable explanatory shapes. The 200-view test comparison remains separate from five-view normal/lighting diagnostics and validation-only loss trials.*
 
-*Sphere, test views 0 and 73: target, SH3, HDR-1.0, HDR-0.75. Slides 2, 6 and 7
-reuse identical source crop rectangles; no experimental pixels are retouched.*
+![Q&A-slide overview](../../outputs/presentation-15min/overview-qna.png)
 
-![Actual reference-normal diagnostic](../reports/assets/2026-11-03-reference-normal-swap/normal-swap-highlight.png)
+*Seven Q&A slides, including additional actual RGB comparisons, normal/depth/error maps, environment substitutions, loss-trial normals and earlier failures. Every scientific display retains its scene/view/model labels and relevant scale information.*
 
-*Sphere, validation view 0: target, reference lighting with learned normals,
-reference lighting with reference normals. Diagnostic reference information is
-not available to training. The five-view means are separate from test results.*
+Checks verify saved metric claims, all embedded images loading, text overflow on nineteen HTML slide previews, native PowerPoint object bounds, speaker-note inclusion, 15-minute timing, appendix navigation and image enlargement. The main and Q&A preview sheets were visually reviewed. PNG/HTML previews share the slide coordinates with PowerPoint; review in the presenting application before delivery.
 
-Main headline: matched HDR-1.0 versus SH3, +4.31 dB test PSNR and 35.1% lower
-LPIPS. Keep the additional size variant and validation-only loss trials distinct.
-One scene and one seed; the 200 cameras are not independent training repeats.
+[make_qna_figures.py](make_qna_figures.py) rebuilds the three diagnostic comparison sheets from archived saved arrays. The [Q&A appendix](qna-visual-appendix.md) explains the RGB/normal/depth differences and the source of each figure. [The report](../final-report/report.md) retains the detailed method and full evidence.
 
-Before presenting: add author details, confirm personal attribution/AI-use
-wording, rehearse timing, and review fonts in PowerPoint. Full claims and sources
-are in [the report](../final-report/report.md).
-
-**Good commit point:** deck source, build requirements and this narrative.
-Generated presentations remain under ignored `outputs/` and can be rebuilt.
+**Good commit point:** the script, Q&A appendix, deck builder, README and portable Q&A data/images. Copy the generated PowerPoint for presentation; generated outputs are ignored by Git and can be rebuilt.

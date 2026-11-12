@@ -1,0 +1,133 @@
+{
+  "scene": "justChromeBall",
+  "split": "validation",
+  "views": [
+    0,
+    51
+  ],
+  "models": [
+    "SH3",
+    "HDR-1.0"
+  ],
+  "files": [
+    {
+      "path": "docs/presentation/assets/2026-11-12-qna/inputs/validation-0.npz",
+      "sha256": "cb49e391802f72f62b1b14adb57f4bd71ca7de5ceac216286e741d63fb1e697f"
+    },
+    {
+      "path": "docs/presentation/assets/2026-11-12-qna/inputs/validation-51.npz",
+      "sha256": "4f55e083d3218db6f622d9104c117f685d26812d97ba65a814a0d9aace8d634b"
+    }
+  ],
+  "original_sources": [
+    {
+      "path": "outputs/Nov03-sphere-validation/protocol.json",
+      "sha256": "2f39f75152aadf97e61362cdb4dae1284f47c72f52e2f7ca1840c1e32035a692"
+    },
+    {
+      "path": "outputs/Nov03-sphere-geometry-val/geometry.json",
+      "sha256": "c401ce6e74a8efd7aea07ec623afb794ae34c9a0a39c9a6e8ed7b85d489b8e26"
+    },
+    {
+      "path": "data/justChromeBall/transforms_val.json",
+      "sha256": "c4ab7891ac24e43c6aa2c0fb3234c3d2cf229c5d0db45d6785ad11f46e680f82"
+    },
+    {
+      "path": "data/justChromeBall/capture.json",
+      "sha256": "44ba1a3e33bb09e94d428703e4948168b45ec89813a948781c39a35308c9c4ad"
+    },
+    {
+      "path": "outputs/Nov03-sphere-geometry-val/r_0.npz",
+      "sha256": "17516b91d7c699abe911e7bdd1ad1fe52cd9a4a78872d5d7cc88e23a5b623f78"
+    },
+    {
+      "path": "data/justChromeBall/val/r_0.png",
+      "sha256": "113b7746463a6787647995aa9d60b060cc362731e6ce5214eadb0916209199d7"
+    },
+    {
+      "path": "outputs/Nov03-sphere-validation/reference-0.png",
+      "sha256": "eab953bba147237c60a0b74eb7b943b3a028c7cb2b5ce3dff4eba20f222d9bdc"
+    },
+    {
+      "path": "outputs/Nov03-sphere-validation/model-0-0.png",
+      "sha256": "28eb2f2c6dfedbd1cff71f0d95131da223fafbc3ce7e169157d7a070c85bb0bd"
+    },
+    {
+      "path": "outputs/Nov03-sphere-validation/model-1-0.png",
+      "sha256": "954fe6d66041e823f324543249ef32ded08b1160760c7695d23025274cafcb11"
+    },
+    {
+      "path": "outputs/Nov03-sphere-validation/model-0-0.buffers.npz",
+      "sha256": "c7e0f582bd558be677c25e1b5ba3254c20dde5213d34aa68bb5a846ff79501f3"
+    },
+    {
+      "path": "outputs/Nov03-sphere-validation/model-1-0.buffers.npz",
+      "sha256": "93ac2590a118b8d119ba5b6c02c62428a1729cb4607921b6c104bce9e519de94"
+    },
+    {
+      "path": "outputs/Nov03-sphere-geometry-val/r_51.npz",
+      "sha256": "eaef4fb7e8e6b124d1af0238925da8d4e8d66054dc4838d776a797dbde12b0f1"
+    },
+    {
+      "path": "data/justChromeBall/val/r_51.png",
+      "sha256": "d3678ce652dc589718de9e97af43d5ec9590c65dbfeeabb41f1bc040e9fff0f7"
+    },
+    {
+      "path": "outputs/Nov03-sphere-validation/reference-51.png",
+      "sha256": "5cd6680aec681d2942fc9772309ee172027b01920f2e41cf40dc566ea29b36a2"
+    },
+    {
+      "path": "outputs/Nov03-sphere-validation/model-0-51.png",
+      "sha256": "b9e9c93eca6344b563e5752c4a337ae6642427f7c7cbe8a21258fe2fd9ede382"
+    },
+    {
+      "path": "outputs/Nov03-sphere-validation/model-1-51.png",
+      "sha256": "900622dfb221748a843ef6f099a6070289b1bacac7cae954b0d8c8300da4e8c2"
+    },
+    {
+      "path": "outputs/Nov03-sphere-validation/model-0-51.buffers.npz",
+      "sha256": "1712c0d2031bd601eee87c2388f6961e163c0b168ed298b879f402e9821b4475"
+    },
+    {
+      "path": "outputs/Nov03-sphere-validation/model-1-51.buffers.npz",
+      "sha256": "83e10447161344fc43c06aca3b524d26916275a9eb91d991e71a639f9b86be1c"
+    }
+  ],
+  "geometry_reference": {
+    "status": "completed",
+    "scene": "C:\\Users\\e1355010\\3DGSresearch\\data\\blender\\justChromeBall.blend",
+    "scene_sha256": "b5b3b5eef50aecde5b353003199edf3e0312ac0862093af76d5972e0e4cd4f91",
+    "manifest": "C:\\Users\\e1355010\\3DGSresearch\\data\\justChromeBall\\transforms_val.json",
+    "manifest_sha256": "c4ab7891ac24e43c6aa2c0fb3234c3d2cf229c5d0db45d6785ad11f46e680f82",
+    "script_sha256": "b4dc4571d95adb907c55ce96f244e4ba49249ec546b6587f8e52df0a8ca03451",
+    "blender_version": "5.0.1",
+    "resolution": [
+      800,
+      800
+    ],
+    "focal": 1250.0000504168488,
+    "views": [
+      0,
+      13,
+      73,
+      88,
+      51
+    ],
+    "objects": [
+      {
+        "id": 1,
+        "name": "Sphere",
+        "materials": [
+          "Chrome"
+        ]
+      }
+    ],
+    "triangles": 960,
+    "normal_convention": "unit world-space, camera-facing interpolated evaluated-mesh corner normals; excludes shader bump",
+    "depth_convention": "positive camera-z distance, not Euclidean ray distance",
+    "pixel_convention": "top-left origin, half-integer centers, Blender c2w +X right +Y up -Z forward",
+    "usage": "diagnostic evaluation only; no reference geometry used by SH training"
+  },
+  "selection": "Existing illustration view 0 and previously preserved failure view 51.",
+  "note": "Saved RGB PNGs and float normal/depth/coverage arrays only; no training or new rendering."
+}
