@@ -107,9 +107,18 @@ def main():
             path = (document.parent / target.split('#')[0]).resolve()
             assert path.exists(), f'{document.name}: missing link {target}'
             local_links += 1
-    assert len(re.findall(r'^!\[', text, flags=re.M)) == 13
-    for label in ('E1', '4a', '4b', '6'):
+    assert len(re.findall(r'^!\[', text, flags=re.M)) == 14
+    for label in ('E1', '3a', '3b', '4a', '4b', '6'):
         assert f'*Figure {label}.' in text
+    full_view_asset = ASSETS / '2026-11-12-full-views'
+    full_views = json.loads((full_view_asset / 'provenance.json').read_text(encoding='utf-8'))
+    assert full_views['split'] == 'test' and full_views['views'] == [0, 13, 73, 88]
+    assert full_views['columns'] == ['Blender reference', 'SH3', 'HDR-1.0']
+    assert len(full_views['panels']) == 12
+    for item in full_views['sources'] + [full_views['figure']]:
+        assert hashlib.sha256((ROOT / item['path']).read_bytes()).hexdigest() == item['sha256']
+    full_archive = json.loads((full_view_asset / 'archive.json').read_text(encoding='utf-8'))
+    assert len(full_archive['verified_original_panels']) == 12
     analysis_path = ASSETS / '2026-11-07-report-analysis/analysis.json'
     analysis = json.loads(analysis_path.read_text(encoding='utf-8'))
     assert analysis['effect_plot']['kind'] == 'histograms'
@@ -134,7 +143,8 @@ def main():
             checked_copies += 1
     print(json.dumps({'table_rows_checked': len(checked), 'local_links_checked': local_links,
                       'available_original_input_hashes_checked': checked_copies,
-                      'report_figures': 13, 'saved_data_analysis_sources_checked': len(analysis['sources']),
+                      'report_figures': 14, 'saved_data_analysis_sources_checked': len(analysis['sources']),
+                      'full_view_panels_checked': len(full_views['panels']),
                       'revision_figure_sources_checked': len(revision['sources']),
                       'historical_materials_metric_rows_checked': 400,
                       'loss_trial_paired_validation_rows': 200, 'loss_trial_normal_rows': 10,

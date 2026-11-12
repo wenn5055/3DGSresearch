@@ -1,0 +1,61 @@
+{
+  "original": {
+    "path": "outputs/Nov03-sphere-final-test/rgb-comparison.png",
+    "sha256": "5da9a767aa6b8a38a0c7da657f8f4905e422b86057b523dfecebd629388f9a3a"
+  },
+  "copy": {
+    "path": "docs/reports/assets/2026-11-12-full-views/source-test-rgb.png",
+    "sha256": "5da9a767aa6b8a38a0c7da657f8f4905e422b86057b523dfecebd629388f9a3a"
+  },
+  "verified_original_panels": [
+    {
+      "path": "outputs/Nov03-sphere-final-test/reference-0.png",
+      "sha256": "00bee63f1ca1a46e6db57dc32ec72dc4e9e1c279fc99fffe2986a767d2765c86"
+    },
+    {
+      "path": "outputs/Nov03-sphere-final-test/model-0-0.png",
+      "sha256": "8dd83720888744209ec4b8825c369f4483661762a2c2e5249ac6deecb5803a60"
+    },
+    {
+      "path": "outputs/Nov03-sphere-final-test/model-1-0.png",
+      "sha256": "ad6b98540bf7014688715154d90b7610250f83fdb4b51614db47746de72d4f1c"
+    },
+    {
+      "path": "outputs/Nov03-sphere-final-test/reference-13.png",
+      "sha256": "1b5ec1b20791201bcc4892b8464adb89985053dd0e7c16ec52b442d64053ef5b"
+    },
+    {
+      "path": "outputs/Nov03-sphere-final-test/model-0-13.png",
+      "sha256": "c0edf5d7214af6abe8e38118b79c66ad8f8110aa5c92b1e581a3d452d0340f26"
+    },
+    {
+      "path": "outputs/Nov03-sphere-final-test/model-1-13.png",
+      "sha256": "17c623a9696acef4fb24cfde7475fb37d28f9e49438c9d5db963f2523f0330de"
+    },
+    {
+      "path": "outputs/Nov03-sphere-final-test/reference-73.png",
+      "sha256": "daf4484b86b6689f9080cf07ffbd2238504b5b6e2b709d184ee522dcf0da6664"
+    },
+    {
+      "path": "outputs/Nov03-sphere-final-test/model-0-73.png",
+      "sha256": "1a0c749419cc8443531fa3b21b091c7cdf2e04da97e8190b608e6dcfefe42002"
+    },
+    {
+      "path": "outputs/Nov03-sphere-final-test/model-1-73.png",
+      "sha256": "8ef29fc4409528239d21c4592632d043ed38668f2eb48f07610ef399cfad7459"
+    },
+    {
+      "path": "outputs/Nov03-sphere-final-test/reference-88.png",
+      "sha256": "9c8e0fa45a23e7ba8b3b793f8f3dc05272dc0b634988de9dc3569a4e01193592"
+    },
+    {
+      "path": "outputs/Nov03-sphere-final-test/model-0-88.png",
+      "sha256": "5d132fb0eb6c772fb21b273588be452dd6edeca7459748156c8c2a3256f2a595"
+    },
+    {
+      "path": "outputs/Nov03-sphere-final-test/model-1-88.png",
+      "sha256": "489a168b1a793fb65a04966b091907d66136273303e354444ca817bd32ba1195"
+    }
+  ],
+  "check": "Selected panels match previously archived raw image hashes and downsampled sheet pixels exactly."
+}

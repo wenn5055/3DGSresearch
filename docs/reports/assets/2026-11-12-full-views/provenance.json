@@ -1,0 +1,158 @@
+{
+  "scene": "justChromeBall",
+  "split": "test",
+  "views": [
+    0,
+    13,
+    73,
+    88
+  ],
+  "columns": [
+    "Blender reference",
+    "SH3",
+    "HDR-1.0"
+  ],
+  "selection": "Reuse the four original illustration cameras, without ranking scores.",
+  "display": "Complete image panels copied pixel-for-pixel from saved 400px displays of 800px renders. Labels/layout only; no scene crop, contrast adjustment or retouching.",
+  "panels": [
+    {
+      "view": 0,
+      "model": "reference",
+      "source_rectangle_xyxy": [
+        12,
+        68,
+        412,
+        468
+      ]
+    },
+    {
+      "view": 0,
+      "model": "SH3",
+      "source_rectangle_xyxy": [
+        424,
+        68,
+        824,
+        468
+      ]
+    },
+    {
+      "view": 0,
+      "model": "HDR-1.0",
+      "source_rectangle_xyxy": [
+        836,
+        68,
+        1236,
+        468
+      ]
+    },
+    {
+      "view": 13,
+      "model": "reference",
+      "source_rectangle_xyxy": [
+        12,
+        510,
+        412,
+        910
+      ]
+    },
+    {
+      "view": 13,
+      "model": "SH3",
+      "source_rectangle_xyxy": [
+        424,
+        510,
+        824,
+        910
+      ]
+    },
+    {
+      "view": 13,
+      "model": "HDR-1.0",
+      "source_rectangle_xyxy": [
+        836,
+        510,
+        1236,
+        910
+      ]
+    },
+    {
+      "view": 73,
+      "model": "reference",
+      "source_rectangle_xyxy": [
+        12,
+        952,
+        412,
+        1352
+      ]
+    },
+    {
+      "view": 73,
+      "model": "SH3",
+      "source_rectangle_xyxy": [
+        424,
+        952,
+        824,
+        1352
+      ]
+    },
+    {
+      "view": 73,
+      "model": "HDR-1.0",
+      "source_rectangle_xyxy": [
+        836,
+        952,
+        1236,
+        1352
+      ]
+    },
+    {
+      "view": 88,
+      "model": "reference",
+      "source_rectangle_xyxy": [
+        12,
+        1394,
+        412,
+        1794
+      ]
+    },
+    {
+      "view": 88,
+      "model": "SH3",
+      "source_rectangle_xyxy": [
+        424,
+        1394,
+        824,
+        1794
+      ]
+    },
+    {
+      "view": 88,
+      "model": "HDR-1.0",
+      "source_rectangle_xyxy": [
+        836,
+        1394,
+        1236,
+        1794
+      ]
+    }
+  ],
+  "archive": "archive.json",
+  "figure": {
+    "path": "docs/reports/assets/2026-11-12-full-views/reference-sh3-hdr1-full-views.png",
+    "sha256": "e5d9271d5357441baf0ff5039fad377776a7656e9a5395b8225cf2959ca04f07"
+  },
+  "sources": [
+    {
+      "path": "docs/reports/assets/2026-11-12-full-views/source-test-rgb.png",
+      "sha256": "5da9a767aa6b8a38a0c7da657f8f4905e422b86057b523dfecebd629388f9a3a"
+    },
+    {
+      "path": "docs/reports/assets/2026-11-03-sphere-study/test/protocol.json",
+      "sha256": "d233da880077a8c991055e4f585fda50bbd6ca2c7e0ad5b33cf561322167d2d6"
+    },
+    {
+      "path": "docs/final-report/make_full_view_figure.py",
+      "sha256": "2f53be927d231bf5f94de063325dc81552bf39104851903b18e5a9e3eef7c054"
+    }
+  ]
+}

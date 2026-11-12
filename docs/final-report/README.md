@@ -13,6 +13,8 @@ The primary evidence is the recorded **100k-surfel / seed-7 / 10k + 5k** study. 
 
 The 11 November revision adds early Materials RGB/SH3 results as initial exploration, defines appearance/footprint/NeRF terminology, makes the surfel count and training budget explicit, replaces Figure 2 with view-count histograms, shows refinement improvements before the preserved failure, simplifies the environment display to one exposure, and shows all four lighting/normal combinations. HDR-0.75 remains clearly labelled as the additional diagnostic model. The Markdown and figures are current; the PDF/HTML were not rebuilt for this revision, as requested.
 
+The 12 November revision adds SSIM to the abstract, explains the controlled sphere scope, distinguishes normal–depth regularization from supplied-normal supervision, defines L1 and validation use, clarifies the 0.75 initial-scale experiment, and labels the two follow-up loss trials. Figure 6's caption records the remaining contrast/dark-tone mismatch. The mirror-angle illustration cites Wright's reflection worksheet and separates the geometric calculation from measured experiment results. Existing experimental figures and numerical tables are preserved; no PDF/HTML rebuild was requested.
+
 ## Build a PDF and offline reading copy
 
 Use an isolated report environment so document packages do not alter the research environment:
@@ -23,7 +25,7 @@ py -3.12 -m venv outputs/report-tools
 ./outputs/report-tools/Scripts/python.exe docs/final-report/build_report.py
 ```
 
-Outputs are `outputs/final-report-draft/report.pdf` and `report.html`. The HTML embeds all figures and needs no network connection. The builder uses installed Chrome or Edge; pass `--browser PATH` for another Chromium executable. It verifies all thirteen images load (twelve experiment figures and one labelled method schematic), checks expected PDF text, exports page previews, and records asset hashes/package versions in `build-manifest.json`.
+Outputs are `outputs/final-report-draft/report.pdf` and `report.html`. The HTML embeds all figures and needs no network connection. The builder uses installed Chrome or Edge; pass `--browser PATH` for another Chromium executable. It verifies all fourteen images load (thirteen experiment figures and one labelled method schematic), checks expected PDF text, exports page previews, and records asset hashes/package versions in `build-manifest.json`.
 
 Check numeric tables, links and available evidence hashes independently with `python docs/final-report/verify_report.py` (standard library only).
 
@@ -38,6 +40,8 @@ Generated artifacts and document-tool packages stay under ignored `outputs/`. So
 `python docs/final-report/analyse_saved_results.py` uses the research environment to regenerate paired descriptive statistics and plot/crop layouts from tracked saved evidence. It runs no model evaluation. Camera variation is not treated as uncertainty over training seeds.
 
 `python docs/final-report/make_revision_figures.py` rebuilds the early Materials, refinement, single-exposure environment and full lighting/normal figures from tracked images and metric archives. It runs no experiments. The optional `--archive-materials` flag is only for checking/copying the original historical local outputs into that archive.
+
+`python docs/final-report/make_full_view_figure.py` rebuilds Figure 3a: full-frame reference/SH3/HDR-1.0 comparisons for test views 0/13/73/88, using the archived original test sheet. Figure 3b retains the detail crops. The optional `--archive-source` flag verifies and copies the original local sheet; default rebuilding uses tracked inputs only. No new evaluation or PDF build is needed.
 
 The locally prepared `outputs/final-report-reproduction/checkpoints.zip` contains the seven required files for the three main final models plus original/rebased run metadata, source fingerprints, package records and training logs. `bundle_checkpoints.py` rebuilds it and verifies frozen selection hashes. Its [manifest](../reports/assets/2026-11-07-report-analysis/checkpoint-bundle-manifest.json) is tracked; the author still needs a persistent submission/download location. All 400 sphere images and split manifests are already tracked in Git.
 
