@@ -1,6 +1,6 @@
 # Reconstructing Reflections with Deferred Gaussian Surfels
 
-**CP4282 individual project — draft, revised 12 November 2026**<br>
+**CP4282 individual project — Final, revised 13 November 2026**<br>
 **Author:** Tang Xiao Di Wendy<br>
 **Code and experiment records:** [github.com/wenn5055/3DGSresearch](https://github.com/wenn5055/3DGSresearch)
 
@@ -24,7 +24,7 @@ The original plan included Materials and Ship. Work began on Materials by extend
 
 *Figure E1. Original Materials, test view 13. Columns: Blender target, fixed RGB with staged MSE/D-SSIM, SH3 with staged MSE/D-SSIM. Top: full images; bottom: identical Chrome crops, image bounds (200, 505)–(380, 685). Actual saved renders show recognisable materials and reflected colour, but both models miss the target's sharp Chrome detail. View 13 reuses an existing illustration camera; this is an early baseline result, not the later surfel comparison.*
 
-This was an **initial exploration phase**, before the later decisions about training-only surface initialisation, fixed surfel count and appearance-first refinement. The version of the course assignment trainer used in these early experiments also used validation images when computing its initial mean colour; the later study uses training-only initialisation. These results document baseline development rather than an exact reproduction of the course's published scores, and are not pooled with the main study. [Archived results and protocol](../findings.md#matched-materials-test-comparison)
+This was an **initial exploration phase**, before the later decisions about training-only surface initialisation, fixed surfel count and appearance-first refinement. The version of the course assignment trainer used in these early experiments also used validation images when computing its initial mean colour; the later study uses training-only initialisation. These results document baseline development rather than an exact reproduction of the course's published scores, and are not pooled with the main study. [Archived results and protocol](https://github.com/wenn5055/3DGSresearch/blob/main/docs/findings.md#matched-materials-test-comparison)
 
 In the initial dataset chosen, the Nerf synthetic Materials dataset (also in the course notes), there are a few complications that muddles the research direction. Chrome reflects nearby objects as well as the forest. A single environment map indexed only by direction cannot directly represent how those local reflections change with surface position and visibility. In the separate enlarged-Chrome scene, silhouette-based initialisation missed a recessed logo, adding a local shape-recovery problem.
 
@@ -93,7 +93,7 @@ Both main methods follow the same schedule:
 | Appearance fitting | 10,000 | Appearance only; position, scale, orientation and opacity stay fixed |
 | Refinement | 5,000 | Geometry, opacity and appearance |
 
-The first stage lets appearance fit the estimated surface before geometry starts moving. Refinement then allows smaller geometry updates. Adam, the parameter-update algorithm, restarts its optimiser state at the transition; the learned model parameters are retained.
+At the start of training, appearance is still inaccurate, including the environment lighting in the reflection model. If geometry moves immediately, it can reduce image error by compensating for appearance errors rather than recovering the correct surface. The first stage therefore holds the estimated surface fixed while appearance is fitted. This is intended to reduce early geometry–appearance compensation; refinement then allows smaller geometry updates alongside appearance. Adam, the parameter-update algorithm, restarts its optimiser state at the transition; the learned model parameters are retained.
 
 Both methods use the same geometry-loss settings and learning-rate schedules. Each retains **100,000 surfels** throughout training and completes **15,000 iterations: 10,000 appearance-fitting steps plus 5,000 refinement steps**. No surfels are added or removed, and early stopping is disabled. Here, a reported point count means the number of surfel primitives, not image pixels or sampled camera rays. The SH3 control gradually enables its three directional bands during the first stage. Following the same update policy does not force the two methods to learn identical final surfaces.
 
@@ -121,9 +121,13 @@ The mask weight is **0.1** during refinement. This supplies foreground informati
 
 ### 4.3 Normal–depth consistency: make two descriptions of the surface agree
 
-Although Blender provides reference normal maps, using them as training targets would supply additional geometric information unavailable in our RGB-and-mask setting. We therefore reserve those maps for evaluation and diagnostic substitutions. Training instead uses **normal–depth consistency as a geometric regulariser**, encouraging two surface descriptions predicted by the model to agree without supplying the true normals.
+Although Blender provides reference normal and depth maps, using them as training targets would supply additional geometric information unavailable in our RGB-and-mask setting. We therefore reserve those maps for evaluation and, for normals, diagnostic substitutions. Training instead uses **normal–depth consistency as a geometric regulariser**, encouraging two surface descriptions predicted by the model to agree without supplying the true geometry.
 
-The model describes surface orientation in two ways. Surfel orientations produce a normal map: an image recording the surface direction at each pixel. The depth map records surface depth at each pixel, from which another normal can be estimated.
+The model describes surface orientation in two ways. Surfel orientations produce a normal map: an image recording the surface direction at each pixel. A second normal is estimated from the model's rendered depth map.
+
+**The silhouettes provide the initial 3D surface. The depth map used by the consistency loss is rendered from the current surfel geometry, so it evolves during refinement.**
+
+For each pixel, the renderer computes where the camera ray meets each contributing surfel's plane. It blends those camera-z depths using the same front-to-back visibility and opacity weights used for image compositing, then divides by the accumulated coverage. The result is a visibility-weighted average depth, rather than simply the nearest intersection. No separate depth network or supplied depth image is used. Blender's reference depth in the evaluation comparisons is a separate map exported from the known mesh and does not enter this training loss. Appendix D.2 compares the rendered normals and depth with these independent mesh references.
 
 To obtain that second normal, use the camera geometry and neighbouring depth values to locate their points in 3D. The vectors from left to right and from top to bottom describe the local surface slopes. Their cross product gives a direction perpendicular to that surface. After normalisation and alignment to the same camera coordinates, compare it with the rendered surfel normal:
 
@@ -242,7 +246,7 @@ Here **reference** means Blender information used only for this diagnostic. Refe
 
 ![All four lighting and normal combinations](../reports/assets/2026-11-11-report-revision/lighting-normal-permutations.png)
 
-*Figure 6. Chrome sphere, validation view 0, same HDR-0.75 checkpoint and identical reflection crop. Left: Blender target. In the 2 × 2 grid, rows use learned/reference lighting and columns use learned/reference normals. Top left: trained result, blurred and rippled; top right: reference normals with learned lighting, still blurred; bottom left: reference lighting with learned normals, detailed but rippled; bottom right: both reference inputs, recovering much more recognisable structure while still failing to reproduce the Blender target's contrast and darker colour tones. All four are actual saved diagnostic renders.*
+*Figure 6. Chrome sphere, validation view 0, same HDR-0.75 checkpoint and identical reflection crop. Left: Blender target. In the 2 × 2 grid, rows use learned/reference lighting and columns use learned/reference normals. Top left: trained result, blurred and rippled; top right: reference normals with learned lighting, still blurred; bottom left: reference lighting with learned normals, detailed but rippled; bottom right: both reference inputs, recovering much more recognisable structure while still failing to reproduce the Blender target's contrast and darker colour tones. All four are actual saved diagnostic renders. Appendix D.4 shows two additional views.*
 
 Correcting normals helps strongly **when reference lighting is used**: PSNR rises by 2.31 dB and LPIPS improves by 0.0287. Under learned lighting, the same normal replacement instead worsens mean LPIPS by 0.0058. This dependence on the lighting suggests that the learned map and normals have fitted together; correcting one input alone need not improve the image.
 
@@ -284,7 +288,7 @@ LPIPS improves on **all 100 views**, with a **10.15% lower mean**. SSIM improves
 
 ![Actual image-loss comparison](../reports/assets/2026-11-07-refinement-loss/reflection-highlight-view-0.png)
 
-*Figure 8. Sphere validation view 0: target, MSE refinement, L1 + D-SSIM refinement. Actual central crops show changed contrast, while thin branches remain smeared or distorted. The full five-view comparison is preserved with the loss experiment.*
+*Figure 8. Sphere validation view 0: target, MSE refinement, L1 + D-SSIM refinement. Actual central crops show changed contrast, while thin branches remain smeared or distorted. Appendix D.5 shows the full five-view comparison.*
 
 The loss choice changes the image-quality trade-off, but this trial does not recover the missing fine reflections. It also changes both the pixel penalty and the structural term, so it cannot tell us which caused the gain. A separate MSE + D-SSIM control would be needed to isolate those effects. This is a useful next comparison if loss design is pursued further; it is not a result supplied by the current study.
 
@@ -325,13 +329,48 @@ OpenAI Codex assisted with code inspection, implementation/debugging, experiment
 
 ## Appendix A. Technical details and attribution
 
-The core renderer keeps filtered screen-space Gaussian footprints and front-to-back blending. For rotation Rᵢ and positive tangent scales sₓᵢ, sᵧᵢ, a surfel has covariance Rᵢ diag(sₓᵢ², sᵧᵢ², 0) Rᵢᵀ and normal Rᵢ(0,0,1)ᵀ. Depth uses contributor ray–plane intersections with guarded fallback to centre depth. This does not replace the footprint with the complete perspective-accurate 2DGS rasteriser. The main study disables growth, pruning, opacity resets, the published normal-propagation procedure and early stopping.
+### A.1 Surface representation and depth
 
-For visibility weights wᵢ, the first pass stores colour C = Σwᵢcᵢ, normal sum N = Σwᵢnᵢ, coverage A = Σwᵢ and reflection sum S = Σwᵢσ(mᵢ). The shading normal is n = N/‖N‖. The incoming camera-to-surface ray d reflects to r = d − 2(d·n)n.
+Each surfel is a flat Gaussian with rotation Rᵢ and two positive in-plane scales, sₓᵢ and sᵧᵢ. These define its shape and surface direction:
 
-The shader bilinearly samples raw environment parameters and decodes them with softplus. Its reflection blend is s = σ(logit(clamp(S/A)) + g(|d·n|)), where g linearly interpolates 16 learned values initially set to zero. Base RGB is converted to linear light, mixed with reflected radiance, clipped and converted to display RGB before composition over white. Training compares display RGB. No reference environment pixels, mesh normals or material-curve values enter fitting.
+- **Covariance:** Rᵢ diag(sₓᵢ², sᵧᵢ², 0) Rᵢᵀ. The zero third scale makes the surfel flat.
+- **Normal:** nᵢ = Rᵢ(0,0,1)ᵀ, perpendicular to the surfel plane.
 
-Ignoring the normalisation epsilon and holding weights fixed, the normal-only gradient is wᵢ(I−nnᵀ)/‖N‖ times the pixel-normal gradient. This connects overlapping contributors to the same shading objective. The implementation also differentiates compositing weights and the angle-dependent blend.
+The renderer retains filtered screen-space Gaussian footprints and front-to-back blending. Depth comes from intersecting each pixel's camera ray with contributing surfel planes, with a guarded fallback to centre depth. It therefore does not implement the complete perspective-accurate 2DGS rasteriser.
+
+The main study disables surfel growth, pruning, opacity resets, the published normal-propagation procedure and early stopping.
+
+### A.2 From surface buffers to reflected colour
+
+The first rendering pass combines surfel contributions at each pixel. Each visibility weight wᵢ includes the surfel's opacity and the light transmitted through preceding contributors.
+
+| Stored quantity | Calculation | Meaning |
+| --- | --- | --- |
+| Base colour C | Σwᵢcᵢ | Weighted colour sum |
+| Normal sum N | Σwᵢnᵢ | Weighted surface directions |
+| Coverage A | Σwᵢ | Accumulated opacity |
+| Reflection sum S | Σwᵢσ(mᵢ) | Weighted reflection strengths |
+| Depth D | Σwᵢzᵢ / max(A, 10⁻⁸) | Average contributor depth along the camera's z-axis |
+
+Here, cᵢ is the surfel's base colour, mᵢ its learned reflection parameter and zᵢ its ray–plane intersection depth. The sigmoid function σ maps mᵢ to a reflection strength between zero and one.
+
+The shading pass then:
+
+1. **Finds the reflection direction.** Normalise N to obtain n = N/‖N‖. The incoming camera-to-surface ray d reflects to r = d − 2(d·n)n.
+2. **Samples the lighting.** Bilinearly sample the environment parameters in direction r, then apply softplus to obtain positive HDR radiance.
+3. **Blends base colour and reflection.** The blend strength is s = σ(logit(clamp(S/A)) + g(|d·n|)). The function g adjusts the strength with viewing angle by interpolating 16 learned values, initially zero. Base RGB is converted to linear light, mixed with reflected radiance, clipped and converted back to display RGB before composition over white.
+
+Training compares display RGB. Reference environment pixels, mesh normals and material-curve values are not supplied during fitting.
+
+### A.3 How image errors update surfel normals
+
+Because shading uses the combined pixel normal, an image error can update every contributing surfel's normal. Holding visibility weights fixed and omitting the small normalisation epsilon, the gradient reaching surfel i is:
+
+<div class="equation">∂L/∂nᵢ = [wᵢ(I − nnᵀ)/‖N‖] (∂L/∂n).</div>
+
+Here, I is the identity matrix and ∂L/∂n is the loss gradient at the pixel normal. The expression describes the path through normal blending; the implementation also differentiates the compositing weights and angle-dependent reflection blend.
+
+### A.4 Attribution and implementation checks
 
 | Component | Origin or influence |
 | --- | --- |
@@ -340,36 +379,17 @@ Ignoring the normalisation epsilon and holding weights fixed, the normal-only gr
 | Deferred normal/environment shading | Adapted 3DGS-DR ideas |
 | HDR/angular model, staged experiments and diagnostics | Project implementation |
 
-**[AUTHOR REVIEW: confirm the exact assignment/project boundary and any external code copied verbatim; add file-level attribution and licence acknowledgements where needed.]**
+Recorded development checks cover:
 
-Recorded correctness checks include 22 HDR finite-difference cases per device on CPU and CUDA, plus save/reload and 800px integration checks. Tests verify display conversion before coverage composition. Normal-replacement checks preserve checkpoint hashes and non-normal buffer fields and reproduce the previous lighting baselines. These are recorded development checks, not newly repeated training runs. The [test code](https://github.com/wenn5055/3DGSresearch/blob/59c553f/scripts/test_surfel_hdr.py) and dated experiment records supply details. Unit 9 explains why checking derivatives separately from forward rendering matters. [Unit 9: gradient checks](https://weitsang.github.io/gaussian-splatting-notes/unit-9/#the-central-idea-differentiate-the-primitive-hand-write-the-blend)
+- **Gradients:** 22 HDR finite-difference cases per device on CPU and CUDA.
+- **Rendering and persistence:** save/reload, 800px integration and display conversion before coverage composition.
+- **Normal substitutions:** unchanged checkpoint hashes and non-normal buffers, with the previous lighting baselines reproduced.
+
+These are recorded checks, not newly repeated training runs. Details are in the [test code](https://github.com/wenn5055/3DGSresearch/blob/59c553f/scripts/test_surfel_hdr.py) and dated experiment records. [Unit 9](https://weitsang.github.io/gaussian-splatting-notes/unit-9/#the-central-idea-differentiate-the-primitive-hand-write-the-blend) explains why derivatives are checked separately from forward rendering.
 
 ## Appendix B. Reproduce the results
 
-The repository's recorded study code/evidence commit is `59c553f`; later report helpers accompany this draft. Each run retains its settings and source/input hashes. All 400 sphere images and split manifests are tracked. Capture used Blender 5.0.1, 128 samples, seed 7, Standard colour transform, exposure zero and gamma one. Scene/data attribution is recorded in `data/blender/SOURCE.md`: Materials comes from the NeRF scene distribution, with the original asset credited to elbrujodelatribu (CC0).
-
-### B.1 Evaluate the saved main models
-
-The locally prepared `outputs/final-report-reproduction/checkpoints.zip` contains the three main final models. Extract it into a **fresh clone** to preserve the original workspace's metadata. PLY and surfel sidecars are required together; SH3 also needs its SH sidecar. **[AUTHOR REVIEW: upload or attach the prepared bundle and add its persistent location here; full checkpoints are outside Git.]**
-
-Install `requirements.txt` in the research environment. From the clone's root, run:
-
-```powershell
-python scripts/evaluate_reflection_suite.py `
-  outputs/Nov03-1357-justChromeBall-staged-sh3-refine-5k `
-  outputs/Nov02-2023-justChromeBall-staged-hdr-refine-5k `
-  outputs/Nov03-1402-justChromeBall-staged-hdr-refine-5k `
-  --labels SH3 HDR-1.0 HDR-0.75 `
-  --output outputs/report-main-test-repeat `
-  --manifest transforms_test.json --views 0 13 73 88 `
-  --metrics psnr ssim lpips --cpu-threads 2
-```
-
-### B.2 Retrain or repeat a diagnostic
-
-`python docs/final-report/reproduce_study.py --output outputs/NEW_PLAN` prepares the six archived 100k stage configs with local paths. Add `--run` with a fresh output directory to initialise and train them. Preparation was checked; full training was not repeated for this rewrite. This helper validates models without automatically evaluating test views. Default sphere presets were restored to 100k on 10 November; the archived configs preserve the recorded study settings.
-
-The dated lighting, normal and loss experiment notes under `docs/experiments/` give diagnostic commands and their required exports. The [evidence map](evidence-map.md) links every main claim and figure to its saved data. Reference geometry and lighting remain evaluation-only. No new experiments were run for the readability rewrite.
+For instructions on reproducing the results, see the [repository README](https://github.com/wenn5055/3DGSresearch/blob/main/README.md#reproduce-from-a-fresh-clone).
 
 ## Appendix C. Computational cost
 
@@ -387,7 +407,9 @@ Training times exclude the common initialiser (68.79 s), evaluation and startup.
 
 The separate loss trial recorded 70.26 s for 5k L1/D-SSIM refinement, compared with 63.84 s for the MSE refinement. These are observations from different sessions, not a repeated timing benchmark.
 
-## Appendix D. Supporting scenes and normal maps
+## Appendix D. Supporting scenes and diagnostic comparisons
+
+### D.1 Earlier Materials and Chrome scenes
 
 In original Materials, protected deferred + SH3 improves validation PSNR from 27.3575 to 28.4721 dB but worsens LPIPS from 0.036361 to 0.038978. Chrome normal error improves from 25.88° to 15.71°, while thin reflected details remain missing. A ray diagnostic also found reflected rays hitting nearby objects, a limitation of a direction-only environment map.
 
@@ -397,6 +419,40 @@ The enlarged Chrome scene contains a recessed logo and base. Increasing position
 
 *Figure D1. Enlarged Chrome, validation view 18. Columns: target, original refinement, fivefold position-rate refinement; rows: RGB and normals. Actual crops preserve the unrecovered logo geometry. This is a separate scene and protocol.*
 
-![Reference and learned sphere normals](../reports/assets/2026-11-07-report-analysis/normal-example-view-0.png)
+### D.2 Surface normals and depth
 
-*Figure D2. Sphere validation view 0: reference mesh normal, HDR-0.75 shading normal, angular error clipped at 30°. Actual maps, with world-space normals encoded as RGB. The full five-view sheet remains in the saved diagnostic evidence.*
+The normal maps capture the broad spherical surface, but the angular-error map exposes local orientation errors that are less obvious in RGB-encoded normals. These comparisons use the primary HDR-1.0 model alongside SH3; the HDR-0.75 lighting diagnostic remains separate.
+
+![Reference and learned sphere normals with angular errors](../presentation/assets/2026-11-12-qna/normal-comparison-errors.png)
+
+*Figure D2. Chrome sphere, validation views 0 and 51, top to bottom. Columns: Blender mesh normal, SH3 shading normal, HDR-1.0 shading normal, HDR-1.0 angular error against the mesh. Actual saved float normals are encoded as RGB by mapping world-space XYZ from [−1, 1] to [0, 1]. Angular error uses a shared 0–5° scale, clipped. White pixels are outside the jointly valid reference foreground, where both models have coverage ≥ 0.5; white does not mean zero error. These are two selected validation views, not the five-view mean.*
+
+The rendered depth similarly recovers the broad sphere shape while retaining local deviations from the mesh reference. Its shared display range allows comparison across both models and views. Agreement in broad depth alone does not establish accurate local surface normals, which depend on surface slopes.
+
+![Reference and rendered sphere depth with absolute errors](../presentation/assets/2026-11-12-qna/depth-comparison-errors.png)
+
+*Figure D3. Same scene and validation views 0 and 51. Columns: Blender mesh depth, SH3 rendered depth, HDR-1.0 rendered depth, HDR-1.0 absolute depth error against the mesh. The first three columns share one positive camera-z depth range across both views and all three surfaces, in scene units rather than metres. The error display spans 0–0.02 scene units, clipped; white pixels are excluded using the same joint foreground mask as Figure D2. Model depth is rendered from the current surfels; Blender depth is an independent evaluation reference and does not supervise training. These plots use saved float buffers, without new model rendering.*
+
+### D.3 RGB differences
+
+The difference maps locate errors on the reflected structures and around the rim. HDR-1.0 reduces many of the disagreements visible with SH3, while the retained ground-detail failure remains apparent in view 51. A pixelwise difference identifies where the image disagrees with the target, without separating lighting, geometry and material causes.
+
+![RGB comparisons and absolute differences](../presentation/assets/2026-11-12-qna/rgb-differences.png)
+
+*Figure D4. Chrome sphere, validation views 0 and 51. Columns: Blender target, SH3, HDR-1.0, SH3 absolute RGB difference, HDR-1.0 absolute RGB difference. Each error pixel is the mean absolute RGB difference after scaling saved 8-bit PNG channels to [0, 1]. Both error maps use the same 0–0.25 scale, clipped; black indicates small or zero error. These visual differences include the full frame and are distinct from the float-render inputs used for the reported PSNR/SSIM/LPIPS metrics.*
+
+### D.4 Lighting and normal substitutions in additional views
+
+The additional cameras show the same interaction investigated in Section 6.3: reference lighting retains distortion with learned normals, while reference normals retain blur with learned lighting. Replacing both recovers more recognisable structure, with residual contrast and brightness differences. All four combinations are retained, including the normal-only replacement that worsens mean LPIPS in the five-view diagnostic.
+
+![Additional lighting and normal substitutions](../reports/assets/2026-11-13-appendix/lighting-normal-views-13-51.png)
+
+*Figure D5. Chrome sphere, validation views 13 and 51. Columns: Blender target; learned lighting/learned normals; reference lighting/learned normals; learned lighting/reference normals; reference lighting/reference normals. Actual identical reflection crops from the same saved HDR-0.75 checkpoint used in Figure 6. Only lighting and shading-normal direction are substituted; geometry, coverage and learned material parameters are held fixed. These are additional views from the existing five-camera diagnostic, including the preserved view-51 failure, rather than new trained results.*
+
+### D.5 Image-loss comparison across five views
+
+The extended comparison supports the trade-off in Section 6.5. L1 + D-SSIM changes contrast and broad reflected structures across the selected cameras, but thin branches, fencing and ground texture remain blurred or distorted. The improved mean LPIPS therefore does not establish recovery of those details or more accurate geometry.
+
+![Five-view refinement image-loss comparison](../reports/assets/2026-11-07-refinement-loss/reflection-crops.png)
+
+*Figure D6. Chrome sphere, validation views 0, 13, 73, 88 and 51, top to bottom. Columns: Blender target, MSE refinement, L1 + D-SSIM refinement. Actual matched central reflection crops. Both refinements start from the same frozen HDR-1.0 parent and use 5k steps with the same geometry-loss coefficients. The view order reuses the fixed diagnostic cameras; the image-score means in Table 4 cover all 100 validation views, while these five views illustrate the remaining reflection errors.*

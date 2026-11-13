@@ -15,6 +15,8 @@ The 11 November revision adds early Materials RGB/SH3 results as initial explora
 
 The 12 November revision adds SSIM to the abstract, explains the controlled sphere scope, distinguishes normal–depth regularization from supplied-normal supervision, defines L1 and validation use, clarifies the 0.75 initial-scale experiment, and labels the two follow-up loss trials. Figure 6's caption records the remaining contrast/dark-tone mismatch. The mirror-angle illustration cites Wright's reflection worksheet and separates the geometric calculation from measured experiment results. Existing experimental figures and numerical tables are preserved; no PDF/HTML rebuild was requested.
 
+The 13 November revision clarifies the intended two-stage rationale and traces depth from the silhouette-derived starting surface to the evolving rendered surfel geometry. Appendix D now compares primary-model normals, depth and RGB errors, adds lighting/normal substitutions for validation views 13/51, and includes the five-view image-loss comparison. Its scales, masks, models and split scopes are stated in the captions. These are reused saved-data figures and layout selections; no training, evaluation or document build was added.
+
 ## Build a PDF and offline reading copy
 
 Use an isolated report environment so document packages do not alter the research environment:
@@ -25,7 +27,7 @@ py -3.12 -m venv outputs/report-tools
 ./outputs/report-tools/Scripts/python.exe docs/final-report/build_report.py
 ```
 
-Outputs are `outputs/final-report-draft/report.pdf` and `report.html`. The HTML embeds all figures and needs no network connection. The builder uses installed Chrome or Edge; pass `--browser PATH` for another Chromium executable. It verifies all fourteen images load (thirteen experiment figures and one labelled method schematic), checks expected PDF text, exports page previews, and records asset hashes/package versions in `build-manifest.json`.
+Outputs are `outputs/final-report-draft/report.pdf` and `report.html`. The HTML embeds all figures and needs no network connection. The builder uses installed Chrome or Edge; pass `--browser PATH` for another Chromium executable. It verifies all eighteen images load (seventeen experiment figures and one labelled method schematic), checks expected PDF text, exports page previews, and records asset hashes/package versions in `build-manifest.json`.
 
 Check numeric tables, links and available evidence hashes independently with `python docs/final-report/verify_report.py` (standard library only).
 
@@ -41,11 +43,11 @@ Generated artifacts and document-tool packages stay under ignored `outputs/`. So
 
 `python docs/final-report/make_revision_figures.py` rebuilds the early Materials, refinement, single-exposure environment and full lighting/normal figures from tracked images and metric archives. It runs no experiments. The optional `--archive-materials` flag is only for checking/copying the original historical local outputs into that archive.
 
+`python docs/final-report/make_appendix_figures.py` rebuilds Figure D5 by selecting the complete labelled validation-13/51 rows from the tracked lighting/normal sheet. Figures D2–D4 reuse existing diagnostic plots and their portable source metadata; D6 uses the original five-view loss sheet.
+
 `python docs/final-report/make_full_view_figure.py` rebuilds Figure 3a: full-frame reference/SH3/HDR-1.0 comparisons for test views 0/13/73/88, using the archived original test sheet. Figure 3b retains the detail crops. The optional `--archive-source` flag verifies and copies the original local sheet; default rebuilding uses tracked inputs only. No new evaluation or PDF build is needed.
 
-The locally prepared `outputs/final-report-reproduction/checkpoints.zip` contains the seven required files for the three main final models plus original/rebased run metadata, source fingerprints, package records and training logs. `bundle_checkpoints.py` rebuilds it and verifies frozen selection hashes. Its [manifest](../reports/assets/2026-11-07-report-analysis/checkpoint-bundle-manifest.json) is tracked; the author still needs a persistent submission/download location. All 400 sphere images and split manifests are already tracked in Git.
-
-Extract the ZIP into a **fresh clone**, preserving the original workspace's run metadata. Then run Appendix A.1 from that clone's root.
+For reproduction from a fresh clone, follow the [repository README](../../README.md#reproduce-from-a-fresh-clone). It covers generating the initial surface, training the main models and comparing validation/test results. Checkpoints and generated outputs remain local; the instructions do not depend on a downloadable model bundle.
 
 ## Review order
 

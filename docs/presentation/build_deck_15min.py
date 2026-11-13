@@ -137,7 +137,7 @@ def build_content():
     loss_images = [asset(f'loss-crop-{col}', loss, (col * 360, 42, (col + 1) * 360, 402)) for col in range(3)]
 
     s = slide('Reconstructing reflections', 'Opening',
-              'Actual Blender target · sphere · validation view 0 | CP4282 research presentation · 12 November 2026', dark=True)
+              'Actual Blender target · sphere · validation view 0 | CP4282 research presentation · 13 November 2026', dark=True)
     T(s, 72, 52, 800, 38, 'CP4282 / 15-MINUTE RESEARCH TALK', 21, C['lime'], True)
     T(s, 72, 152, 840, 260, 'Reconstructing\nreflections.', 100, font='Georgia')
     T(s, 77, 445, 780, 104, 'Deferred Gaussian surfels\nfor a chrome sphere', 38)
@@ -327,8 +327,8 @@ def build_content():
 
     s = slide('A4: Depth and absolute depth error', 'Q&A / depth',
               'Sphere · validation 0 / 51 · positive camera-z depth | same range across both views / all models; white excluded', backup=True)
-    header(s, 'Q&A / A4', 'Depth is another check on the surface.',
-           'Shared scene-unit depth scale; absolute depth error is displayed from 0 to 0.02, clipped.')
+    header(s, 'Q&A / A4', 'Depth is rendered from the current surfels.',
+           'Visibility-weighted ray–plane depths. Blender depth is an evaluation reference, not a training input.')
     image = asset('qna-depth-errors', 'docs/presentation/assets/2026-11-12-qna/depth-comparison-errors.png')
     P(s, image, 72, 290, 1456, 508)
 

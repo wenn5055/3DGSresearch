@@ -107,9 +107,21 @@ def main():
             path = (document.parent / target.split('#')[0]).resolve()
             assert path.exists(), f'{document.name}: missing link {target}'
             local_links += 1
-    assert len(re.findall(r'^!\[', text, flags=re.M)) == 14
-    for label in ('E1', '3a', '3b', '4a', '4b', '6'):
+    assert len(re.findall(r'^!\[', text, flags=re.M)) == 18
+    for label in ('E1', '3a', '3b', '4a', '4b', '6', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6'):
         assert f'*Figure {label}.' in text
+    diagnostic_asset = ROOT / 'docs/presentation/assets/2026-11-12-qna'
+    diagnostics = json.loads((diagnostic_asset / 'provenance.json').read_text(encoding='utf-8'))
+    assert diagnostics['split'] == 'validation' and diagnostics['views'] == [0, 51]
+    assert diagnostics['models'] == ['SH3', 'HDR-1.0']
+    for item in diagnostics['sources'] + diagnostics['figures']:
+        assert hashlib.sha256((ROOT / item['path']).read_bytes()).hexdigest() == item['sha256'], item['path']
+    appendix_asset = ASSETS / '2026-11-13-appendix'
+    appendix = json.loads((appendix_asset / 'provenance.json').read_text(encoding='utf-8'))
+    assert appendix['split'] == 'validation' and appendix['views'] == [13, 51]
+    assert appendix['model'] == 'HDR-0.75' and len(appendix['columns']) == 5
+    for item in appendix['sources'] + [appendix['figure']]:
+        assert hashlib.sha256((ROOT / item['path']).read_bytes()).hexdigest() == item['sha256'], item['path']
     full_view_asset = ASSETS / '2026-11-12-full-views'
     full_views = json.loads((full_view_asset / 'provenance.json').read_text(encoding='utf-8'))
     assert full_views['split'] == 'test' and full_views['views'] == [0, 13, 73, 88]
@@ -143,7 +155,9 @@ def main():
             checked_copies += 1
     print(json.dumps({'table_rows_checked': len(checked), 'local_links_checked': local_links,
                       'available_original_input_hashes_checked': checked_copies,
-                      'report_figures': 14, 'saved_data_analysis_sources_checked': len(analysis['sources']),
+                      'report_figures': 18, 'saved_data_analysis_sources_checked': len(analysis['sources']),
+                      'appendix_diagnostic_sources_and_figures_checked': len(diagnostics['sources'] + diagnostics['figures']),
+                      'appendix_layout_sources_and_figure_checked': len(appendix['sources']) + 1,
                       'full_view_panels_checked': len(full_views['panels']),
                       'revision_figure_sources_checked': len(revision['sources']),
                       'historical_materials_metric_rows_checked': 400,

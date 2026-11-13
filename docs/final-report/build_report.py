@@ -137,8 +137,7 @@ def main():
         page.pdf(path=str(pdf_path), format='A4', print_background=True, prefer_css_page_size=True,
                  display_header_footer=True, header_template='<span></span>',
                  footer_template='<div style="font:8px Arial;width:100%;text-align:center;color:#65727c;">'
-                                 'CP4282 · Reviewed draft · <span class="pageNumber"></span> / '
-                                 '<span class="totalPages"></span></div>')
+                                 '<span class="pageNumber"></span></div>')
         browser.close()
     import pymupdf
     pdf = pymupdf.open(pdf_path)

@@ -3,7 +3,7 @@
 **Speaker:** Tang Xiao Di Wendy  
 **Format:** 12 planned slides; 15-minute speaking slot, excluding questions.  
 **Audience:** Classmates familiar with the course's Gaussian splatting trainer.  
-**Status:** Script draft, 12 November 2026. Timings are rehearsal targets, not measured delivery times.
+**Status:** Script draft, revised 13 November 2026. Timings are rehearsal targets, not measured delivery times.
 
 Read the paragraphs under **Say** aloud. Visual directions, captions, tables and backup answers are preparation notes. Allow time to point at the comparisons rather than reading every number. The slide titles state the main message; the spoken paragraphs provide the explanation.
 
@@ -119,9 +119,9 @@ The original forest map is not supplied during fitting. The lighting map itself 
 
 To make the comparison meaningful, both main methods use surfels. I am comparing their appearance approaches, rather than comparing volumetric Gaussians against a different surface representation.
 
-Both start from the same 100,000 surfels, estimated from the training silhouettes. For the first 10,000 steps, I keep the surface fixed and fit appearance. I then allow geometry and opacity to change during another 5,000 refinement steps. No surfels are added or removed.
+Both start from the same 100,000 surfels, estimated from the training silhouettes. For the first 10,000 steps, I keep the surface fixed and fit appearance. The aim is to avoid early geometry changes that compensate for inaccurate appearance or lighting. I then allow geometry and opacity to change during another 5,000 refinement steps. No surfels are added or removed.
 
-Both methods use the same MSE image objective, mask constraint and normal–depth consistency settings. Consistency compares the rendered normal with a normal calculated from the model's own depth. It does not supply the correct Blender normals.
+Both methods use the same MSE image objective, mask constraint and normal–depth consistency settings. The renderer produces the depth map from the current surfel geometry. Consistency compares the rendered normal with a normal calculated from that depth, without supplying Blender geometry.
 
 The scene has 100 training, 100 validation and 200 test views. Validation images help compare settings without providing fitting gradients. The main results I will show next are from the 200 test views, using SH3 and the same-initial-size reflection model, HDR-1.0.
 
@@ -278,6 +278,8 @@ These are not part of the timed script. The [visual Q&A appendix](qna-visual-app
 **Why use a sphere?** A smooth isolated sphere removes nearby-object reflections and recessed shape recovery as additional problems. It still requires learning accurate surface normals and environment appearance. The result is scoped to that setting.
 
 **Why not train using Blender normals?** That would provide additional geometric supervision unavailable in the RGB-and-mask setting studied here. Normal maps describe orientation, not the complete positions, visibility, lighting or appearance, so they would not make reconstruction unnecessary. They would change the training problem. The implemented regulariser compares two model predictions instead.
+
+**Where does the depth map come from?** The surfel renderer generates it from the model's current geometry. At each pixel, it computes camera-ray intersections with contributing surfel planes and takes their visibility-weighted average camera-z depth. Neighbouring depths are back-projected to 3D to estimate the surface normal used by the consistency loss. No supplied depth map or separate depth network is used. Blender depth is exported separately for evaluation comparisons only.
 
 **What does HDR-0.75 mean, and is it the main result?** Its initial two in-plane surfel scales are multiplied by 0.75; the count stays at 100,000 and scales can change later. It is supplementary. The primary matched test comparison is SH3 versus HDR-1.0. HDR-0.75 adds about 0.17 dB mean test PSNR and does not remove the reflection defects. Its checkpoint supplies the lighting/normal substitution diagnostic.
 

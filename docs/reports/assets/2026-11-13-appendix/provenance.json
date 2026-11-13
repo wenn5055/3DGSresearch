@@ -1,0 +1,52 @@
+{
+  "scene": "justChromeBall",
+  "split": "validation",
+  "views": [
+    13,
+    51
+  ],
+  "model": "HDR-0.75",
+  "columns": [
+    "target",
+    "learned light / learned normals",
+    "reference light / learned normals",
+    "learned light / reference normals",
+    "reference light / reference normals"
+  ],
+  "selection": "Additional views from the existing five-camera diagnostic; includes preserved failure view 51.",
+  "source_rectangles_xyxy": [
+    [
+      0,
+      0,
+      1572,
+      38
+    ],
+    [
+      0,
+      380,
+      1572,
+      722
+    ],
+    [
+      0,
+      1406,
+      1572,
+      1748
+    ]
+  ],
+  "display": "Complete column headings and labelled rows copied pixel-for-pixel; no retouching or rescaling.",
+  "figure": {
+    "path": "docs/reports/assets/2026-11-13-appendix/lighting-normal-views-13-51.png",
+    "sha256": "b8e8bf1008a77f860cec12d6ad6a1cadedcd8b41d6486116c3860a11dc4caf81"
+  },
+  "sources": [
+    {
+      "path": "docs/reports/assets/2026-11-03-reference-normal-swap/reflection-crops.png",
+      "sha256": "8e92eba59b3ff1a9104043f0a699c3acced5beb89dfed6da6e6981f3b67f5ea7"
+    },
+    {
+      "path": "docs/final-report/make_appendix_figures.py",
+      "sha256": "fc4565817c062e6b4b5bb0b103279fc80cc25d2782afea998c41685202b1923e"
+    }
+  ]
+}

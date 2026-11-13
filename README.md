@@ -179,9 +179,9 @@ contains per-view scores. Test results are for reporting, not further tuning.
 
 A **checkpoint** is a trained model saved to disk. Keep `model.ply` and
 `model.surfel.npz` together; SH3 also requires `model.sh.npz`. These files allow
-rendering and scoring without retraining. Full checkpoints are outside Git;
-the [report instructions](docs/final-report/README.md) describe the separately
-prepared bundle, whose persistent download location is still pending.
+rendering and scoring without retraining. Checkpoints and other generated
+outputs are kept locally, outside Git. Follow the fresh-clone reproduction
+steps above to generate the trained models.
 
 Each training stage saves `run.json`, resolved configs, `train.log`, package
 versions, source snapshots and input hashes in its timestamped run folder.

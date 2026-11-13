@@ -8,11 +8,11 @@ The full prose draft is [report.md](report.md); the claim/figure inventory is [e
 - [ ] Read the research question, scope changes, explanations and conclusions; revise them into wording you can explain and defend.
 - [ ] Confirm file-level attribution: assignment starting code, external code copied verbatim (if any), independently implemented paper ideas, and project additions. Add precise citations/license acknowledgements where needed.
 - [ ] Confirm the AI-use declaration, add other tools used, and describe checks/research decisions personally performed. The old root `AI_Use.md` is narrower than the assistance used for this draft and needs reconciliation before submission.
-- [ ] Upload/attach the prepared `outputs/final-report-reproduction/checkpoints.zip` and add its persistent location. Seven main-model files were checked against frozen selection hashes; all 400 sphere images are already tracked. The portable six-stage launcher was preparation-checked, without retraining.
-- [ ] Review figure readability at PDF size. The main test sheet now shows two of the preselected cameras; the appendix uses one normal-map example. Full original sheets remain tracked.
+- [x] Direct readers to the repository README for reproduction from tracked data and source code; no checkpoint or generated-output upload is required.
+- [ ] Review figure readability at final output size. The main report includes full-view and cropped test comparisons; Appendix D includes normals, depth/RGB errors, additional lighting interventions and five-view loss crops. Full source sheets remain tracked.
 - [ ] Decide whether to shorten supporting Materials/logo history and Appendix B for the final length.
 - [ ] Check every final citation and remove all `AUTHOR REVIEW` markers after resolving them.
-- [ ] Freeze the final report source and required artifact/bundle versions, then prepare the 20-minute presentation.
+- [ ] Freeze the final report source and tracked evidence versions for submission.
 
 ## Evidence closure performed for this draft
 
@@ -30,6 +30,7 @@ The full prose draft is [report.md](report.md); the claim/figure inventory is [e
 - [x] Complete the later user-requested L1/D-SSIM refinement trial: one 5k continuation, 100-view validation and five-view normals, actual crops and a separately labelled report result. No test evaluation.
 - [x] Rewrite for interested peers, define terms before using them, add dedicated loss explanations and cite verified course material (especially Units 10–11). Preserve result tables and move detailed math/metadata to appendices.
 - [x] Address 11 November author comments: add clearly separated early Materials RGB/SH3 results and actual images; clarify terminology/count/budget; replace cumulative plots with histograms; lead with visible refinement improvements while retaining the failure; use one environment display exposure; show all four lighting/normal cases and identify the HDR-0.75 diagnostic. Verify source/figure evidence without rebuilding the PDF.
+- [x] Expand Appendix D on 13 November with the primary-model normal comparison, rendered/reference depth, RGB differences, additional complete lighting/normal cases and five-view loss crops. Reuse saved evidence, preserve failures and state display scales and evaluation-only reference use. Keep this revision confined to the report.
 
 ## Optional strengthening; not required to finish this scoped draft
 

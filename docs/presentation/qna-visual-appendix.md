@@ -62,7 +62,7 @@ For legibility, show one complete view row at a time when a sheet contains sever
 
 ## A4 — Depth checks a different part of the reconstruction
 
-**Question:** “Do the image improvements also mean the geometry is accurate?”
+**Question:** “Where does the depth map come from?” or “Do the image improvements also mean the geometry is accurate?”
 
 **Layout:** Blender mesh depth / SH3 depth / HDR-1.0 depth / HDR-1.0 absolute depth error. Retain both colour bars. Do not use the individually normalised debug depth PNGs as a quantitative side-by-side comparison.
 
@@ -70,7 +70,9 @@ For legibility, show one complete view row at a time when a sheet contains sever
 
 *Chrome sphere, validation views 0 and 51. Depth is positive camera-z distance, in scene units, not Euclidean ray distance or metres. The first three columns share one depth range across both views and all surfaces. The final column shows |predicted depth − Blender mesh depth| on a shared 0–0.02 scene-unit error scale, clipped. White is excluded foreground/background, not measured zero error. Plots use existing saved float depth buffers and matching Blender exports.*
 
-**Short answer:** “The broad depth shape is close to a sphere, but the error map reveals local deviations. The shared range lets us compare the depths directly. A small depth error does not automatically imply correct normals, because normals depend on local surface orientation and slope. That is why I inspect both depth and normal error rather than treating an improved RGB score as proof of correct geometry.”
+**Where the training map comes from:** “It is rendered from the current surfels. For each pixel, I calculate camera-ray intersections with the contributing surfel planes and blend their camera-z depths using visibility and opacity weights. This gives a model-predicted depth map. The consistency loss estimates a normal from neighbouring predicted depths and compares it with the rendered normal. Blender depth is a separate evaluation reference; it does not supervise training.”
+
+**Short answer about accuracy:** “The broad depth shape is close to a sphere, but the error map reveals local deviations. The shared range lets us compare the depths directly. A small depth error does not automatically imply correct normals, because normals depend on local surface orientation and slope. That is why I inspect both depth and normal error rather than treating an improved RGB score as proof of correct geometry.”
 
 **Interpretation:** These are two development views, including the retained view-51 failure. They are diagnostic illustrations, not a full-split depth benchmark. Values above the displayed error limit remain recorded in the saved arrays; the plotting limit is not an error bound.
 
